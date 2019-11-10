@@ -1,6 +1,5 @@
 from flask import Flask, request, render_template
 from flask_mysqldb import MySQL
-import random
 
 app = Flask(__name__)
 app.config['MYSQL_USER'] = 'root'
@@ -20,16 +19,17 @@ def home():
     # cur.execute('''show tables''')
     cur.execute("SELECT * FROM products_product")
     results = cur.fetchall()
-
+    print(results)
     if request.method == 'POST':
         id = request.form['id']
         title = request.form['title']
         desc = request.form['desc']
         p_id = request.form['p_id']
-        #cur.execute("""INSERT INTO products_product
-        #         values(%s,%s,%s,%s)""", (id, title, desc, p_id))
-    cur.execute("""INSERT INTO products_product values(%s,%s,%s,%s)""", (random.randint(1,1000), random.randint(1,1000), random.randint(1,1000), random.randint(1,1000)))
-    mysql.connection.commit()
+        cur.execute("""INSERT INTO products_product
+                 values(%s,%s,%s,%s)""", (id, title, desc, p_id))
+        mysql.connection.commit()
+        # cur.execute('''INSERT INTO products_product
+        #           values(13,'asdasda','fasgasgas',525)''')
     return render_template('tables.html', data=results)
 
 
