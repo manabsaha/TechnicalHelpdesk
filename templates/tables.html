@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table style="width:100%" border="1">
+    <tr>
+    <th>id</th>
+    <th>title</th>
+    <th>desc</th>
+    <th>p_id</th>
+    </tr>>
+    {%for i in data%}
+    <tr>
+        <td>{{i['id']}}</td>
+        <td>{{i['title']}}</td>
+        <td>{{i['desc']}}</td>
+        <td>{{i['p_id']}}</td>
+    </tr>
+    {%endfor%}
+</table>
+<form action="/" method="post">
+    <p>ENTER DATA</p>
+    <p>ID:<input type="text" name="id" id="id"></p>
+    <p>TITLE:<input type="text" name="title" id="text"></p>
+    <p>DESC:<input type="text" name="desc" id="desc"></p>
+    <p>P_ID:<input type="text" name="p_id" id="p_id"></p>
+    <p><input type="submit" value="submit"></p>
+</form>
+
+
+</body>
+</html>
