@@ -1,6 +1,7 @@
-from flask import Flask, url_for, request, redirect, render_template
+from flask import Flask, url_for, request, redirect, render_template,flash
 from flask_mysqldb import MySQL
 import os
+import gc
 
 from flask_mysqldb import MySQL
 
@@ -13,8 +14,26 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
 
+@app.route('/a/', methods=['GET', 'POST'])
+def base():
+    cur = mysql.connection.cursor()
+    if request.method == 'POST':
+        fname = request.form['fname']
+        lname = request.form['lname']
+        phone = request.form['phone']
+        address = request.form['address']
+        device = request.form['device']
+        print(fname, lname, phone, address, device)
+        cur.execute("""INSERT INTO pickup values(%s,%s,%s,%s,%s)""", (
+            fname, lname, phone, address, device))
+        mysql.connection.commit()
+        gc.collect()
+    return render_template('test.html')
+
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    flash("successful")
     return render_template('site/index.html')
 
 
@@ -56,6 +75,7 @@ def pickup():
         cur.execute("""INSERT INTO pickup values(%s,%s,%s,%s,%s)""", (
         fname, lname, phone,address,device))
         mysql.connection.commit()
+        gc.collect()
     return render_template('forms/index.html')
 
 

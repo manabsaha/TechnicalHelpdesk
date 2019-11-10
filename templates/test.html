@@ -1,7 +1,6 @@
-<!DOCTYPE html>
-<html xmlns:style="http://www.w3.org/1999/xhtml">
-<head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+{%extends "base.html"%}
+{%block content%}
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <meta charset="utf-8">
     <title>RegistrationForm_v2 by Colorlib</title>
@@ -13,7 +12,9 @@
     <!-- STYLE CSS -->
     <link rel="stylesheet" href="/static/formcss/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
+
+<script src="/static/js/scripts-all.js"></script>
+<script src="/static/js/main.js"></script>
 <style>
 	select{border: 2px solid #ccc;
   display: block;
@@ -30,15 +31,23 @@
   .form-control:focus {
     border: 1px solid #ae3c33; }
 }
-
-
-
-
+.form-control {
+  border: 2px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 20px;
+  font-family: "Muli-Bold";
+  background: none; }
+  .form-control:focus {
+    border: 1px solid #ae3c33; }
 </style>
-<body>
 
-<div class="wrapper" style="background-image: url('/static/images/fback.jpg');">
-    <div class="inner">
+
+<div class="wrapper js-animsition animsition" data-animsition-in-class="fade-in"
+     data-animsition-out-class="fade-out">
+    <div class="inner " data-aos="fade-up" data-aos-delay="800">
         <form action="" method="post">
             <h3>Registration Form</h3>
             <div class="form-group">
@@ -96,5 +105,4 @@
     </div>
 </div>
 
-</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
-</html>
+{%endblock%}
