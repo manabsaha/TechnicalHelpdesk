@@ -44,23 +44,16 @@
     border: 1px solid #ae3c33; }
 </style>
 
-
 <div class="wrapper js-animsition animsition" data-animsition-in-class="fade-in"
      data-animsition-out-class="fade-out">
     <div class="inner " data-aos="fade-up" data-aos-delay="800">
       
+        <div class="form-wrapper">
+              <h6 align="center"><a href="/reg">Get back to registration</a></h6>
+       </div>
+
         <form action="" method="post">
-            <h3>Registration Form</h3>
-            <div class="form-group">
-                <div class="form-wrapper">
-                    <label for="">First Name</label>
-                    <input type="text" name="fname" id="fname" class="form-control" pattern="[a-zA-Z]{2,}" required="required">
-                </div>
-                <div class="form-wrapper">
-                    <label for="">Last Name</label>
-                    <input type="text" name="lname" id="lname" class="form-control" pattern="[a-zA-Z]{2,}" required="required">
-                </div>
-            </div>
+            <h3>Login</h3>
 
             <div class="form-phone">
                 <div class="form-wrapper">
@@ -81,27 +74,11 @@
 
 
             <div class="form-wrapper">
-                <label for="">Pickup Address</label>
-                <input type="text" name="address" id="address" class="form-control" pattern="[a-zA-Z, ]{2,}" required="required">
+                <label for="">Password</label>
+                <input type="password" name="password" id="password" class="form-control" pattern=".{6,20}" title="Password should be 6-20 characters long" required="required">
             </div>
-            <div class="form-wrapper">
-                <label for="">Device Type</label>
 
-                <select name="device" id="device"  required>
-                    <option value="">-select device-</option>
-                    <option value="mobile">Mobile</option>
-                    <option value="tablet">Tablet</option>
-                    <option value="laptop">Laptop</option>
-                    <option value="desktop">Desktop</option>
-                </select>
-            </div>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" required="required"> I accept the Terms of Use & Privacy Policy.
-                    <span class="checkmark"></span>
-                </label>
-            </div>
-            <button>Register Now</button>
+            <button>Login Now</button>
         </form>
     </div>
 </div>
