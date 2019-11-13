@@ -107,13 +107,14 @@ def base():
         device = request.form['device']
         print(fname, lname, phone, address, device)
         try:
-            cur.execute("""INSERT INTO pickup values(%s,%s,%s,%s,%s)""", (
+            cur.execute("""INSERT INTO pickup1 values(%s,%s,%s,%s,%s)""", (
                 fname, lname, phone, address, device))
         except:
-            cur.execute("""CREATE TABLE pickup (fname varchar(20),lname varchar(20),
-                    phone bigint(10),address varchar(20),device varchar(20))""")
+            cur.execute("""CREATE TABLE pickup1(fname varchar(50),lname varchar(50),phone bigint(10), address varchar(100), 
+            device varchar(50))""")
             cur.execute("""INSERT INTO pickup values(%s,%s,%s,%s,%s)""", (
                 fname, lname, phone, address, device))
+
         mysql.connection.commit()
         gc.collect()
     return render_template('test.html')
