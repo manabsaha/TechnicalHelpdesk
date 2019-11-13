@@ -130,6 +130,9 @@ def about():
 def services():
     return render_template('site/services.html')
 
+@app.route('/profile/', methods=['GET', 'POST'])
+def profile():
+    return render_template('site/profile.html')
 
 @app.route('/gallery/', methods=['GET', 'POST'])
 def gallery():
