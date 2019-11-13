@@ -49,7 +49,7 @@
     <div class="inner " data-aos="fade-up" data-aos-delay="800">
       
         <div class="form-wrapper">
-              <h6 align="center"><a href="/reg">Get back to registration</a></h6>
+              <h6 align="center"><a href="/reg">Don't have a account! Click here to register</a></h6>
        </div>
 
         <form action="" method="post">
@@ -76,6 +76,10 @@
             <div class="form-wrapper">
                 <label for="">Password</label>
                 <input type="password" name="password" id="password" class="form-control" pattern=".{6,20}" title="Password should be 6-20 characters long" required="required">
+            </div>
+
+            <div class="form-wrapper">
+                <label style="color:red;" for="">{{ msg }}</label>
             </div>
 
             <button>Login Now</button>

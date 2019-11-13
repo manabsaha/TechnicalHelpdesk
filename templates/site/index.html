@@ -25,7 +25,12 @@
 
                 <div class="col-3 templateux-logo">
                     <a href="/" class="animsition-link">TECHNICAL HELPDESK</a>
+                    {% if user|length != 0 %}
+                        <p>Welcome {{ user }}</p>
+                        <p><a href="/logout">Logout</a></p>
+                    {% endif %}
                 </div>
+            
                 <nav class="col-9 site-nav">
                     <button class="d-block d-md-none hamburger hamburger--spin templateux-toggle templateux-toggle-light ml-auto templateux-toggle-menu"
                             data-toggle="collapse" data-target="#mobile-menu" aria-controls="mobile-menu"
@@ -82,16 +87,17 @@
     <div class="templateux-cover" style="background-image: url(/static/images/slider-1.jpg);">
         <div class="container">
             <div class="row align-items-lg-center">
-                <div class="col-lg-6 text-center order-lg-2">
+                <!-- <div class="col-lg-6 text-center order-lg-2">
                     <a href="https://vimeo.com/channels/staffpicks/93951774" data-fancybox
                        class="templateux-block-play"><span class="ion-ios-play"></span></a>
-                </div>
+                </div> -->
                 <div class="col-lg-6 order-lg-1">
                     <h1 class="heading mb-3" data-aos="fade-up">Sign up<p> to avail free pickup from your home.</h1>
-                    <p class="lead mb-5" data-aos="fade-up" data-aos-delay="100">Speedy Fast technical support service
-                        provided at minimal cost.</p>
-                    <p data-aos="fade-up" data-aos-delay="200"><a href="reg" class="btn btn-primary py-3 px-4">SIGN UP/LOG
-                        IN</a></p>
+                    <p class="lead mb-5" data-aos="fade-up" data-aos-delay="100">Speedy Fast technical support service provided at minimal cost.</p>
+                    {% if user|length == 0 %}
+                        <p data-aos="fade-up" data-aos-delay="200">
+                            <a href="login" class="btn btn-primary py-3 px-4">SIGN UP/LOGIN</a></p>
+                    {% endif %}
                 </div>
 
             </div>
