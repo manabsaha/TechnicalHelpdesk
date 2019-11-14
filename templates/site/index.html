@@ -9,7 +9,7 @@
 
     <div class="templateux-cover" style="background-image: url(/static/images/slider-1.jpg);">
         <div class="container">
-            <div class="row align-items-lg-center">
+            <div class="row align-items-lg-center" >
                 <!-- <div class="col-lg-6 text-center order-lg-2">
                     <a href="https://vimeo.com/channels/staffpicks/93951774" data-fancybox
                        class="templateux-block-play"><span class="ion-ios-play"></span></a>
@@ -19,14 +19,16 @@
                         <p>Welcome {{ name }}</p>
                     {% endif %}
                     {% if user|length != 0 %}
-                    <h1 class="heading mb-3" data-aos="fade-up">Start availing free pickup services from your home.</h1>
+                    <h1 class="heading mb-3" data-aos="fade-up" >Start availing free pickup services<p> from your home.</h1>
                     {%else%}
-                    <h1 class="heading mb-3" data-aos="fade-up">Sign up<p> to avail free pickup from your home.</h1>
+                    <h1 class="heading mb-3" data-aos="fade-up" style="line-height:1.2; padding-top:0px"><a href="/reg">SIGN UP!</a><p
+                            style="font-size:30px;" data-aos="fade-up">to avail free<br>pickup from your home.</h1>
                     {% endif %}
-                    <p class="lead mb-5" data-aos="fade-up" data-aos-delay="100">Speedy Fast technical support service provided at minimal cost.</p>
+                    <h3><p class="lead mb-5" data-aos="fade-up" data-aos-delay="100">Speedy Fast technical support service
+                        <br> provided at minimal cost.</br></p></h3>
                     {% if user|length == 0 %}
                         <p data-aos="fade-up" data-aos-delay="200">
-                            <a href="/login" class="btn btn-primary py-3 px-4">SIGN UP/LOGIN</a></p>
+                            <a href="/login" class="btn btn-primary py-3 px-4">LOGIN NOW!</a></p>
                     {%else%}
                         <p data-aos="fade-up" data-aos-delay="200">
                             <a href="/ticket" class="btn btn-primary py-3 px-4">Book Ticket</a></p>

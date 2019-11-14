@@ -57,45 +57,17 @@
                         <li><a href="/about" class="animsition-link" style="color:black">About</a></li>
                         <li>
                             <a href="/services" class="animsition-link" style="color:black">Services</a>
-                            <ul>
-                                <li><a href="#">Schedule</a>
-                                    <ul>
-                                        <li><a href="/pickup">Pickup</a></li>
-                                        <hr>
-                                        <li><a href="#">Appointment</a></li>
-                                        <hr>
-                                        <li><a href="#">Delivery</a></li>
-                                        <hr>
-                                    </ul>
-                                </li>
-                                <hr>
-                                <li>
-                                    <a href="#">Charges</a>
-                                    <ul>
-                                        <li><a href="#">Pickup</a></li>
-                                        <hr>
-                                        <li><a href="#">Spares</a></li>
-                                        <hr>
-                                        <li><a href="#">Services</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
+                          
                         </li>
                         <li><a href="/contact" style="color:black" class="animsition-link">Contact</a></li>
                         {% if user|length != 0 %}
                             <li><a href="/profile" style="color:black" class="animsition-link">Profile</a></li>
                         {%else%}
-                        <li><a href="/login" style="color:black" class="animsition-link">Sign in</a></li>
+                        <li><a href="/login" style="color:black" class="animsition-link">Log in</a></li>
                         {% endif %}
                         {% if user|length != 0 %}
-<<<<<<< HEAD
                         <li><a href="/logout" style="color:darkred">LOGOUT <i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
 
-=======
-                            <!-- <li><a href="/logout" style="color:black" class="animsition-link glyphicon glyphicon-log-out">Logout</a></li> -->
-                        <li><a href="/logout" style="color:darkred">LOGOUT <i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
->>>>>>> 950e86ac645ff6f128e64a15a4263f60716074a0
                             <!--<li><a href="/logout" class="animsition-link">Logout</a></li>-->
                         {% endif %}
                     </ul> <!-- .templateux-menu -->
