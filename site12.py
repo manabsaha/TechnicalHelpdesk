@@ -143,7 +143,7 @@ def ticket():
     gc.collect()
 
 
-    return render_template('forms/ticket.html',data=data,date=date.today())
+    return render_template('forms/ticket.html',data=data,date=date.today(),user=escape(session['number']))
 
 
 
