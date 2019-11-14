@@ -7,6 +7,7 @@
     {% endblock %}
 </head>
 <body>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <link rel="stylesheet" href="/static/css/style.css">
 <script src="/static/js/scripts-all.js"></script>
 <script src="/static/js/main.js"></script>
@@ -48,7 +49,7 @@
                         <li>
                             <a href="/" class="animsition-link">Home</a>
                         </li>
-                        <li><a href="/profile" class="animsition-link">Profile</a></li>
+                        <li><a href="/about" class="animsition-link">About</a></li>
                         <li>
                             <a href="/services" class="animsition-link">Services</a>
                             <ul>
@@ -76,9 +77,16 @@
                                 </li>
                             </ul>
                         </li>
-                        <li><a href="/about" class="animsition-link">About</a></li>
-                        <li><a href="/blog" class="animsition-link">Blog</a></li>
                         <li><a href="/contact" class="animsition-link">Contact</a></li>
+                        {% if user|length != 0 %}
+                            <li><a href="/profile" class="animsition-link">Profile</a></li>
+                        {%else%}
+                            <li><a href="/login" class="animsition-link">Sign in</a></li>
+                        {% endif %}
+                        {% if user|length != 0 %}
+                            <li><a href="/logout" class="animsition-link glyphicon glyphicon-log-out"></a></li>
+                            <!--<li><a href="/logout" class="animsition-link">Logout</a></li>-->
+                        {% endif %}
                     </ul> <!-- .templateux-menu -->
 
                 </nav> <!-- .site-nav -->

@@ -62,8 +62,12 @@ def login():
     if request.method == 'POST':
         phone = request.form['phone']
         password = request.form['password']
+
         cur.execute("""SELECT hash_password FROM user where phone = %s""",(phone,))
-        
+        if(cur.rowcount == 0):
+            msg = '*Number not registered'
+            return render_template('reg-login/login.html',msg=msg)
+
         psw=str(cur.fetchone())
         hash_password = psw[19:len(psw)-2]
         check_pass = bcrypt.hashpw(password.encode('utf8'),hash_password.encode('utf8'))
@@ -75,7 +79,7 @@ def login():
             return redirect(url_for('home'))
         else:
             print(False)
-            msg = '*Incorrect number/password!'
+            msg = '*Incorrect password!'
             return render_template('reg-login/login.html',msg=msg)
 
     return render_template('reg-login/login.html')
@@ -92,8 +96,12 @@ def logout():
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if 'number' in session:
-        username_session = escape(session['number'])
-        return render_template('site/index.html', user=username_session)
+        user = escape(session['number'])
+        cur = mysql.connection.cursor()
+        cur.execute("""SELECT fname FROM user where phone=%s""",(user,))
+        name = str(cur.fetchone())
+        name = name[11:len(name)-2]
+        return render_template('site/index.html', user=user,name=name)
     return render_template('site/index.html')
 
 
@@ -130,29 +138,31 @@ def base():
 
 @app.route('/about/', methods=['GET', 'POST'])
 def about():
+    if 'number' in session:
+        user = escape(session['number'])
+        return render_template('site/about.html', user=user)
     return render_template('site/about.html')
 
 
 @app.route('/services/', methods=['GET', 'POST'])
 def services():
+    if 'number' in session:
+        user = escape(session['number'])
+        return render_template('site/services.html', user=user)
     return render_template('site/services.html')
 
 @app.route('/profile/', methods=['GET', 'POST'])
 def profile():
+    if 'number' in session:
+        user = escape(session['number'])
+        return render_template('site/profile.html', user=user)
     return render_template('site/profile.html')
-
-@app.route('/gallery/', methods=['GET', 'POST'])
-def gallery():
-    return render_template('site/gallery.html')
-
-
-@app.route('/blog/', methods=['GET', 'POST'])
-def blog():
-    return render_template('site/blog.html')
-
 
 @app.route('/contact/', methods=['GET', 'POST'])
 def contact():
+    if 'number' in session:
+        user = escape(session['number'])
+        return render_template('site/contact.html', user=user)
     return render_template('site/contact.html')
 
 
