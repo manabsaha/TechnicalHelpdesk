@@ -3,6 +3,7 @@ from flask_mysqldb import MySQL
 import bcrypt
 import os
 import gc
+from datetime import date
 
 from flask_mysqldb import MySQL
 
@@ -86,6 +87,7 @@ def login():
 
 #Logout method.
 @app.route('/logout/',methods=['GET','POST'])
+@app.route('/logout/',methods=['GET','POST'])
 def logout():
     session.pop('loggedin', None)
     session.pop('number', None)
@@ -96,10 +98,48 @@ def logout():
 def ticket():
     cur=mysql.connection.cursor()
     if 'loggedin' not in session:
-        return redirect(url_for('home'))
-    cur.execute("""select * from user where phone= %s""", (str(session['number']),))
-    data=cur.fetchall()
-    print(data.fname,data.pincode)
+         return redirect(url_for('home'))
+    cur.execute("""select * from user where phone= %s""", (session['number'],))
+    data=cur.fetchone()
+    if request.method=='POST':
+        fname=request.form['fname']
+        lname=request.form['lname']
+        phone = request.form['phone']
+        address = request.form['address']
+        pickup=request.form['pickup']
+        app_date = request.form['date']
+        curr_date = date.today()
+        print(pickup)
+        if pickup=='True':
+            try:
+                cur.execute("""INSERT INTO pickup values(%s,%s,%s,%s,%s,%s)""", (
+                    fname, lname, phone, address, app_date, curr_date))
+            except:
+                cur.execute("""CREATE TABLE pickup (fname varchar(20),lname varchar(20),
+                                    phone bigint(10),address varchar(20) ,app_date date, curr_date date,
+                                    PRIMARY KEY (phone))""")
+                cur.execute("""INSERT INTO pickup values(%s,%s,%s,%s,%s,%s)""", (
+                    fname, lname, phone, address, app_date, curr_date))
+            mysql.connection.commit()
+            return redirect(url_for('home'))
+        else:
+            try:
+                cur.execute("""INSERT INTO appointment values(%s,%s,%s,%s,%s,%s)""", (
+                    fname, lname, phone, address, app_date, curr_date))
+            except:
+                cur.execute("""CREATE TABLE appointment (fname varchar(20),lname varchar(20),
+                                                phone bigint(10),address varchar(20) ,pickup_date date, curr_date date,
+                                                PRIMARY KEY (phone))""")
+                cur.execute("""INSERT INTO appointment values(%s,%s,%s,%s,%s,%s)""", (
+                    fname, lname, phone, address, app_date, curr_date))
+            mysql.connection.commit()
+            return redirect(url_for('home'))
+
+
+    gc.collect()
+
+
+    return render_template('forms/ticket.html',data=data,date=date.today())
 
 
 
