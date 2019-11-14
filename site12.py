@@ -1,5 +1,6 @@
 from flask import Flask, url_for, request, redirect, render_template,flash,session,escape
 from flask_mysqldb import MySQL
+import bcrypt
 import os
 import gc
 
@@ -25,21 +26,24 @@ def reg():
             address = request.form['address']
             pincode = request.form['pincode']
             password = request.form['password']
-            #print(fname,lname,phone,address,pincode)
+            hash_password = bcrypt.hashpw(password.encode('utf8'),bcrypt.gensalt())
+
             try:
                 cur.execute("""INSERT INTO user values(%s,%s,%s,%s,%s,%s)""", (
-                    fname, lname, phone,address,pincode,password))
+                    fname, lname, phone,address,pincode,hash_password))
             except:
                 cur.execute("""CREATE TABLE user (fname varchar(20),lname varchar(20),
-                    phone bigint(10),address varchar(20),pincode bigint(6),password varchar(20),
+                    phone bigint(10),address varchar(20),pincode bigint(6),hash_password varchar(128),
                     PRIMARY KEY (phone))""")
                 cur.execute("""INSERT INTO user values(%s,%s,%s,%s,%s,%s)""", (
-                    fname, lname, phone,address,pincode,password))
+                    fname, lname, phone,address,pincode,hash_password))
+
             mysql.connection.commit()
             gc.collect()
             session['loggedin'] = True
             session['number'] = phone
             return redirect(url_for('home'))
+            
         except:
             cur.execute("""SELECT phone FROM user WHERE phone=%s""",(phone,))
             if cur.rowcount == 0:
@@ -58,19 +62,22 @@ def login():
     if request.method == 'POST':
         phone = request.form['phone']
         password = request.form['password']
-        try:
-            cur.execute("""SELECT * FROM user where phone = %s AND password = %s""",(phone,password))
-            account = cur.fetchone()
-            if account:
-                session['loggedin'] = True
-                session['number'] = phone
-                return redirect(url_for('home'))
-            else:
-                msg = '*Incorrect number/password!'
-                return render_template('reg-login/login.html',msg=msg)
-        except:
-            msg = '*Some error occured'
+        cur.execute("""SELECT hash_password FROM user where phone = %s""",(phone,))
+        
+        psw=str(cur.fetchone())
+        hash_password = psw[19:len(psw)-2]
+        check_pass = bcrypt.hashpw(password.encode('utf8'),hash_password.encode('utf8'))
+
+        if(check_pass==hash_password.encode('utf8')):
+            print(True)
+            session['loggedin'] = True
+            session['number'] = phone
+            return redirect(url_for('home'))
+        else:
+            print(False)
+            msg = '*Incorrect number/password!'
             return render_template('reg-login/login.html',msg=msg)
+
     return render_template('reg-login/login.html')
 
 #Logout method.
