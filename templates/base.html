@@ -18,12 +18,20 @@
     height: 2px;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
           }
+
+    .fixedbar {
+	  overflow: hidden;
+	  background-color: #333;
+	  position: fixed; /* Set the navbar to fixed position */
+	  top: 0; /* Position the navbar at the top of the page */
+	  width: 100%; /* Full width */
+	}
 </style>
 
 <div class="js-animsition animsition " id="site-wrap"
      data-animsition-out-class="fade-out"  >
 
-    <header class="templateux-navbar dark shadow-lg p-4 mb-4 bg-white" role="banner"
+    <header class="templateux-navbar dark shadow-lg p-4 mb-4 bg-white fixedbar" role="banner"
         style=" z-index:10; background-image: url(/static/images/slider-1.jpg); background-size:cover;  border-radius: 5px;">
 
         <div class="container" data-aos="fade-down" style="position: relative; z-index:10;">
@@ -31,8 +39,6 @@
 
                 <div class="col-3 templateux-logo">
                     <a href="/" class="animsition-link">TECHNICAL HELPDESK</a>
-                    {%block logout%}
-                    {%endblock%}
                 </div>
                 <nav class="col-9 site-nav">
                     <button class="d-block d-md-none hamburger hamburger--spin templateux-toggle templateux-toggle-light ml-auto templateux-toggle-menu"
@@ -46,11 +52,11 @@
                     <ul class="sf-menu templateux-menu d-none d-md-block">
                         <!-- <li class="active"> -->
                         <li>
-                            <a href="/" class="animsition-link" style="color:white" ;>Home</a>
+                            <a href="/" class="animsition-link" style="color:black" ;>Home</a>
                         </li>
-                        <li><a href="/about" class="animsition-link" style="color:white">About</a></li>
+                        <li><a href="/about" class="animsition-link" style="color:black">About</a></li>
                         <li>
-                            <a href="/services" class="animsition-link" style="color:white">Services</a>
+                            <a href="/services" class="animsition-link" style="color:black">Services</a>
                             <ul>
                                 <li><a href="#">Schedule</a>
                                     <ul>
@@ -76,14 +82,14 @@
                                 </li>
                             </ul>
                         </li>
-                        <li><a href="/contact" style="color:white" class="animsition-link">Contact</a></li>
+                        <li><a href="/contact" style="color:black" class="animsition-link">Contact</a></li>
                         {% if user|length != 0 %}
-                            <li><a href="/profile" style="color:white" class="animsition-link">Profile</a></li>
+                            <li><a href="/profile" style="color:black" class="animsition-link">Profile</a></li>
                         {%else%}
-                        <li><a href="/login" style="color:white" class="animsition-link">Sign in</a></li>
+                        <li><a href="/login" style="color:black" class="animsition-link">Sign in</a></li>
                         {% endif %}
                         {% if user|length != 0 %}
-                            <li><a href="/logout" style="color:white" class="animsition-link glyphicon glyphicon-log-out"></a></li>
+                            <li><a href="/logout" style="color:black" class="animsition-link glyphicon glyphicon-log-out"></a></li>
                             <!--<li><a href="/logout" class="animsition-link">Logout</a></li>-->
                         {% endif %}
                     </ul> <!-- .templateux-menu -->
