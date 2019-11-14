@@ -100,9 +100,9 @@ def logout():
 #Generate ticket method
 @app.route('/ticket/', methods=['GET','POST'])
 def ticket():
-    cur=mysql.connection.cursor()
     if 'loggedin' not in session:
-         return redirect(url_for('home'))
+         return redirect(url_for('login'))
+    cur=mysql.connection.cursor()
     cur.execute("""select * from user where phone= %s""", (session['number'],))
     data=cur.fetchone()
     if request.method=='POST':
