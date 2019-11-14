@@ -243,6 +243,9 @@ def pickup():
         gc.collect()
 
     return render_template('forms/index.html')
+@app.route('/test/')
+def test():
+    return render_template('test.html')
 
 
 if __name__ == "__main__":
