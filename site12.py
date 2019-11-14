@@ -17,6 +17,8 @@ mysql = MySQL(app)
 #Register method.
 @app.route('/reg/', methods=['GET', 'POST'])
 def reg():
+    if 'number' in session:
+        return redirect(url_for('home'))
     cur=mysql.connection.cursor()
     if request.method == 'POST':
         try:
@@ -58,6 +60,8 @@ def reg():
 #Login method.
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
+    if 'number' in session:
+        return redirect(url_for('home'))
     cur=mysql.connection.cursor()
     if request.method == 'POST':
         phone = request.form['phone']
