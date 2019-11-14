@@ -8,7 +8,6 @@
 
 <!-- STYLE CSS -->
 <link rel="stylesheet" href="/static/formcss/style.css">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 
@@ -42,16 +41,15 @@ select{border: 2px solid #ccc;
 </style>
 
 <div class="wrapper js-animsition animsition" data-animsition-in-class="fade-in"
-     data-animsition-out-class="fade-out">
+     data-animsition-out-class="fade-out" style="background-image: url(/static/images/slider-1.jpg); padding-top: 120px; padding-bottom: 50px">
 
-    <div class="inner " data-aos="fade-up" data-aos-delay="800">
+    <div class="inner" data-aos="fade-up" data-aos-delay="50">
       
-        <div class="form-wrapper">
-              <h6 align="center"><a href="/login">Already have a account. Login here</a></h6>
-       </div>
+
 
         <form action="" method="post">
             <h3>Registration Form</h3>
+            <hr>
             <div class="form-group">
                 <div class="form-wrapper">
                     <label for="">First Name</label>
@@ -107,6 +105,9 @@ select{border: 2px solid #ccc;
                 </label>
             </div>
             <button>Register Now</button>
+            <div class="form-wrapper" style="text-align:center; padding-top: 20px;">
+              Already have an account? <a href="/login">Login here</a>
+       </div>
         </form>
     </div>
 </div>
