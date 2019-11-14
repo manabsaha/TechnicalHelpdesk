@@ -17,6 +17,8 @@ mysql = MySQL(app)
 #Register method.
 @app.route('/reg/', methods=['GET', 'POST'])
 def reg():
+    if 'number' in session:
+        return redirect(url_for('home'))
     cur=mysql.connection.cursor()
     if request.method == 'POST':
         try:
@@ -58,6 +60,8 @@ def reg():
 #Login method.
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
+    if 'number' in session:
+        return redirect(url_for('home'))
     cur=mysql.connection.cursor()
     if request.method == 'POST':
         phone = request.form['phone']
@@ -90,6 +94,17 @@ def logout():
     session.pop('loggedin', None)
     session.pop('number', None)
     return redirect(url_for('home'))
+
+#Generate ticket method
+@app.route('/ticket/', methods=['GET','POST'])
+def ticket():
+    cur=mysql.connection.cursor()
+    if 'loggedin' not in session:
+        return redirect(url_for('home'))
+    cur.execute("""select * from user where phone= %s""", (str(session['number']),))
+    data=cur.fetchall()
+    print(data.fname,data.pincode)
+
 
 
 #HOME PAGE.
