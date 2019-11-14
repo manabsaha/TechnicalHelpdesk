@@ -1,15 +1,87 @@
 {%extends "base.html"%}
 {%block content%}
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
     <div class="templateux-cover" style="background-image: url(/static/images/slider-1.jpg);">
         <div class="container">
             <div class="row align-items-lg-center">
                 <div class="col-lg-6 order-lg-1">
-                    <p class="lead mb-5" data-aos="fade-up" data-aos-delay="100">
-                    PROFILE<br><br>Speedy Fast technical support service provided at minimal cost.
-                </p>
+
+
+        <div class="container" data-aos="fade-down" style="position: top; z-index:12;">
+            <div class="row" style="padding-top: 120px" >
+
+                    <ul class="sf-menu templateux-menu d-none d-md-block">
+                        <!-- <li class="active"> -->
+                        <li style="margin: 8px">
+                            <a href="" class="animsition-link btn btn-primary mb-10 py-3 px-4" style="color:black" ;>Details</a>
+                        </li>
+                        <li style="margin: 8px"><a href="" class="animsition-link btn btn-primary py-3 px-4" style="color:black">History</a></li>
+                        <li style="margin: 8px">
+                            <a href="" class="animsition-link btn btn-primary py-3 px-4" style="color:black">Settings</a>
+                    </ul> 
+
+                </nav> 
+
+
+            </div> 
+        </div>
+
+
+ <!--
+<div class="w3-sidebar w3-bar-block w3-light-grey w3-card" style="width:130px;">
+  <h5 class="w3-bar-item">Profile</h5>
+  <button class="w3-bar-item w3-button tablink" onclick="openCity(event, 'London')">London</button>
+  <button class="w3-bar-item w3-button tablink" onclick="openCity(event, 'Paris')">Paris</button>
+  <button class="w3-bar-item w3-button tablink" onclick="openCity(event, 'Tokyo')">Tokyo</button>
+</div>
+
+<div style="margin-left:130px">
+
+  <div id="London" class="w3-container city" style="display:none">
+    <h2>London</h2>
+    <p>London is the capital city of England.</p>
+    <p>It is the most populous city in the United Kingdom, with a metropolitan area of over 13 million inhabitants.</p>
+  </div>
+
+  <div id="Paris" class="w3-container city" style="display:none">
+    <h2>Paris</h2>
+    <p>Paris is the capital of France.</p> 
+    <p>The Paris area is one of the largest population centers in Europe, with more than 12 million inhabitants.</p>
+  </div>
+
+  <div id="Tokyo" class="w3-container city" style="display:none">
+    <h2>Tokyo</h2>
+    <p>Tokyo is the capital of Japan.</p>
+    <p>It is the center of the Greater Tokyo Area, and the most populous metropolitan area in the world.</p>
+  </div>
+
+</div>
+
+<script>
+function openCity(evt, cityName) {
+  var i, x, tablinks;
+  x = document.getElementsByClassName("city");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < x.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" w3-red", ""); 
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " w3-red";
+}
+</script>-->
                 </div>
 
             </div>
+
         </div>
+
     </div> <!-- .templateux-cover -->
+
+
+
 {%endblock%}
