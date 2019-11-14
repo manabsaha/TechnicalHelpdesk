@@ -87,6 +87,17 @@ def logout():
     session.pop('number', None)
     return redirect(url_for('home'))
 
+#Generate ticket method
+@app.route('/ticket/', methods=['GET','POST'])
+def ticket():
+    cur=mysql.connection.cursor()
+    if 'loggedin' not in session:
+        return redirect(url_for('home'))
+    cur.execute("""select * from user where phone= %s""", (str(session['number']),))
+    data=cur.fetchall()
+    print(data.fname,data.pincode)
+
+
 
 #HOME PAGE.
 @app.route('/', methods=['GET', 'POST'])
