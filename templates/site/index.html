@@ -9,6 +9,7 @@
 
     <div class="templateux-cover" style="background-image: url(/static/images/slider-1.jpg);">
         <div class="container">
+<<<<<<< HEAD
             <div class="row align-items-lg-center" >
                 <!-- <div class="col-lg-6 text-center order-lg-2">
                     <a href="https://vimeo.com/channels/staffpicks/93951774" data-fancybox
@@ -29,9 +30,21 @@
                     {% if user|length == 0 %}
                         <p data-aos="fade-up" data-aos-delay="200">
                             <a href="/login" class="btn btn-primary py-3 px-4">LOGIN NOW!</a></p>
-                    {%else%}
+=======
+            <div class="row align-items-lg-center">
+                <div class="col-lg-6 order-lg-1">
+                    {% if user|length != 0 %}
+                        <p data-aos="fade-up" data-aos-delay="200">Welcome {{ name }}</p>
+                        <h1 class="heading mb-3" data-aos="fade-up">Start availing free pickup services from your home.</h1>
+                        <p class="lead mb-5" data-aos="fade-up" data-aos-delay="100">Speedy Fast technical support service provided at minimal cost.</p>
                         <p data-aos="fade-up" data-aos-delay="200">
                             <a href="/ticket" class="btn btn-primary py-3 px-4">Book Ticket</a></p>
+>>>>>>> e85d63301678ce11e86c5e83672485dd1767d4d8
+                    {%else%}
+                        <h1 class="heading mb-3" data-aos="fade-up">Sign up<p> to avail free pickup from your home.</h1>
+                        <p class="lead mb-5" data-aos="fade-up" data-aos-delay="100">Speedy Fast technical support service provided at minimal cost.</p>
+                        <p data-aos="fade-up" data-aos-delay="200">
+                            <a href="/login" class="btn btn-primary py-3 px-4">SIGN UP/LOGIN</a></p>
                     {% endif %}
                 </div>
 
@@ -44,7 +57,7 @@
             <div class="row">
                 <div class="col-md-12 templateux-overlap">
                     <div class="row">
-                        <div class="col-md-4" data-aos="fade-up" data-aos-delay="600">
+                        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
                             <div class="media block-icon-1 d-block text-left">
                                 <div class="icon mb-3"><span class="ion-ios-lightbulb-outline"></span></div>
                                 <div class="media-body">
@@ -54,7 +67,7 @@
                                 </div>
                             </div> <!-- .block-icon-1 -->
                         </div>
-                        <div class="col-md-4" data-aos="fade-up" data-aos-delay="700">
+                        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
                             <div class="media block-icon-1 d-block text-left">
                                 <div class="icon mb-3"><span class="ion-ios-nutrition-outline"></span></div>
                                 <div class="media-body">
@@ -64,7 +77,7 @@
                                 </div>
                             </div> <!-- .block-icon-1 -->
                         </div>
-                        <div class="col-md-4" data-aos="fade-up" data-aos-delay="800">
+                        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
                             <div class="media block-icon-1 d-block text-left">
                                 <div class="icon mb-3"><span class="ion-ios-infinite-outline"></span></div>
                                 <div class="media-body">
@@ -153,7 +166,7 @@
                     </div> <!-- .block-icon-1 -->
                 </div>
 
-                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="media block-icon-1 d-block text-center">
                         <div class="icon mb-3"><span class="ion-ios-nutrition-outline"></span></div>
                         <div class="media-body">
@@ -163,7 +176,7 @@
                         </div>
                     </div> <!-- .block-icon-1 -->
                 </div>
-                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="media block-icon-1 d-block text-center">
                         <div class="icon mb-3"><span class="ion-ios-lightbulb-outline"></span></div>
                         <div class="media-body">
@@ -173,7 +186,7 @@
                         </div>
                     </div> <!-- .block-icon-1 -->
                 </div>
-                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="500">
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="media block-icon-1 d-block text-center">
                         <div class="icon mb-3"><span class="ion-ios-videocam-outline"></span></div>
                         <div class="media-body">
