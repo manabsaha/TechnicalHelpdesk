@@ -18,7 +18,7 @@ mysql = MySQL(app)
 #Register method.
 @app.route('/reg/', methods=['GET', 'POST'])
 def reg():
-    if 'number' in session:
+    if 'loggedin' in session:
         return redirect(url_for('home'))
     cur=mysql.connection.cursor()
     if request.method == 'POST':
@@ -61,7 +61,7 @@ def reg():
 #Login method.
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-    if 'number' in session:
+    if 'loggedin' in session:
         return redirect(url_for('home'))
     cur=mysql.connection.cursor()
     if request.method == 'POST':
@@ -150,7 +150,7 @@ def ticket():
 #HOME PAGE.
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    if 'number' in session:
+    if 'loggedin' in session:
         user = escape(session['number'])
         cur = mysql.connection.cursor()
         cur.execute("""SELECT fname FROM user where phone=%s""",(user,))
@@ -180,7 +180,7 @@ def base():
 
 @app.route('/about/', methods=['GET', 'POST'])
 def about():
-    if 'number' in session:
+    if 'loggedin' in session:
         user = escape(session['number'])
         return render_template('site/about.html', user=user)
     return render_template('site/about.html')
@@ -188,13 +188,14 @@ def about():
 
 @app.route('/services/', methods=['GET', 'POST'])
 def services():
-    if 'number' in session:
+    if 'loggedin' in session:
         user = escape(session['number'])
         return render_template('site/services.html', user=user)
     return render_template('site/services.html')
 
 @app.route('/profile/', methods=['GET', 'POST'])
 def profile():
+
     #if 'loggedin' not in session:
      #    return redirect(url_for('home'))
     if 'number' in session:
@@ -207,7 +208,7 @@ def profile():
 
 @app.route('/contact/', methods=['GET', 'POST'])
 def contact():
-    if 'number' in session:
+    if 'loggedin' in session:
         user = escape(session['number'])
         return render_template('site/contact.html', user=user)
     return render_template('site/contact.html')
@@ -235,6 +236,7 @@ def pickup():
         gc.collect()
 
     return render_template('forms/index.html')
+    
 @app.route('/test/')
 def test():
     return render_template('test.html')
