@@ -51,7 +51,7 @@ a:hover {
   margin: auto;
   border: 2px solid white;
   border-radius: 25px;
-  box-shadow: 20px 20px 10px grey;
+  box-shadow: 5px 5px 15px grey;
   padding-top: 68px;
   padding-bottom: 48px;
   background: url("../images/whitebg.jpg");
