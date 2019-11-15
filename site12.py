@@ -90,7 +90,7 @@ def login():
     return render_template('reg-login/login.html')
 
 #Logout method.
-@app.route('/logout/',methods=['GET','POST'])
+#@app.route('/logout/',methods=['GET','POST'])
 @app.route('/logout/',methods=['GET','POST'])
 def logout():
     session.pop('loggedin', None)
@@ -204,14 +204,24 @@ def profile():
         cur.execute("""select * from user where phone= %s""", (session['number'],))
         d = cur.fetchone()
         return render_template('site/profile.html', data=d,user=user)
-    return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 @app.route('/contact/', methods=['GET', 'POST'])
 def contact():
     if 'loggedin' in session:
         user = escape(session['number'])
+        if request.method == 'POST':
+            feedback = request.form['feedback']
+            cur=mysql.connection.cursor()
+            try:
+                cur.execute("""INSERT INTO feedback values(%s,%s)""", (user,feedback))
+            except:
+                cur.execute("""CREATE TABLE feedback (phone bigint(10),message varchar(200))""")
+                cur.execute("""INSERT INTO feedback values(%s,%s)""", (user,feedback))
+            mysql.connection.commit()
+            return redirect(url_for('home'))
         return render_template('site/contact.html', user=user)
-    return render_template('site/contact.html')
+    return redirect(url_for('login'))
 
 
 @app.route('/pickup/', methods=['GET', 'POST'])

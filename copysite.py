@@ -71,7 +71,7 @@ def login():
         cur.execute("""SELECT hash_password FROM user where phone = %s""",(phone,))
         if(cur.rowcount == 0):
             msg = '*Number not registered'
-            return render_template('reg-login/login2.html',msg=msg)
+            return render_template('reg-login/login.html',msg=msg)
 
         psw=str(cur.fetchone())
         hash_password = psw[19:len(psw)-2]
@@ -90,7 +90,7 @@ def login():
     return render_template('reg-login/login.html')
 
 #Logout method.
-@app.route('/logout/',methods=['GET','POST'])
+#@app.route('/logout/',methods=['GET','POST'])
 @app.route('/logout/',methods=['GET','POST'])
 def logout():
     session.pop('loggedin', None)
@@ -169,25 +169,12 @@ def home():
 @app.route('/a/', methods=['GET', 'POST'])
 def base():
     cur = mysql.connection.cursor()
-    if request.method == 'POST':
-        fname = request.form['fname']
-        lname = request.form['lname']
-        phone = request.form['phone']
-        address = request.form['address']
-        device = request.form['device']
-        print(fname, lname, phone, address, device)
-        try:
-            cur.execute("""INSERT INTO pickup1 values(%s,%s,%s,%s,%s)""", (
-                fname, lname, phone, address, device))
-        except:
-            cur.execute("""CREATE TABLE pickup1(fname varchar(50),lname varchar(50),phone bigint(10), address varchar(100), 
-            device varchar(50))""")
-            cur.execute("""INSERT INTO pickup values(%s,%s,%s,%s,%s)""", (
-                fname, lname, phone, address, device))
-
-        mysql.connection.commit()
-        gc.collect()
-    return render_template('test.html')
+    try:
+        cur.execute("""SELECT * from user where fname='jaspreet'""")
+        data=cur.fetchone()
+    except:
+        pass
+    return render_template('site/profile.html', data=data)
 
 
 
@@ -208,17 +195,33 @@ def services():
 
 @app.route('/profile/', methods=['GET', 'POST'])
 def profile():
-    if 'loggedin' in session:
+
+    #if 'loggedin' not in session:
+     #    return redirect(url_for('home'))
+    if 'number' in session:
         user = escape(session['number'])
-        return render_template('site/profile.html', user=user)
-    return redirect(url_for('home'))
+        cur = mysql.connection.cursor()
+        cur.execute("""select * from user where phone= %s""", (session['number'],))
+        d = cur.fetchone()
+        return render_template('site/profile.html', data=d,user=user)
+    return redirect(url_for('login'))
 
 @app.route('/contact/', methods=['GET', 'POST'])
 def contact():
     if 'loggedin' in session:
         user = escape(session['number'])
+        if request.method == 'POST':
+            feedback = request.form['feedback']
+            cur=mysql.connection.cursor()
+            try:
+                cur.execute("""INSERT INTO feedback values(%s,%s)""", (user,feedback))
+            except:
+                cur.execute("""CREATE TABLE feedback (phone bigint(10),message varchar(200))""")
+                cur.execute("""INSERT INTO feedback values(%s,%s)""", (user,feedback))
+            mysql.connection.commit()
+            return redirect(url_for('home'))
         return render_template('site/contact.html', user=user)
-    return render_template('site/contact.html')
+    return redirect(url_for('login'))
 
 
 @app.route('/pickup/', methods=['GET', 'POST'])
