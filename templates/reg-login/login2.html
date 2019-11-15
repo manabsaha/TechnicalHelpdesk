@@ -1,85 +1,51 @@
-{%extends "base.html"%}
-{%block content2%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>TECHNICAL HELPDESK</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+	<link rel="stylesheet" type="text/css" href="/static/popupform/vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/popupform/css/util.css">
+	<link rel="stylesheet" type="text/css" href="/static/popupform/css/main.css">
+	
+</head>
+<body>
+	
+	<div class="limiter" style="background-image: url(/static/images/slider-3.jpg);">
+		<div class="container-login100">
+			<div class="wrap-login100 p-t-30 p-b-50">
+				<span class="login100-form-title p-b-41">
+					Account Login
+				</span>
+				<form class="login100-form validate-form p-b-33 p-t-5" action="" method="post" >
 
-    <!-- MATERIAL DESIGN ICONIC FONT -->
-    <!--<link rel="stylesheet" href="/static/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">-->
+					<div class="wrap-input100 validate-input" data-validate = "Enter number">
+						<input class="input100" type="text" name="phone" id="phone" placeholder="Number"
+						pattern="[6-9]{1}[0-9]{9}" title="Number can only contain 10 digits">
+						<span class="focus-input100"></span>
+					</div>
 
-    <link rel="stylesheet" href="/static/formcss/style.css">
+					<div class="wrap-input100 validate-input" data-validate="Enter password">
+						<input class="input100" type="password" name="password" id="password" placeholder="Password"
+						pattern=".{6,20}" title="Password should be 6-20 characters long">
+						<span class="focus-input100"></span>
+					</div>
 
+					<div class="container-login100-form-btn m-t-32">
+						<button class="login100-form-btn">
+							Login
+						</button>
+					</div>
 
-<style>
+				</form>
+			</div>
+		</div>
+	</div>
+		
+	<script src="/static/popupform/vendor/animsition/js/animsition.min.js"></script>
+	<script src="/static/popupform/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/static/popupform/js/main.js"></script>
 
-select{border: 2px solid #ccc;
-  display: block;
-  width: 100%;
-  height: 40px;
-  padding: 0 20px;
-  border-radius: 20px;
-  font-family: "Muli-Bold";
-  cursor: pointer;
- background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right 000;
- background-position: 95% 50%;
-}
-
-.form-control:focus {
-    border: 1px solid #ae3c33; }
-}
-.form-control {
-  border: 2px solid #ccc;
-  display: block;
-  width: 100%;
-  height: 40px;
-  padding: 20px 20px;
-  border-radius: 20px;
-  font-family: "Muli-Bold";
-  background: none; }
-  .form-control:focus {
-    border: 1px solid #ae3c33; }
-
-</style>
-
-<div class="wrapper js-animsition"
-     data-animsition-out-class="fade-out" style="background-image: url(/static/images/slider-1.jpg); z-index:0; padding-bottom:5%">
-
-    <div class="inner shadow-lg p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="800" >
-
-        <form action="" method="post">
-            <h3>Login</h3>
-            <hr>
-
-            <div class="form-phone">
-                <div class="form-wrapper">
-                    <label for="">Country Code</label>
-
-                    <select name="country" required="required">
-                        <option>+91(INDIA)</option>
-                    </select>
-
-                </div>
-
-                <div class="form-wrapper">
-                    <label for="">Mobile Number</label>
-                    <input type="text" name="phone" id="phone" style="width:385%" class="form-control" required="required"
-                           pattern="[6-9]{1}[0-9]{9}" title="Number can only contain 10 digits">
-                </div>
-            </div>
-
-
-            <div class="form-wrapper">
-                <label for="">Password</label>
-                <input type="password" name="password" id="password" class="form-control" pattern=".{6,20}" title="Password should be 6-20 characters long" required="required">
-            </div>
-
-            <div class="form-wrapper">
-                <label style="color:red;" for="">{{ msg }}</label>
-            </div>
-
-            <button>Login Now</button>
-            <div style="padding-top: 30px; text-align:center ">Don't have an account? <a href="/reg">SIGN UP</a></div>
-        </form>
-    </div>
-</div>
-
-{%endblock%}
+</body>
+</html>

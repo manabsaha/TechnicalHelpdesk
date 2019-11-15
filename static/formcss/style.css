@@ -49,9 +49,11 @@ a:hover {
 .inner {
   min-width: 720px;
   margin: auto;
+  border: 2px solid red;
+  border-radius: 25px;
   padding-top: 68px;
   padding-bottom: 48px;
-  background: url("../images/fback.jpg");
+  background: url("../images/whitebg.jpg");
    background-size: cover;}
   .inner h3 {
     text-transform: uppercase;
