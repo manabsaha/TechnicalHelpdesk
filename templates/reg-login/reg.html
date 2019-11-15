@@ -90,7 +90,12 @@ select{
             </div>
 
             <div class="form-wrapper">
-                <input type="password" name="password" id="password" placeholder="Create New Password" class="form-control" pattern=".{6,20}" title="Password should be 6-20 characters long" required="required">
+                <input type="password" name="password" id="password" placeholder="Create New Password" class="form-control" onkeyup='check();' pattern=".{6,20}" title="Password should be 6-20 characters long" required="required">
+            </div>
+
+            <div class="form-wrapper">
+                <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" onkeyup='check();' class="form-control" pattern=".{6,20}" title="Password should be 6-20 characters long" required="required">
+                <span id='message'></span>
             </div>
 
             <div class="checkbox">
@@ -99,14 +104,27 @@ select{
                     <span class="checkmark"></span>
                 </label>
             </div>
-            <button>Register Now</button>
+            <button id="regbutton">Register Now</button>
             <div class="form-wrapper" style="text-align:center; padding-top: 20px;">
               Already have an account? <a href="/login">LOG IN</a>
        </div>
         </form>
     </div>
 </div>
-
+<script>
+var check = function() {
+  if (document.getElementById('password').value == document.getElementById('confirm_password').value) {
+    document.getElementById('message').style.display = "none";
+    document.getElementById('regbutton').disabled = false
+  } 
+  else {
+    document.getElementById('message').style.display = "initial";
+    document.getElementById('message').style.color = 'red';
+    document.getElementById('message').innerHTML = ' Password doesn\'t match';
+    document.getElementById('regbutton').disabled = true
+  }
+}
+</script>
 {%endblock%}
 
 
