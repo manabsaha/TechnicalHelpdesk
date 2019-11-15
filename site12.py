@@ -71,7 +71,7 @@ def login():
         cur.execute("""SELECT hash_password FROM user where phone = %s""",(phone,))
         if(cur.rowcount == 0):
             msg = '*Number not registered'
-            return render_template('reg-login/login.html',msg=msg)
+            return render_template('reg-login/login2.html',msg=msg)
 
         psw=str(cur.fetchone())
         hash_password = psw[19:len(psw)-2]
@@ -208,6 +208,8 @@ def services():
 
 @app.route('/profile/', methods=['GET', 'POST'])
 def profile():
+    if 'loggedin' not in session:
+         return redirect(url_for('home'))
     if 'number' in session:
         user = escape(session['number'])
         return render_template('site/profile.html', user=user)
