@@ -19,10 +19,61 @@
   background: none; }
 .form-control:focus {
     border: 1px solid #ae3c33; }
+button {
+  border: none;
+  width: 152px;
+  height: 40px;
+  margin: auto;
+  cursor: pointer;
+  display: flex;
+  text-align:center;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: #ae3c33;
+  font-size: 13px;
+  color: #fff;
+  text-transform: uppercase;
+  font-family: "Muli-SemiBold";
+  border-radius: 20px;
+  overflow: hidden;
+  -webkit-transform: perspective(1px) translateZ(0);
+  transform: perspective(1px) translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+  position: relative;
+  -webkit-transition-property: color;
+  transition-property: color;
+  -webkit-transition-duration: 0.5s;
+  transition-duration: 0.5s; }
+  button:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #f11a09;
+    border-radius: 20px;
+    -webkit-transform: scaleX(0);
+    transform: scaleX(0);
+    -webkit-transform-origin: 0 50%;
+    transform-origin: 0 50%;
+    -webkit-transition-property: transform;
+    transition-property: transform;
+    -webkit-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+    -webkit-transition-timing-function: ease-out;
+    transition-timing-function: ease-out; }
+  button:hover:before {
+    -webkit-transform: scaleX(1);
+    transform: scaleX(1);
+    -webkit-transition-timing-function: cubic-bezier(0.52, 1.64, 0.37, 0.66);
+    transition-timing-function: cubic-bezier(0.52, 1.64, 0.37, 0.66); }
 }
 </style>
     
-    <div class="templateux-cover" style="background-image: url(/static/images/slider-1.jpg);">
+    <div class="templateux-cover" style="background-image: url(/static/images/slider-1.jpg); background-width:100%;">
       <div class="container">
         <div class="row align-items-center">
           <div class="col-md-6">
@@ -46,8 +97,8 @@
                 pattern=".{1,200}" title="feedback should be 200 characters max" required="required">
                 </textarea>
             </div>
-            <div class="form-wrapper"> 
-              <button class="form-control">Send</button>
+            <div class="form-wrapper">
+              <button class="form-control" style="padding:0; font-size:18px;">Send</button>
             </div>
           </form>
           </div>
@@ -57,7 +108,7 @@
 
         <div class="row">
           <div class="col-md-4 mb-4">
-            <div class="media block-icon-1 d-block text-center">
+            <div class="media block-icon-1 d-block text-center" >
               <div class="icon small mb-3"><span class="ion-ios-location-outline"></span></div>
               <div class="media-body">
                 <h3 class="h5 mb-4">Jorhat, Assam, India</h3>
