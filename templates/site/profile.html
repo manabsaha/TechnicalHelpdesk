@@ -1,87 +1,127 @@
 {%extends "base.html"%}
-{%block content%}
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+{%block content2%}
 
-    <div class="templateux-cover" style="background-image: url(/static/images/slider-1.jpg);">
-        <div class="container">
-            <div class="row align-items-lg-center">
-                <div class="col-lg-6 order-lg-1">
+    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport">
 
+    <!-- MATERIAL DESIGN ICONIC FONT -->
+    <!--<link rel="stylesheet" href="/static/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">-->
 
-        <div class="container" data-aos="fade-down" style="position: top; z-index:12;">
-            <div class="row" style="padding-top: 120px" >
-
-                    <ul class="sf-menu templateux-menu d-none d-md-block">
-                        <!-- <li class="active"> -->
-                        <li style="margin: 8px">
-                            <a href="" class="animsition-link btn btn-primary mb-10 py-3 px-4" style="color:black" ;>Details</a>
-                        </li>
-                        <li style="margin: 8px"><a href="" class="animsition-link btn btn-primary py-3 px-4" style="color:black">History</a></li>
-                        <li style="margin: 8px">
-                            <a href="" class="animsition-link btn btn-primary py-3 px-4" style="color:black">Settings</a>
-                    </ul> 
-
-                </nav> 
+    <link href="/static/formcss/style.css" rel="stylesheet">
 
 
-            </div> 
-        </div>
+<style>
 
-
- <!--
-<div class="w3-sidebar w3-bar-block w3-light-grey w3-card" style="width:130px;">
-  <h5 class="w3-bar-item">Profile</h5>
-  <button class="w3-bar-item w3-button tablink" onclick="openCity(event, 'London')">London</button>
-  <button class="w3-bar-item w3-button tablink" onclick="openCity(event, 'Paris')">Paris</button>
-  <button class="w3-bar-item w3-button tablink" onclick="openCity(event, 'Tokyo')">Tokyo</button>
-</div>
-
-<div style="margin-left:130px">
-
-  <div id="London" class="w3-container city" style="display:none">
-    <h2>London</h2>
-    <p>London is the capital city of England.</p>
-    <p>It is the most populous city in the United Kingdom, with a metropolitan area of over 13 million inhabitants.</p>
-  </div>
-
-  <div id="Paris" class="w3-container city" style="display:none">
-    <h2>Paris</h2>
-    <p>Paris is the capital of France.</p> 
-    <p>The Paris area is one of the largest population centers in Europe, with more than 12 million inhabitants.</p>
-  </div>
-
-  <div id="Tokyo" class="w3-container city" style="display:none">
-    <h2>Tokyo</h2>
-    <p>Tokyo is the capital of Japan.</p>
-    <p>It is the center of the Greater Tokyo Area, and the most populous metropolitan area in the world.</p>
-  </div>
-
-</div>
-
-<script>
-function openCity(evt, cityName) {
-  var i, x, tablinks;
-  x = document.getElementsByClassName("city");
-  for (i = 0; i < x.length; i++) {
-    x[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablink");
-  for (i = 0; i < x.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" w3-red", ""); 
-  }
-  document.getElementById(cityName).style.display = "block";
-  evt.currentTarget.className += " w3-red";
+select{
+  border: 2px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 20px;
+  font-family: "Muli-Bold";
+  font-size: 10px;
+  cursor: pointer;
+ background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right 000;
+ background-position: 95% 50%;
 }
-</script>-->
-                </div>
 
+.form-control:focus {
+    border: 1px solid #ae3c33; }
+}
+.form-control {
+  border: 2px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 40px;
+  padding: 20px 20px;
+  border-radius: 20px;
+  font-family: "Muli-Bold";
+  background: none; }
+  .form-control:focus {
+    border: 1px solid #ae3c33; }
+ .inner12 {
+  min-width: 32%;
+  margin-top: 10%;
+  margin-left:auto;
+  margin-right:auto;
+  border: 2px solid white;
+  border-radius: 25px;
+  box-shadow: 20px 20px 10px grey;
+  padding-top: 100px;
+  padding-bottom: 48px;
+  background: url("../images/whitebg.jpg");
+   background-size: cover;}
+  .inner h3 {
+    text-transform: uppercase;
+    font-size: 22px;
+    font-family: "Muli-Bold";
+    text-align: center;
+    margin-bottom: 32px;
+    color: #333;
+    letter-spacing: 2px; }
+
+
+</style>
+
+<div class="wrapper js-animsition"
+     data-animsition-out-class="fade-out" style=" background-image: url(/static/images/slider-1.jpg); z-index:0; padding-bottom:5%">
+     <div class="inner12 p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="800" >
+
+        <form action="" method="post">
+            <h3 style="text-align:center">MY PROFILE</h3>
+            <hr>
+            <div class="item form-wrapper" style="margin-top:10%;margin-bottom:10%;">
+                    <img src="/static/images/no_dp.png" style="margin-left:auto;margin-right:auto;display:block;border-radius:50%; width:50%;" alt="Free template by TemplateUX.com" class="w3-round img-fluid">
+            </div>
+            <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
+            <div class="form-group">
+                <div class="form-wrapper">
+                    <label>Name:</label>
+                </div>
+                <div class="form-wrapper">
+                    <label>{{data['fname']+' '+data['lname']}}</label>
+                </div>
+            </div>
+            <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
+            <div class="form-group">
+                <div class="form-wrapper">
+                    <label>Phone:</label>
+                </div>
+                <div class="form-wrapper">
+                    <label>{{data['phone']}}</label>
+                </div>
+            </div>
+             <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
+            <div class="form-group">
+                <div class="form-wrapper">
+                    <label>Address:</label>
+                </div>
+                <div class="form-wrapper">
+                    <label>{{data['address']}}</label>
+                </div>
+            </div>
+             <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
+            <div class="form-group">
+                <div class="form-wrapper">
+                    <label>PIN:</label>
+                </div>
+                <div class="form-wrapper">
+                    <label>{{data['pincode']}}</label>
+                </div>
+            </div>
+             <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
+            <div class="form-group">
+                <div class="form-wrapper">
+                    <button>EDIT PROFILE</button>
+                </div>
+                <div class="form-wrapper">
+                    <button>CHANGE PASSWORD</button>
+                </div>
             </div>
 
-        </div>
 
-    </div> <!-- .templateux-cover -->
-
-
+        </form>
+    </div>
+</div>
 
 {%endblock%}
