@@ -73,6 +73,8 @@ button {
 }
 </style>
     
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <div class="templateux-cover" style="background-image: url(/static/images/slider-1.jpg); background-width:100%;">
       <div class="container">
         <div class="row align-items-center">
@@ -87,15 +89,18 @@ button {
       </div>
     </div> <!-- .templateux-cover f0f2f5 fafcff-->
 
-    <div class="row align-items-center" id="feedback_div" style="padding: 30px">
+  
+  <div class="templateux-section">
+        <div class="container">
+          
+
+    <div class="row align-items-center" id="feedback_div">
             <div class="js-animsition inner p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="50" style="border-color: #f7f8fa">
           <form action="" method="post">
               <h3 style="text-align:center">FEEDBACK</h3>
               <div class="form-wrapper">
               <textarea name="feedback" id="feedback" cols="30" rows="10" 
-                class="form-control" placeholder="(maximum 200 characters)" 
-                pattern=".{1,200}" title="feedback should be 200 characters max" required="required">
-                </textarea>
+                class="form-control" maxlength="200" placeholder="(maximum 200 characters)"></textarea>
             </div>
             <div class="form-wrapper">
               <button class="form-control" style="padding:0; font-size:18px;">Send</button>
@@ -106,14 +111,14 @@ button {
 
         <br><br>
 
-        <div class="row">
+         <div class="row">
           <div class="col-md-4 mb-4">
             <div class="media block-icon-1 d-block text-center" >
               <div class="icon small mb-3"><span class="ion-ios-location-outline"></span></div>
               <div class="media-body">
                 <h3 class="h5 mb-4">Jorhat, Assam, India</h3>
               </div>
-            </div> <!-- .block-icon-1 -->
+            </div>
           </div>
           <div class="col-md-4 mb-4">
             <div class="media block-icon-1 d-block text-center">
@@ -121,7 +126,7 @@ button {
               <div class="media-body">
                 <h3 class="h5 mb-4">+91 987 654 3210</h3>
               </div>
-            </div> <!-- .block-icon-1 -->
+            </div>
           </div>
           <div class="col-md-4 mb-4">
             <div class="media block-icon-1 d-block text-center">
@@ -129,12 +134,12 @@ button {
               <div class="media-body">
                 <h3 class="h5 mb-4">info@technicalhelpdeskjrt.com</h3>
               </div>
-            </div> <!-- .block-icon-1 -->
+            </div>
           </div>
         </div>
 
 
+        </div> 
       </div>
-    </div> <!-- .templateux-section -->
     
 {%endblock%}

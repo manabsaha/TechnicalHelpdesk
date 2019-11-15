@@ -61,14 +61,14 @@ select{
                 </div>
 
                 <div class="form-wrapper">
-                    <input type="text" name="phone" id="phone" placeholder="Mobile Number" style="width:385%" class="form-control" required="required"
+                    <input type="text" name="phone" id="phone" maxlength="10" placeholder="Mobile Number" style="width:385%" class="form-control" required="required"
                            pattern="[6-9]{1}[0-9]{9}" title="Number can only contain 10 digits">
                 </div>
             </div>
 
 
             <div class="form-wrapper">
-                <input type="password" name="password" id="password" placeholder="Password" class="form-control" pattern=".{6,20}" title="Password should be 6-20 characters long" required="required">
+                <input type="password" name="password" id="password" maxlength="20" placeholder="Password" class="form-control" pattern=".{6,20}" title="Password should be 6-20 characters long" required="required">
             </div>
 
             <div class="form-wrapper">
