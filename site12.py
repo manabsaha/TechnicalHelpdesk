@@ -253,7 +253,6 @@ def edit_profile():
             address = request.form['address']
             pincode = request.form['pincode']
             file = request.files['display_pic']
-            print(file.filename)
             try:
                 cur.execute("""update user set fname=%s,lname=%s,phone=%s,address=%s,pincode=%s where phone=%s""", (
                     fname, lname, user, address, pincode, session['number'],))

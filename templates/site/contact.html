@@ -2,12 +2,12 @@
 {%extends "base.html"%}
 
 {%block head%}
-    <link href="/static/formcss/style.css" rel="stylesheet">
 {%endblock%}
 
 {%block content%}
-
+<link href="/static/formcss/style.css" rel="stylesheet">
 <style>
+
 .form-control {
   border: 2px solid #ccc;
   display: block;
@@ -100,7 +100,8 @@ button {
               <h3 style="text-align:center">FEEDBACK</h3>
               <div class="form-wrapper">
               <textarea name="feedback" id="feedback" cols="30" rows="10" 
-                class="form-control" maxlength="200" placeholder="(maximum 200 characters)"></textarea>
+                class="form-control" maxlength="200" placeholder="(maximum 200 characters)"
+                style="font-size: 14px"></textarea>
             </div>
             <div class="form-wrapper">
               <button class="form-control" style="padding:0; font-size:18px;">Send</button>
@@ -108,8 +109,6 @@ button {
           </form>
           </div>
         </div>
-
-        <br><br>
 
          <div class="row js-animsition templateux-section" data-aos="fade-up" data-aos-delay="50">
           <div class="col-md-4 mb-4 ">
