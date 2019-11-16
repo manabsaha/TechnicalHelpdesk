@@ -156,7 +156,7 @@ def home():
         cur.execute("""SELECT fname FROM user where phone=%s""",(user,))
         name = str(cur.fetchone())
         name = name[11:len(name)-2]
-        return render_template('site/index.html', user=user,name=name)
+        return render_template('site/index.html', user=user,name=name,login_flag=True)
     return render_template('site/index.html')
 
 

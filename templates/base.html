@@ -5,6 +5,27 @@
     <title>TECHNICAL HELPDESK</title>
     {% block head %}
     {% endblock %}
+     <!-- Modal -->
+  <div class="modal animsition js-animsition" data-aos-delay="5000" data-animsition-in-class="fadeIn" id="myModal" role="dialog">
+    <div class="modal-dialog" style="padding-top:20%;">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title" style="text-align:left">Info</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+        </div>
+        <div class="modal-body">
+          <h3 style="text-align:center">LOGIN SUCCESSFUL!</h3>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
 </head>
 <body>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -12,7 +33,8 @@
 <script src="/static/js/scripts-all.js"></script>
 <script src="/static/js/main.js"></script>
 
-<style> 
+<style>
+
     hr{
              border: 0;
     height: 2px;
@@ -86,11 +108,7 @@
         </div> <!-- .container -->
     </header> <!-- .templateux-navba -->
 
-    {% if user|length != 0 %}
-    <div class="row alert alert-success" id="id_msg" data-aos="fade-left" style="position: relative;padding-left: 5%;margin-top: 8%;visibility: visible;">
-                <strong>Test message</strong>
-            </div>
-    {% endif %}
+
 
     {% block content %}
     {% endblock %}
@@ -180,6 +198,9 @@
         </div>
     </footer>
 <script>
+$(window).on('load',function(){
+        $('#myModal').modal('show');
+    });
     var prevScrollpos = window.pageYOffset;
 window.onscroll = function() {
   var currentScrollPos = window.pageYOffset;
@@ -191,10 +212,10 @@ window.onscroll = function() {
   prevScrollpos = currentScrollPos;
 }
 
-setTimeout(fade_out, 2000);
+setTimeout(fade_out, 3000);
 
 function fade_out() {
-  $("#id_msg").fadeOut();
+  $('#myModal').modal('hide');
 }
 </script>
 
