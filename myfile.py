@@ -9,7 +9,6 @@ app.config['MYSQL_DB'] = 'abc'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
-
 @app.route('/', methods=['GET', 'POST'])
 def home():
     # if request.method=='POST':

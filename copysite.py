@@ -3,6 +3,7 @@ from flask_mysqldb import MySQL
 import bcrypt
 import os
 import gc
+import pyrebase
 from datetime import date
 
 from flask_mysqldb import MySQL
@@ -14,6 +15,20 @@ app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'abc'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
+
+config = {
+    "apiKey": "AIzaSyBjlH55tLK6JRNlMybLMf5EX_BgrA7tbT4",
+    "authDomain": "technicalhelpdesk-c4612.firebaseapp.com",
+    "databaseURL": "https://technicalhelpdesk-c4612.firebaseio.com",
+    "projectId": "technicalhelpdesk-c4612",
+    "storageBucket": "technicalhelpdesk-c4612.appspot.com",
+    "messagingSenderId": "448324302994",
+    "appId": "1:448324302994:web:da49238fd03eab01f3ce4b",
+    "measurementId": "G-KSX47MVXRN"
+}
+
+firebase = pyrebase.initialize_app(config)
+storage = firebase.storage()
 
 #Register method.
 @app.route('/reg/', methods=['GET', 'POST'])
@@ -156,7 +171,7 @@ def home():
         cur.execute("""SELECT fname FROM user where phone=%s""",(user,))
         name = str(cur.fetchone())
         name = name[11:len(name)-2]
-        return render_template('site/index.html', user=user,name=name)
+        return render_template('site/index.html', user=user,name=name,login_flag=True)
     return render_template('site/index.html')
 
 
@@ -213,12 +228,13 @@ def profile():
         cur = mysql.connection.cursor()
         cur.execute("""select * from user where phone= %s""", (session['number'],))
         d = cur.fetchone()
+        pic_url =storage.child("images/"+user+"/new.jpg").get_url(None)
         if request.method=='POST':
             if request.form['submit']=="edit":
                 return redirect(url_for('edit_profile'))
             if request.form['submit']=="change":
                 return redirect(url_for('change_password'))
-        return render_template('site/profile.html', data=d,user=user)
+        return render_template('site/profile.html', data=d,user=user,pic=pic_url)
     return redirect(url_for('login'))
 
 #Edit profile method.
@@ -226,6 +242,7 @@ def profile():
 def edit_profile():
     if 'loggedin' in session:
         user = escape(session['number'])
+        pic_url =storage.child("images/"+user+"/new.jpg").get_url(None)
         cur = mysql.connection.cursor()
         cur.execute("""select * from user where phone= %s""", (session['number'],))
         d = cur.fetchone()
@@ -235,14 +252,18 @@ def edit_profile():
             #phone = request.form['phone']
             address = request.form['address']
             pincode = request.form['pincode']
+            file = request.files['display_pic']
+            print(file.filename)
             try:
                 cur.execute("""update user set fname=%s,lname=%s,phone=%s,address=%s,pincode=%s where phone=%s""", (
                     fname, lname, user, address, pincode, session['number'],))
+                if file.filename!= '':
+                    storage.child("images/"+user+"/new.jpg").put(file)
             except:
                 pass
             mysql.connection.commit()
             return redirect(url_for('profile'))
-        return render_template('reg-login/edit_profile.html', data=d,user=user)
+        return render_template('reg-login/edit_profile.html', data=d,user=user,pic=pic_url)
     return redirect(url_for('home'))
 
 #Change password method.
