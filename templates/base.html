@@ -34,11 +34,7 @@
     }
 </style>
 
-{% if user|length != 0 %}
-    <div class="row alert alert-success" style="position: relative;padding-left: 10%;">
-                <strong>Login Success!</strong>
-            </div>
-{% endif %}
+
 
 <div class="js-animsition animsition " id="site-wrap"  data-animsition-in-class="fade-in"
      data-animsition-out-class="fade-out"  >
@@ -89,6 +85,12 @@
             </div> <!-- .row -->
         </div> <!-- .container -->
     </header> <!-- .templateux-navba -->
+
+    {% if user|length != 0 %}
+    <div class="row alert alert-success" id="id_msg" data-aos="fade-left" style="position: relative;padding-left: 5%;margin-top: 8%;visibility: visible;">
+                <strong>Test message</strong>
+            </div>
+    {% endif %}
 
     {% block content %}
     {% endblock %}
@@ -187,6 +189,12 @@ window.onscroll = function() {
     document.getElementById("navbar").style.top = "-100px";
   }
   prevScrollpos = currentScrollPos;
+}
+
+setTimeout(fade_out, 2000);
+
+function fade_out() {
+  $("#id_msg").fadeOut();
 }
 </script>
 
