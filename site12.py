@@ -202,15 +202,13 @@ def about():
 def services():
     if 'loggedin' in session:
         user = escape(session['number'])
-        return render_template('site/services.html', user=user)
+        return render_template('site/services.html', user=user,success_msg = "Feedback sent")
     return render_template('site/services.html')
 
+#Profile Method.
 @app.route('/profile/', methods=['GET', 'POST'])
 def profile():
-
-    #if 'loggedin' not in session:
-     #    return redirect(url_for('home'))
-    if 'number' in session:
+    if 'loggedin' in session:
         user = escape(session['number'])
         cur = mysql.connection.cursor()
         cur.execute("""select * from user where phone= %s""", (session['number'],))
@@ -222,9 +220,35 @@ def profile():
                 return redirect(url_for('change_password'))
         return render_template('site/profile.html', data=d,user=user)
     return redirect(url_for('login'))
+
+#Edit profile method.
+@app.route('/edit_profile/', methods=['GET', 'POST'])
+def edit_profile():
+    if 'loggedin' in session:
+        user = escape(session['number'])
+        cur = mysql.connection.cursor()
+        cur.execute("""select * from user where phone= %s""", (session['number'],))
+        d = cur.fetchone()
+        if request.method == 'POST':
+            fname = request.form['fname']
+            lname = request.form['lname']
+            #phone = request.form['phone']
+            address = request.form['address']
+            pincode = request.form['pincode']
+            try:
+                cur.execute("""update user set fname=%s,lname=%s,phone=%s,address=%s,pincode=%s where phone=%s""", (
+                    fname, lname, user, address, pincode, session['number'],))
+            except:
+                pass
+            mysql.connection.commit()
+            return redirect(url_for('profile'))
+        return render_template('reg-login/edit_profile.html', data=d,user=user)
+    return redirect(url_for('home'))
+
+#Change password method.
 @app.route('/change_password/', methods=['GET','POST'])
 def change_password():
-    if 'number' in session:
+    if 'loggedin' in session:
         cur = mysql.connection.cursor()
         user = escape(session['number'])
         if request.method == 'POST':
@@ -235,40 +259,20 @@ def change_password():
             psw = str(cur.fetchone())
             hash_password = psw[19:len(psw) - 2]
             check_pass = bcrypt.hashpw(old_pass.encode('utf8'), hash_password.encode('utf8'))
-            hash = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
             if (check_pass == hash_password.encode('utf8')):
-                cur.execute("""update user set hash_password=%s where phone = %s""", (hash, session['number'],))
+                new_hash = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
+                cur.execute("""update user set hash_password=%s where phone = %s""", (new_hash, session['number'],))
 
             else:
-                print(False)
                 msg = '*Incorrect password!'
                 return render_template('reg-login/change_pass.html', msg=msg,user=user)
             mysql.connection.commit()
-            return redirect(url_for('home'))
+            return redirect(url_for('profile'))
         return render_template('reg-login/change_pass.html', user=user)
     return redirect(url_for('home'))
-@app.route('/edit_profile/', methods=['GET', 'POST'])
-def edit_profile():
-    if 'number' in session:
-        user = escape(session['number'])
-        cur = mysql.connection.cursor()
-        cur.execute("""select * from user where phone= %s""", (session['number'],))
-        d = cur.fetchone()
-        if request.method == 'POST':
-            fname = request.form['fname']
-            lname = request.form['lname']
-            phone = request.form['phone']
-            address = request.form['address']
-            pincode = request.form['pincode']
-            try:
-                cur.execute("""update user set fname=%s,lname=%s,phone=%s,address=%s,pincode=%s where phone=%s""", (
-                    fname, lname, phone, address, pincode, session['number'],))
-            except:
-                pass
-            mysql.connection.commit()
-            return redirect(url_for('home'))
-        return render_template('reg-login/edit_profile.html', data=d,user=user)
-    return redirect(url_for('home'))
+
+
+#Feedback method.
 @app.route('/contact/', methods=['GET', 'POST'])
 def contact():
     if 'loggedin' in session:
