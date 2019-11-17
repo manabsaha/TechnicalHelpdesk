@@ -88,10 +88,15 @@
                             <a href="/" class="animsition-link" style="color:black" ;>Home</a>
                         </li>
                         <li><a href="/about" class="animsition-link" style="color:black">About</a></li>
+
                         <li>
+                            {% if designation=='customer' %}
                             <a href="/services" class="animsition-link" style="color:black">Services</a>
-                          
+                            {% elif designation=='customer_care' %}
+                            <a href="/all_tickets" class="animsition-link" style="color:black">Tickets</a>
+                            {% endif %}
                         </li>
+
                         <li><a href="/contact" style="color:black" class="animsition-link">Contact</a></li>
                         {% if user|length != 0 %}
                             <li><a href="/profile" style="color:black" class="animsition-link">Profile</a></li>
@@ -121,9 +126,9 @@
     {% block content2 %}
     {% endblock %}
 
-    <footer class="templateux-footer bg-light" style="box-shadow:5px 5px 15px grey;">
+    <footer class="templateux-footer bg-light" style="box-shadow:5px 5px 15px grey; z-index:10">
         <!--link rel="stylesheet" href="/static/css/style.css"-->
-        <div class="container" style=" style="background:#fff;padding-top:20px;padding-bottom:20px;border-radius:7px;"">
+        <div class="container" style=" ">
 
             <div class="row mb-5">
                 <div class="col-md-4 pr-md-5">

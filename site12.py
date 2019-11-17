@@ -1,12 +1,10 @@
-from flask import Flask, url_for, request, redirect, render_template,flash,session,escape
+from flask import Flask, url_for, request, redirect, render_template,flash, session, escape
 from flask_mysqldb import MySQL
 import bcrypt
 import os
 import gc
 import pyrebase
 from datetime import date
-
-from flask_mysqldb import MySQL
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(32)
@@ -59,6 +57,7 @@ def reg():
                                                 pincode bigint(6),
                                                 hash_password varchar(128),
                                                 picture varchar(200) DEFAULT '/static/images/no_dp.png',
+                                                designation varchar(50) DEFAULT 'customer',
                                                 PRIMARY KEY (user_id))auto_increment=1001""")
                 cur.execute("""INSERT INTO user(fname, lname, phone,address,pincode,hash_password) 
                     values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))
@@ -67,6 +66,7 @@ def reg():
             user_id=cur.fetchone()
             session['loggedin'] = True
             session['id'] = user_id['user_id']
+            session['designation'] =  user_id['designation']
             mysql.connection.commit()
             gc.collect()
             return redirect(url_for('home'))
@@ -100,11 +100,12 @@ def login():
         psw=cur.fetchone()
         hash_password = psw['hash_password']
         check_pass = bcrypt.hashpw(password.encode('utf8'),hash_password.encode('utf8'))
-        cur.execute("""SELECT user_id FROM user where phone = %s""",(phone,))
+        cur.execute("""SELECT user_id,designation FROM user where phone = %s""",(phone,))
         id=cur.fetchone()
         if(check_pass==hash_password.encode('utf8')):
             session['loggedin'] = True
             session['id'] = id['user_id']
+            session['designation']= id['designation']
             return redirect(url_for('home'))
         else:
             msg = '*Incorrect password!'
@@ -161,11 +162,13 @@ def ticket():
                                                 FOREIGN KEY (user_id)
                                                 REFERENCES user(user_id))AUTO_INCREMENT=10001""")
             cur.execute("""INSERT INTO ticket(user_id,fname, lname, phone, address, app_date, curr_date,app_type) 
-                            values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date, curr_date, type))
+                values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date,
+                curr_date, type))
             mysql.connection.commit()
             return redirect(url_for('home'))
     gc.collect()
-    return render_template('forms/ticket.html',data=data,date=date.today(), user=escape(session['id']))
+    return render_template('forms/ticket.html',designation=escape(session['designation']), data=data,date=date.today(),
+        user=escape(session['id']))
 
 
 
@@ -174,11 +177,12 @@ def ticket():
 def home():
     if 'loggedin' in session:
         user = escape(session['id'])
+        designation=escape(session['designation'])
         cur = mysql.connection.cursor()
         cur.execute("""SELECT fname FROM user where user_id=%s""",(user,))
         name = cur.fetchone()
         name = name['fname']
-        return render_template('site/index.html', user=user,name=name,login_flag=True)
+        return render_template('site/index.html',designation=designation, user=user,name=name,login_flag=True)
     return render_template('site/index.html')
 
 
@@ -187,29 +191,38 @@ def home():
 def about():
     if 'loggedin' in session:
         user = escape(session['id'])
-        return render_template('site/about.html', user=user)
+        designation = escape(session['designation'])
+        return render_template('site/about.html',designation=designation, user=user)
     return render_template('site/about.html')
 
+#All_tickets method.
+@app.route('/all_tickets/', methods=['GET', 'POST'])
+def all_tickets():
+    if 'loggedin' in session:
+        user = escape(session['id'])
+        designation = escape(session['designation'])
+        cur=mysql.connection.cursor()
+        cur.execute("SELECT ticket_id, user_id, fname, app_date,app_type,status FROM ticket")
+        data=cur.fetchall()
+        return render_template('site/all_tickets.html',data=data, designation=designation, user=user,success_msg = "Feedback sent")
+    return redirect(url_for('login'))
 
 #Services method.
 @app.route('/services/', methods=['GET', 'POST'])
 def services():
-    if 'loggedin' in session:
-        if request.method == 'POST':
-            if request.form['submit'] == "cancel":
-                print("adsa")
+    if 'loggedin' in session and session['designation']=="customer":
         user = escape(session['id'])
+        designation = escape(session['designation'])
         cur=mysql.connection.cursor()
         cur.execute("SELECT ticket_id,app_date,app_type,status FROM ticket where user_id=%s",(user,))
         data=cur.fetchall()
-        return render_template('site/services.html',data=data, user=user,success_msg = "Feedback sent")
+        return render_template('site/services.html',data=data, designation=designation, user=user,success_msg = "Feedback sent")
     return redirect(url_for('login'))
 
 #Cancel Ticket method.
 @app.route('/services/<int:id>')
 def cancel(id):
-    if 'loggedin' in session:
-        print(id)
+    if 'loggedin' in session and session['designation']=="customer":
         cur=mysql.connection.cursor()
         status = "CANCELLED BY USER"
         cur.execute("""UPDATE ticket SET status=%s WHERE ticket_id=%s""",(status,id))
@@ -223,6 +236,7 @@ def cancel(id):
 def profile():
     if 'loggedin' in session:
         user = escape(session['id'])
+        designation = escape(session['designation'])
         cur = mysql.connection.cursor()
         cur.execute("""select * from user where user_id= %s""", (user,))
         d = cur.fetchone()
@@ -235,7 +249,7 @@ def profile():
                 return redirect(url_for('edit_profile'))
             if request.form['submit']=="change":
                 return redirect(url_for('change_password'))
-        return render_template('site/profile.html', data=d,user=user,pic=pic_url)
+        return render_template('site/profile.html',designation=designation, data=d,user=user,pic=pic_url)
     return redirect(url_for('login'))
 
 #Edit profile method.
@@ -243,6 +257,7 @@ def profile():
 def edit_profile():
     if 'loggedin' in session:
         user = escape(session['id'])
+        designation = escape(session['designation'])
         cur = mysql.connection.cursor()
         cur.execute("""select * from user where user_id= %s""", (session['id'],))
         d = cur.fetchone()
@@ -268,7 +283,7 @@ def edit_profile():
                 pass
             mysql.connection.commit()
             return redirect(url_for('profile'))
-        return render_template('reg-login/edit_profile.html', data=d,user=user,pic=pic_url)
+        return render_template('reg-login/edit_profile.html',designation=designation, data=d,user=user,pic=pic_url)
     return redirect(url_for('home'))
 
 #Change password method.
@@ -277,6 +292,7 @@ def change_password():
     if 'loggedin' in session:
         cur = mysql.connection.cursor()
         user = escape(session['id'])
+        designation = escape(session['designation'])
         if request.method == 'POST':
             old_pass = request.form['pass']
             password = request.form['password']
@@ -291,10 +307,10 @@ def change_password():
 
             else:
                 msg = '*Incorrect password!'
-                return render_template('reg-login/change_pass.html', msg=msg,user=user)
+                return render_template('reg-login/change_pass.html',designation=designation, msg=msg,user=user)
             mysql.connection.commit()
             return redirect(url_for('profile'))
-        return render_template('reg-login/change_pass.html', user=user)
+        return render_template('reg-login/change_pass.html',designation=designation, user=user)
     return redirect(url_for('home'))
 
 
@@ -303,6 +319,7 @@ def change_password():
 def contact():
     if 'loggedin' in session:
         user = escape(session['id'])
+        designation = escape(session['designation'])
         if request.method == 'POST':
             feedback = request.form['feedback']
             cur=mysql.connection.cursor()
@@ -313,7 +330,7 @@ def contact():
                 cur.execute("""INSERT INTO feedback values(%s,%s)""", (user,feedback))
             mysql.connection.commit()
             return redirect(url_for('home'))
-        return render_template('site/contact.html', user=user)
+        return render_template('site/contact.html', user=user, designation=designation)
     return redirect(url_for('login'))
 
 

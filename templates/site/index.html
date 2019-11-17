@@ -11,15 +11,20 @@
         <div class="container">
             <div class="row align-items-lg-center" >
                 <div class="col-lg-6 order-lg-1">
-                    
-                    {% if user|length != 0 %}
+                    {% if designation=='customer' %}
                     <p><div style="text-transform: uppercase">&nbspWelcome, {{ name }}</div></p>
                     <h1 class="heading mb-3" data-aos="fade-up" >Facing Troubles?<p style="font-size:20px;">Book now to get quick & easy solutions.</p></h1>
                         <h3><p class="lead mb-5" data-aos="fade-up" data-aos-delay="100">Speedy Fast technical support service
                         <br> provided at minimal cost.</br></p></h3>
                     <p data-aos="fade-up" data-aos-delay="200">
                             <a href="/ticket" class="btn btn-primary py-3 px-4">BOOK NOW!</a></p>
+                    {% elif designation=='customer_care' %}
+                    <p><div style="text-transform: uppercase">&nbspWelcome, {{ name }}</div></p>
 
+                        <h3><p class="lead mb-5" data-aos="fade-up" data-aos-delay="100">Speedy Fast technical support service
+                        <br> provided at minimal cost.</br></p></h3>
+                    <p data-aos="fade-up" data-aos-delay="200">
+                            <a href="/all_tickets" class="btn btn-primary py-3 px-4">VIEW TICKETS</a></p>
                     {%else%}
                     <h1 class="heading mb-3" data-aos="fade-up" style="line-height:1.4; padding-top:0px">SIGN UP<p
                             style="font-size:35px;" data-aos="fade-up">to avail free<br>pickup from your home.</h1>
