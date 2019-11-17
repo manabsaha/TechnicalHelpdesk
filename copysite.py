@@ -47,19 +47,28 @@ def reg():
             hash_password = bcrypt.hashpw(password.encode('utf8'),bcrypt.gensalt())
 
             try:
-                cur.execute("""INSERT INTO user values(%s,%s,%s,%s,%s,%s)""", (
-                    fname, lname, phone,address,pincode,hash_password))
+                cur.execute("""INSERT INTO user(fname, lname, phone,address,pincode,hash_password) 
+                    values(%s,%s,%s,%s,%s,%s)""", (fname, lname, phone,address,pincode,hash_password))
             except:
-                cur.execute("""CREATE TABLE user (fname varchar(20),lname varchar(20),
-                    phone bigint(10),address varchar(20),pincode bigint(6),hash_password varchar(128),
-                    PRIMARY KEY (phone))""")
-                cur.execute("""INSERT INTO user values(%s,%s,%s,%s,%s,%s)""", (
-                    fname, lname, phone,address,pincode,hash_password))
-
+                cur.execute("""CREATE TABLE user (
+                                                user_id int AUTO_INCREMENT,
+                                                fname varchar(20),
+                                                lname varchar(20),
+                                                phone bigint(10) UNIQUE,
+                                                address varchar(100),
+                                                pincode bigint(6),
+                                                hash_password varchar(128),
+                                                picture varchar(200) DEFAULT '/static/images/no_dp.png',
+                                                PRIMARY KEY (user_id))auto_increment=1001""")
+                cur.execute("""INSERT INTO user(fname, lname, phone,address,pincode,hash_password) 
+                    values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))
+            
+            cur.execute("""SELECT user_id from user where phone=%s""",(phone,))
+            user_id=cur.fetchone()
+            session['loggedin'] = True
+            session['id'] = user_id['user_id']
             mysql.connection.commit()
             gc.collect()
-            session['loggedin'] = True
-            session['number'] = phone
             return redirect(url_for('home'))
             
         except:
@@ -88,17 +97,16 @@ def login():
             msg = '*Number not registered'
             return render_template('reg-login/login.html',msg=msg)
 
-        psw=str(cur.fetchone())
-        hash_password = psw[19:len(psw)-2]
+        psw=cur.fetchone()
+        hash_password = psw['hash_password']
         check_pass = bcrypt.hashpw(password.encode('utf8'),hash_password.encode('utf8'))
-
+        cur.execute("""SELECT user_id FROM user where phone = %s""",(phone,))
+        id=cur.fetchone()
         if(check_pass==hash_password.encode('utf8')):
-            print(True)
             session['loggedin'] = True
-            session['number'] = phone
+            session['id'] = id['user_id']
             return redirect(url_for('home'))
         else:
-            print(False)
             msg = '*Incorrect password!'
             return render_template('reg-login/login.html',msg=msg)
 
@@ -109,7 +117,7 @@ def login():
 @app.route('/logout/',methods=['GET','POST'])
 def logout():
     session.pop('loggedin', None)
-    session.pop('number', None)
+    session.pop('id', None)
     return redirect(url_for('home'))
 
 #Generate ticket method
@@ -118,7 +126,7 @@ def ticket():
     if 'loggedin' not in session:
          return redirect(url_for('login'))
     cur=mysql.connection.cursor()
-    cur.execute("""select * from user where phone= %s""", (session['number'],))
+    cur.execute("""select * from user where user_id= %s""", (session['id'],))
     data=cur.fetchone()
     if request.method=='POST':
         fname=request.form['fname']
@@ -128,37 +136,36 @@ def ticket():
         pickup=request.form['pickup']
         app_date = request.form['date']
         curr_date = date.today()
-        print(pickup)
         if pickup=='True':
-            try:
-                cur.execute("""INSERT INTO pickup values(%s,%s,%s,%s,%s,%s)""", (
-                    fname, lname, phone, address, app_date, curr_date))
-            except:
-                cur.execute("""CREATE TABLE pickup (fname varchar(20),lname varchar(20),
-                                    phone bigint(10),address varchar(20) ,app_date date, curr_date date,
-                                    PRIMARY KEY (phone))""")
-                cur.execute("""INSERT INTO pickup values(%s,%s,%s,%s,%s,%s)""", (
-                    fname, lname, phone, address, app_date, curr_date))
-            mysql.connection.commit()
-            return redirect(url_for('home'))
+            type='Pickup'
         else:
-            try:
-                cur.execute("""INSERT INTO appointment values(%s,%s,%s,%s,%s,%s)""", (
-                    fname, lname, phone, address, app_date, curr_date))
-            except:
-                cur.execute("""CREATE TABLE appointment (fname varchar(20),lname varchar(20),
-                                                phone bigint(10),address varchar(20) ,pickup_date date, curr_date date,
-                                                PRIMARY KEY (phone))""")
-                cur.execute("""INSERT INTO appointment values(%s,%s,%s,%s,%s,%s)""", (
-                    fname, lname, phone, address, app_date, curr_date))
+            type='Appointment'
+
+        try:
+            cur.execute("""INSERT INTO ticket(user_id, fname, lname, phone, address, app_date, curr_date,app_type) 
+                values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date, curr_date,type))
             mysql.connection.commit()
             return redirect(url_for('home'))
-
-
+        except:
+            cur.execute("""CREATE TABLE ticket (ticket_id int AUTO_INCREMENT,
+                                                user_id int NOT NULL,
+                                                fname varchar(20),
+                                                lname varchar(20),
+                                                phone bigint(10),
+                                                address varchar(100),
+                                                app_date date, 
+                                                curr_date date,
+                                                app_type varchar(20) CHECK(app_type IN ('Appointment','Pickup')),
+                                                status varchar(20) DEFAULT 'Processing',
+                                                PRIMARY KEY (ticket_id),
+                                                FOREIGN KEY (user_id)
+                                                REFERENCES user(user_id))""")
+            cur.execute("""INSERT INTO ticket(user_id,fname, lname, phone, address, app_date, curr_date,app_type) 
+                            values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date, curr_date, type))
+            mysql.connection.commit()
+            return redirect(url_for('home'))
     gc.collect()
-
-
-    return render_template('forms/ticket.html',data=data,date=date.today(),user=escape(session['number']))
+    return render_template('forms/ticket.html',data=data,date=date.today(), user=escape(session['id']))
 
 
 
@@ -166,14 +173,132 @@ def ticket():
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if 'loggedin' in session:
-        user = escape(session['number'])
+        user = escape(session['id'])
         cur = mysql.connection.cursor()
-        cur.execute("""SELECT fname FROM user where phone=%s""",(user,))
-        name = str(cur.fetchone())
-        name = name[11:len(name)-2]
+        cur.execute("""SELECT fname FROM user where user_id=%s""",(user,))
+        name = cur.fetchone()
+        name = name['fname']
         return render_template('site/index.html', user=user,name=name,login_flag=True)
     return render_template('site/index.html')
 
+
+#About us method.
+@app.route('/about/', methods=['GET', 'POST'])
+def about():
+    if 'loggedin' in session:
+        user = escape(session['id'])
+        return render_template('site/about.html', user=user)
+    return render_template('site/about.html')
+
+
+#Services method.
+@app.route('/services/', methods=['GET', 'POST'])
+def services():
+    if 'loggedin' in session:
+        user = escape(session['id'])
+        return render_template('site/services.html', user=user,success_msg = "Feedback sent")
+    return render_template('site/services.html')
+
+#Profile Method.
+@app.route('/profile/', methods=['GET', 'POST'])
+def profile():
+    if 'loggedin' in session:
+        user = escape(session['id'])
+        cur = mysql.connection.cursor()
+        cur.execute("""select * from user where user_id= %s""", (user,))
+        d = cur.fetchone()
+        #pic_url =storage.child("images/"+user+"/new.jpg").get_url(None)
+        pic_url = d['picture']
+        # if pic_url =="":
+        #     pic_url = d['picture']
+        if request.method=='POST':
+            if request.form['submit']=="edit":
+                return redirect(url_for('edit_profile'))
+            if request.form['submit']=="change":
+                return redirect(url_for('change_password'))
+        return render_template('site/profile.html', data=d,user=user,pic=pic_url)
+    return redirect(url_for('login'))
+
+#Edit profile method.
+@app.route('/edit_profile/', methods=['GET', 'POST'])
+def edit_profile():
+    if 'loggedin' in session:
+        user = escape(session['id'])
+        cur = mysql.connection.cursor()
+        cur.execute("""select * from user where user_id= %s""", (session['id'],))
+        d = cur.fetchone()
+        #pic_url = storage.child("images/" + user + "/new.jpg").get_url(None)
+        pic_url = d['picture']
+        # if pic_url =="":
+        #     pic_url = d['picture']
+        if request.method == 'POST':
+            fname = request.form['fname']
+            lname = request.form['lname']
+            phone = request.form['phone']
+            address = request.form['address']
+            pincode = request.form['pincode']
+            file = request.files['display_pic']
+            try:
+                cur.execute("""update user set fname=%s,lname=%s,phone=%s,address=%s,pincode=%s where user_id=%s""", (
+                    fname, lname, phone, address, pincode, session['id'],))
+                if file.filename!= '':
+                    storage.child("images/"+user+"/new.jpg").put(file)
+                    new_pic_url = storage.child("images/" + user + "/new.jpg").get_url(None)
+                    cur.execute("""update user set picture=%s where user_id=%s""",(new_pic_url,session['id']))
+            except:
+                pass
+            mysql.connection.commit()
+            return redirect(url_for('profile'))
+        return render_template('reg-login/edit_profile.html', data=d,user=user,pic=pic_url)
+    return redirect(url_for('home'))
+
+#Change password method.
+@app.route('/change_password/', methods=['GET','POST'])
+def change_password():
+    if 'loggedin' in session:
+        cur = mysql.connection.cursor()
+        user = escape(session['id'])
+        if request.method == 'POST':
+            old_pass = request.form['pass']
+            password = request.form['password']
+
+            cur.execute("""SELECT hash_password FROM user where user_id = %s""", (session['id'],))
+            psw = cur.fetchone()
+            hash_password = psw['hash_password']
+            check_pass = bcrypt.hashpw(old_pass.encode('utf8'), hash_password.encode('utf8'))
+            if (check_pass == hash_password.encode('utf8')):
+                new_hash = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
+                cur.execute("""update user set hash_password=%s where user_id = %s""", (new_hash, session['id'],))
+
+            else:
+                msg = '*Incorrect password!'
+                return render_template('reg-login/change_pass.html', msg=msg,user=user)
+            mysql.connection.commit()
+            return redirect(url_for('profile'))
+        return render_template('reg-login/change_pass.html', user=user)
+    return redirect(url_for('home'))
+
+
+#Feedback method.
+@app.route('/contact/', methods=['GET', 'POST'])
+def contact():
+    if 'loggedin' in session:
+        user = escape(session['id'])
+        if request.method == 'POST':
+            feedback = request.form['feedback']
+            cur=mysql.connection.cursor()
+            try:
+                cur.execute("""INSERT INTO feedback values(%s,%s)""", (user,feedback))
+            except:
+                cur.execute("""CREATE TABLE feedback (phone bigint(10),message varchar(200))""")
+                cur.execute("""INSERT INTO feedback values(%s,%s)""", (user,feedback))
+            mysql.connection.commit()
+            return redirect(url_for('home'))
+        return render_template('site/contact.html', user=user)
+    return redirect(url_for('login'))
+
+
+#----------------------------------------TEST METHODS---------------------------------------
 
 # @app.route('/user/<username>', methods=['GET', 'POST'])
 # def home_user(username):
@@ -196,120 +321,11 @@ def base():
         if(check_pass==hash_password.encode('utf8')):
             cur.execute("""update user set hash_password=%s where phone = %s""", (hash,8486006074,))
         else:
-            print(False)
             msg = '*Incorrect password!'
             return render_template('reg-login/change_pass.html',msg=msg, user=user)
         mysql.connection.commit()
 
     return render_template('reg-login/change_pass.html', user=user)
-
-
-
-@app.route('/about/', methods=['GET', 'POST'])
-def about():
-    if 'loggedin' in session:
-        user = escape(session['number'])
-        return render_template('site/about.html', user=user)
-    return render_template('site/about.html')
-
-
-@app.route('/services/', methods=['GET', 'POST'])
-def services():
-    if 'loggedin' in session:
-        user = escape(session['number'])
-        return render_template('site/services.html', user=user,success_msg = "Feedback sent")
-    return render_template('site/services.html')
-
-#Profile Method.
-@app.route('/profile/', methods=['GET', 'POST'])
-def profile():
-    if 'loggedin' in session:
-        user = escape(session['number'])
-        cur = mysql.connection.cursor()
-        cur.execute("""select * from user where phone= %s""", (session['number'],))
-        d = cur.fetchone()
-        pic_url =storage.child("images/"+user+"/new.jpg").get_url(None)
-        if request.method=='POST':
-            if request.form['submit']=="edit":
-                return redirect(url_for('edit_profile'))
-            if request.form['submit']=="change":
-                return redirect(url_for('change_password'))
-        return render_template('site/profile.html', data=d,user=user,pic=pic_url)
-    return redirect(url_for('login'))
-
-#Edit profile method.
-@app.route('/edit_profile/', methods=['GET', 'POST'])
-def edit_profile():
-    if 'loggedin' in session:
-        user = escape(session['number'])
-        pic_url =storage.child("images/"+user+"/new.jpg").get_url(None)
-        cur = mysql.connection.cursor()
-        cur.execute("""select * from user where phone= %s""", (session['number'],))
-        d = cur.fetchone()
-        if request.method == 'POST':
-            fname = request.form['fname']
-            lname = request.form['lname']
-            #phone = request.form['phone']
-            address = request.form['address']
-            pincode = request.form['pincode']
-            file = request.files['display_pic']
-            print(file.filename)
-            try:
-                cur.execute("""update user set fname=%s,lname=%s,phone=%s,address=%s,pincode=%s where phone=%s""", (
-                    fname, lname, user, address, pincode, session['number'],))
-                if file.filename!= '':
-                    storage.child("images/"+user+"/new.jpg").put(file)
-            except:
-                pass
-            mysql.connection.commit()
-            return redirect(url_for('profile'))
-        return render_template('reg-login/edit_profile.html', data=d,user=user,pic=pic_url)
-    return redirect(url_for('home'))
-
-#Change password method.
-@app.route('/change_password/', methods=['GET','POST'])
-def change_password():
-    if 'loggedin' in session:
-        cur = mysql.connection.cursor()
-        user = escape(session['number'])
-        if request.method == 'POST':
-            old_pass = request.form['pass']
-            password = request.form['password']
-
-            cur.execute("""SELECT hash_password FROM user where phone = %s""", (session['number'],))
-            psw = str(cur.fetchone())
-            hash_password = psw[19:len(psw) - 2]
-            check_pass = bcrypt.hashpw(old_pass.encode('utf8'), hash_password.encode('utf8'))
-            if (check_pass == hash_password.encode('utf8')):
-                new_hash = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
-                cur.execute("""update user set hash_password=%s where phone = %s""", (new_hash, session['number'],))
-
-            else:
-                msg = '*Incorrect password!'
-                return render_template('reg-login/change_pass.html', msg=msg,user=user)
-            mysql.connection.commit()
-            return redirect(url_for('profile'))
-        return render_template('reg-login/change_pass.html', user=user)
-    return redirect(url_for('home'))
-
-
-#Feedback method.
-@app.route('/contact/', methods=['GET', 'POST'])
-def contact():
-    if 'loggedin' in session:
-        user = escape(session['number'])
-        if request.method == 'POST':
-            feedback = request.form['feedback']
-            cur=mysql.connection.cursor()
-            try:
-                cur.execute("""INSERT INTO feedback values(%s,%s)""", (user,feedback))
-            except:
-                cur.execute("""CREATE TABLE feedback (phone bigint(10),message varchar(200))""")
-                cur.execute("""INSERT INTO feedback values(%s,%s)""", (user,feedback))
-            mysql.connection.commit()
-            return redirect(url_for('home'))
-        return render_template('site/contact.html', user=user)
-    return redirect(url_for('login'))
 
 
 @app.route('/pickup/', methods=['GET', 'POST'])
@@ -321,7 +337,6 @@ def pickup():
         phone = request.form['phone']
         address = request.form['address']
         device = request.form['device']
-        print(fname,lname,phone,address,device)
         try:
             cur.execute("""INSERT INTO pickup values(%s,%s,%s,%s,%s)""", (
                 fname, lname, phone,address,device))
@@ -339,6 +354,7 @@ def pickup():
 def test():
     return render_template('test.html')
 
+#----------------------------------------END------------------------------------------------------
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -62,10 +62,11 @@ def reg():
                                                 PRIMARY KEY (user_id))auto_increment=1001""")
                 cur.execute("""INSERT INTO user(fname, lname, phone,address,pincode,hash_password) 
                     values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))
-            cur.execute("""SELECT user_id from user where phone=%s"""(phone,))
-            user_id=str(cur.fetchone())
+            
+            cur.execute("""SELECT user_id from user where phone=%s""",(phone,))
+            user_id=cur.fetchone()
             session['loggedin'] = True
-            session['id'] = user_id
+            session['id'] = user_id['user_id']
             mysql.connection.commit()
             gc.collect()
             return redirect(url_for('home'))
@@ -96,8 +97,8 @@ def login():
             msg = '*Number not registered'
             return render_template('reg-login/login.html',msg=msg)
 
-        psw=str(cur.fetchone())
-        hash_password = psw[19:len(psw)-2]
+        psw=cur.fetchone()
+        hash_password = psw['hash_password']
         check_pass = bcrypt.hashpw(password.encode('utf8'),hash_password.encode('utf8'))
         cur.execute("""SELECT user_id FROM user where phone = %s""",(phone,))
         id=cur.fetchone()
@@ -175,41 +176,13 @@ def home():
         user = escape(session['id'])
         cur = mysql.connection.cursor()
         cur.execute("""SELECT fname FROM user where user_id=%s""",(user,))
-        name = str(cur.fetchone())
-        name = name[11:len(name)-2]
+        name = cur.fetchone()
+        name = name['fname']
         return render_template('site/index.html', user=user,name=name,login_flag=True)
     return render_template('site/index.html')
 
 
-# @app.route('/user/<username>', methods=['GET', 'POST'])
-# def home_user(username):
-#     flash("successful")
-#     return render_template('site/index.html',user=username)
-
-
-@app.route('/a/', methods=['GET', 'POST'])
-def base():
-    cur = mysql.connection.cursor()
-    if request.method == 'POST':
-        old_pass = request.form['pass']
-        password = request.form['password']
-
-        cur.execute("""SELECT hash_password FROM user where phone = %s""",(8486006074,))
-        psw=str(cur.fetchone())
-        hash_password = psw[19:len(psw)-2]
-        check_pass = bcrypt.hashpw(old_pass.encode('utf8'),hash_password.encode('utf8'))
-        hash = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
-        if(check_pass==hash_password.encode('utf8')):
-            cur.execute("""update user set hash_password=%s where phone = %s""", (hash,8486006074,))
-        else:
-            msg = '*Incorrect password!'
-            return render_template('reg-login/change_pass.html',msg=msg, user=user)
-        mysql.connection.commit()
-
-    return render_template('reg-login/change_pass.html', user=user)
-
-
-
+#About us method.
 @app.route('/about/', methods=['GET', 'POST'])
 def about():
     if 'loggedin' in session:
@@ -218,6 +191,7 @@ def about():
     return render_template('site/about.html')
 
 
+#Services method.
 @app.route('/services/', methods=['GET', 'POST'])
 def services():
     if 'loggedin' in session:
@@ -233,10 +207,10 @@ def profile():
         cur = mysql.connection.cursor()
         cur.execute("""select * from user where user_id= %s""", (user,))
         d = cur.fetchone()
-        pic_url =storage.child("images/"+user+"/new.jpg").get_url(None)
-        print(pic_url)
-        if pic_url =="":
-            pic_url = d['picture']
+        #pic_url =storage.child("images/"+user+"/new.jpg").get_url(None)
+        pic_url = d['picture']
+        # if pic_url =="":
+        #     pic_url = d['picture']
         if request.method=='POST':
             if request.form['submit']=="edit":
                 return redirect(url_for('edit_profile'))
@@ -253,9 +227,10 @@ def edit_profile():
         cur = mysql.connection.cursor()
         cur.execute("""select * from user where user_id= %s""", (session['id'],))
         d = cur.fetchone()
-        pic_url = storage.child("images/" + user + "/new.jpg").get_url(None)
-        if pic_url =="":
-            pic_url = d['picture']
+        #pic_url = storage.child("images/" + user + "/new.jpg").get_url(None)
+        pic_url = d['picture']
+        # if pic_url =="":
+        #     pic_url = d['picture']
         if request.method == 'POST':
             fname = request.form['fname']
             lname = request.form['lname']
@@ -268,6 +243,8 @@ def edit_profile():
                     fname, lname, phone, address, pincode, session['id'],))
                 if file.filename!= '':
                     storage.child("images/"+user+"/new.jpg").put(file)
+                    new_pic_url = storage.child("images/" + user + "/new.jpg").get_url(None)
+                    cur.execute("""update user set picture=%s where user_id=%s""",(new_pic_url,session['id']))
             except:
                 pass
             mysql.connection.commit()
@@ -286,8 +263,8 @@ def change_password():
             password = request.form['password']
 
             cur.execute("""SELECT hash_password FROM user where user_id = %s""", (session['id'],))
-            psw = str(cur.fetchone())
-            hash_password = psw[19:len(psw) - 2]
+            psw = cur.fetchone()
+            hash_password = psw['hash_password']
             check_pass = bcrypt.hashpw(old_pass.encode('utf8'), hash_password.encode('utf8'))
             if (check_pass == hash_password.encode('utf8')):
                 new_hash = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
@@ -321,6 +298,36 @@ def contact():
     return redirect(url_for('login'))
 
 
+#----------------------------------------TEST METHODS---------------------------------------
+
+# @app.route('/user/<username>', methods=['GET', 'POST'])
+# def home_user(username):
+#     flash("successful")
+#     return render_template('site/index.html',user=username)
+
+
+@app.route('/a/', methods=['GET', 'POST'])
+def base():
+    cur = mysql.connection.cursor()
+    if request.method == 'POST':
+        old_pass = request.form['pass']
+        password = request.form['password']
+
+        cur.execute("""SELECT hash_password FROM user where phone = %s""",(8486006074,))
+        psw=str(cur.fetchone())
+        hash_password = psw[19:len(psw)-2]
+        check_pass = bcrypt.hashpw(old_pass.encode('utf8'),hash_password.encode('utf8'))
+        hash = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
+        if(check_pass==hash_password.encode('utf8')):
+            cur.execute("""update user set hash_password=%s where phone = %s""", (hash,8486006074,))
+        else:
+            msg = '*Incorrect password!'
+            return render_template('reg-login/change_pass.html',msg=msg, user=user)
+        mysql.connection.commit()
+
+    return render_template('reg-login/change_pass.html', user=user)
+
+
 @app.route('/pickup/', methods=['GET', 'POST'])
 def pickup():
     cur=mysql.connection.cursor()
@@ -347,6 +354,7 @@ def pickup():
 def test():
     return render_template('test.html')
 
+#----------------------------------------END------------------------------------------------------
 
 if __name__ == "__main__":
     app.run(debug=True)
