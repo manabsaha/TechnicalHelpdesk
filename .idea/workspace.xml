@@ -34,8 +34,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/templates/site/services.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="147">
-              <caret line="124" column="80" selection-start-line="124" selection-start-column="80" selection-end-line="124" selection-end-column="80" />
+            <state relative-caret-position="156">
+              <caret line="123" column="99" selection-start-line="123" selection-start-column="99" selection-end-line="123" selection-end-column="99" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#div#1;n#div#1;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#h3#0;n#form#0;n#div#0;n#div#2;n#div#1;n#!!top" expanded="true" />
@@ -680,8 +680,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/site/services.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="124" column="80" selection-start-line="124" selection-start-column="80" selection-end-line="124" selection-end-column="80" />
+        <state relative-caret-position="156">
+          <caret line="123" column="99" selection-start-line="123" selection-start-column="99" selection-end-line="123" selection-end-column="99" />
           <folding>
             <element signature="n#style#0;n#div#0;n#div#1;n#div#1;n#!!top" expanded="true" />
             <element signature="n#style#0;n#h3#0;n#form#0;n#div#0;n#div#2;n#div#1;n#!!top" expanded="true" />
