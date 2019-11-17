@@ -124,8 +124,8 @@
         <div class="wrapper js-animsition"
      data-animsition-out-class="fade-out" id="ticket" style=" background-color: #F8F8FF	; z-index:0;">
      <div class="inner12 p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="800" style="margin-top:5%" >
-
-        <form action="" method="post">
+            <!-- action="" method="post" -->
+        <form>
             <h3 style="text-align:center">TICKET RECORD</h3>
             <hr>
             <div class="item form-wrapper">
@@ -143,7 +143,11 @@
                         <td>{{ i['app_date'] }}</td>
                         <td>{{ i['app_type'] }}</td>
                         <td>{{ i['status'] }}</td>
-                        <td class="text-center align-middle"><button id="btn1" value="cancel" class="btn btn-primary" >Cancel Ticket</button></td>
+                        {% if i['status'] != 'CANCELLED BY USER' %}
+                        <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-primary" ><a href="/services/{{ i['ticket_id'] }}" style="color:white">Cancel Ticket</a></p></td>
+                        {% else %}
+                        <td class="text-center align-middle"><p class="btn btn-primary" style="">Cancelled</p></td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
 

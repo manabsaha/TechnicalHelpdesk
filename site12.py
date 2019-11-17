@@ -203,7 +203,20 @@ def services():
         cur.execute("SELECT ticket_id,app_date,app_type,status FROM ticket where user_id=%s",(user,))
         data=cur.fetchall()
         return render_template('site/services.html',data=data, user=user,success_msg = "Feedback sent")
-    return render_template('site/services.html')
+    return redirect(url_for('login'))
+
+#Cancel Ticket method.
+@app.route('/services/<int:id>')
+def cancel(id):
+    if 'loggedin' in session:
+        print(id)
+        cur=mysql.connection.cursor()
+        status = "CANCELLED BY USER"
+        cur.execute("""UPDATE ticket SET status=%s WHERE ticket_id=%s""",(status,id))
+        mysql.connection.commit()
+        return redirect(url_for('services'))
+    return redirect(url_for('login'))
+
 
 #Profile Method.
 @app.route('/profile/', methods=['GET', 'POST'])
