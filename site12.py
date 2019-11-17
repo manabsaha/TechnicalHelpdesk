@@ -159,7 +159,7 @@ def ticket():
                                                 status varchar(20) DEFAULT 'Processing',
                                                 PRIMARY KEY (ticket_id),
                                                 FOREIGN KEY (user_id)
-                                                REFERENCES user(user_id))""")
+                                                REFERENCES user(user_id))AUTO_INCREMENT=10001""")
             cur.execute("""INSERT INTO ticket(user_id,fname, lname, phone, address, app_date, curr_date,app_type) 
                             values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date, curr_date, type))
             mysql.connection.commit()
@@ -195,8 +195,14 @@ def about():
 @app.route('/services/', methods=['GET', 'POST'])
 def services():
     if 'loggedin' in session:
+        if request.method == 'POST':
+            if request.form['submit'] == "cancel":
+                print("adsa")
         user = escape(session['id'])
-        return render_template('site/services.html', user=user,success_msg = "Feedback sent")
+        cur=mysql.connection.cursor()
+        cur.execute("SELECT ticket_id,app_date,app_type,status FROM ticket where user_id=%s",(user,))
+        data=cur.fetchall()
+        return render_template('site/services.html',data=data, user=user,success_msg = "Feedback sent")
     return render_template('site/services.html')
 
 #Profile Method.
