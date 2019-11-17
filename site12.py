@@ -62,7 +62,7 @@ def reg():
                 cur.execute("""INSERT INTO user(fname, lname, phone,address,pincode,hash_password) 
                     values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))
             
-            cur.execute("""SELECT user_id from user where phone=%s""",(phone,))
+            cur.execute("""SELECT user_id,designation from user where phone=%s""",(phone,))
             user_id=cur.fetchone()
             session['loggedin'] = True
             session['id'] = user_id['user_id']
@@ -206,6 +206,42 @@ def all_tickets():
         data=cur.fetchall()
         return render_template('site/all_tickets.html',data=data, designation=designation, user=user,success_msg = "Feedback sent")
     return redirect(url_for('login'))
+
+#inventory_add method
+@app.route('/all_tickets/<int:id>')
+def add_to_inventory():
+    if 'loggedin' in session and session['designation']=="customer_care":
+        cur=mysql.connection.cursor()
+    try:
+        cur.execute("""INSERT INTO inventory(inventory_id, product_name, product_type, phone, address, app_date, curr_date,app_type) 
+              values(%s,%s,%s,%s,%s,%s,%s,%s)""",
+                    (session['id'], fname, lname, phone, address, app_date, curr_date, type))
+        mysql.connection.commit()
+        return redirect(url_for('home'))
+    except:
+        cur.execute("""CREATE TABLE ticket (ticket_id int AUTO_INCREMENT,
+                                              user_id int NOT NULL,
+                                              fname varchar(20),
+                                              lname varchar(20),
+                                              phone bigint(10),
+                                              address varchar(100),
+                                              app_date date, 
+                                              curr_date date,
+                                              app_type varchar(20) CHECK(app_type IN ('Appointment','Pickup')),
+                                              status varchar(20) DEFAULT 'Processing',
+                                              PRIMARY KEY (ticket_id),
+                                              FOREIGN KEY (user_id)
+                                              REFERENCES user(user_id))AUTO_INCREMENT=10001""")
+        cur.execute("""INSERT INTO ticket(user_id,fname, lname, phone, address, app_date, curr_date,app_type) 
+              values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date,
+                                                   curr_date, type))
+        mysql.connection.commit()
+        return redirect(url_for('home'))
+
+        mysql.connection.commit()
+        return redirect(url_for('all_tickets'))
+    return redirect(url_for('login'))
+
 
 #Services method.
 @app.route('/services/', methods=['GET', 'POST'])
