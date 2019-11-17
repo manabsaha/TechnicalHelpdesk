@@ -8,12 +8,13 @@ from datetime import date
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(32)
+#MySQL config.
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'abc'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
-
+#Firebase config.
 config = {
     "apiKey": "AIzaSyBjlH55tLK6JRNlMybLMf5EX_BgrA7tbT4",
     "authDomain": "technicalhelpdesk-c4612.firebaseapp.com",
@@ -25,8 +26,6 @@ config = {
     "measurementId": "G-KSX47MVXRN"
 }
 
-firebase = pyrebase.initialize_app(config)
-storage = firebase.storage()
 
 #Register method.
 @app.route('/reg/', methods=['GET', 'POST'])
@@ -121,7 +120,7 @@ def logout():
     session.pop('id', None)
     return redirect(url_for('home'))
 
-#Generate ticket method
+#Ticket Generate method
 @app.route('/ticket/', methods=['GET','POST'])
 def ticket():
     if 'loggedin' not in session:
@@ -165,7 +164,7 @@ def ticket():
                 values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date,
                 curr_date, type))
             mysql.connection.commit()
-            return redirect(url_for('home'))
+            return redirect(url_for('services'))
     gc.collect()
     return render_template('forms/ticket.html',designation=escape(session['designation']), data=data,date=date.today(),
         user=escape(session['id']))
@@ -198,18 +197,20 @@ def about():
 #All_tickets method.
 @app.route('/all_tickets/', methods=['GET', 'POST'])
 def all_tickets():
-    if 'loggedin' in session:
+    if 'loggedin' in session and session['designation']=="customer_care":
         user = escape(session['id'])
         designation = escape(session['designation'])
         cur=mysql.connection.cursor()
         cur.execute("SELECT ticket_id, user_id, fname, app_date,app_type,status FROM ticket")
         data=cur.fetchall()
         return render_template('site/all_tickets.html',data=data, designation=designation, user=user,success_msg = "Feedback sent")
+    if 'loggedin' in session:
+        return redirect(url_for('services'))
     return redirect(url_for('login'))
 
 #inventory_add method
 @app.route('/all_tickets/<int:id>')
-def add_to_inventory():
+def add_to_inventory(id):
     if 'loggedin' in session and session['designation']=="customer_care":
         cur=mysql.connection.cursor()
     try:
@@ -276,10 +277,7 @@ def profile():
         cur = mysql.connection.cursor()
         cur.execute("""select * from user where user_id= %s""", (user,))
         d = cur.fetchone()
-        #pic_url =storage.child("images/"+user+"/new.jpg").get_url(None)
         pic_url = d['picture']
-        # if pic_url =="":
-        #     pic_url = d['picture']
         if request.method=='POST':
             if request.form['submit']=="edit":
                 return redirect(url_for('edit_profile'))
@@ -297,10 +295,7 @@ def edit_profile():
         cur = mysql.connection.cursor()
         cur.execute("""select * from user where user_id= %s""", (session['id'],))
         d = cur.fetchone()
-        #pic_url = storage.child("images/" + user + "/new.jpg").get_url(None)
         pic_url = d['picture']
-        # if pic_url =="":
-        #     pic_url = d['picture']
         if request.method == 'POST':
             fname = request.form['fname']
             lname = request.form['lname']
@@ -312,6 +307,8 @@ def edit_profile():
                 cur.execute("""update user set fname=%s,lname=%s,phone=%s,address=%s,pincode=%s where user_id=%s""", (
                     fname, lname, phone, address, pincode, session['id'],))
                 if file.filename!= '':
+                    firebase = pyrebase.initialize_app(config)
+                    storage = firebase.storage()
                     storage.child("images/"+user+"/new.jpg").put(file)
                     new_pic_url = storage.child("images/" + user + "/new.jpg").get_url(None)
                     cur.execute("""update user set picture=%s where user_id=%s""",(new_pic_url,session['id']))
@@ -370,63 +367,60 @@ def contact():
     return redirect(url_for('login'))
 
 
-#----------------------------------------TEST METHODS---------------------------------------
-
-# @app.route('/user/<username>', methods=['GET', 'POST'])
-# def home_user(username):
-#     flash("successful")
-#     return render_template('site/index.html',user=username)
-
-
-@app.route('/a/', methods=['GET', 'POST'])
-def base():
-    cur = mysql.connection.cursor()
+#SUPERUSER ACCESS METHOD
+@app.route('/superuseraccess/',methods=['GET','POST'])
+def super_access():
     if request.method == 'POST':
-        old_pass = request.form['pass']
-        password = request.form['password']
+        superuser_password = request.form['su_password']
+        if superuser_password == "superuser":
+            session['SuperuserAccess'] = True
+            session.pop('loggedin', None)
+            session.pop('id', None)
+            session.pop('designation',None)
+            return redirect(url_for('super_panel'))
+    return render_template('superuser/superuser_access.html')
 
-        cur.execute("""SELECT hash_password FROM user where phone = %s""",(8486006074,))
-        psw=str(cur.fetchone())
-        hash_password = psw[19:len(psw)-2]
-        check_pass = bcrypt.hashpw(old_pass.encode('utf8'),hash_password.encode('utf8'))
-        hash = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
-        if(check_pass==hash_password.encode('utf8')):
-            cur.execute("""update user set hash_password=%s where phone = %s""", (hash,8486006074,))
-        else:
-            msg = '*Incorrect password!'
-            return render_template('reg-login/change_pass.html',msg=msg, user=user)
-        mysql.connection.commit()
+#SUPERUSER PANEL
+@app.route('/superuserpanel/',methods=['GET','POST'])
+def super_panel():
+    if 'SuperuserAccess' in session:
+        return render_template('superuser/superuser_panel.html',desg="SUPERUSER",log=session['SuperuserAccess'])
+    return redirect(url_for('super_access'))
 
-    return render_template('reg-login/change_pass.html', user=user)
+#SUPERUSER LOGOUT
+@app.route('/superuser/logout',methods=['GET','POST'])
+def super_logout():
+    session.pop('SuperuserAccess', None)
+    return redirect(url_for('home'))
 
-
-@app.route('/pickup/', methods=['GET', 'POST'])
-def pickup():
-    cur=mysql.connection.cursor()
+#ADMIN ACCESS METHOD
+@app.route('/adminaccess/',methods=['GET','POST'])
+def admin_access():
     if request.method == 'POST':
-        fname = request.form['fname']
-        lname = request.form['lname']
-        phone = request.form['phone']
-        address = request.form['address']
-        device = request.form['device']
-        try:
-            cur.execute("""INSERT INTO pickup values(%s,%s,%s,%s,%s)""", (
-                fname, lname, phone,address,device))
-        except:
-            cur.execute("""CREATE TABLE pickup (fname varchar(20),lname varchar(20),
-                    phone bigint(10),address varchar(20),device varchar(20))""")
-            cur.execute("""INSERT INTO pickup values(%s,%s,%s,%s,%s)""", (
-                fname, lname, phone,address,device))
-        mysql.connection.commit()
-        gc.collect()
+        #admin_phone = request.form['phone']
+        admin_password = request.form['admin_password']
+        if admin_password == "adminpass":
+            session['AdminAccess'] = True
+            session.pop('loggedin', None)
+            session.pop('id', None)
+            session.pop('designation',None)
+            return redirect(url_for('admin_panel'))
+    return render_template('admin/admin_login.html')
 
-    return render_template('forms/index.html')
-    
-@app.route('/test/')
-def test():
-    return render_template('test.html')
+#ADMIN PANEL
+@app.route('/adminpanel/',methods=['GET','POST'])
+def admin_panel():
+    if 'AdminAccess' in session:
+        return render_template('admin/admin_panel.html',desg="ADMIN",log=session['AdminAccess'])
+    return redirect(url_for('admin_access'))
 
-#----------------------------------------END------------------------------------------------------
+#ADMIN LOGOUT
+@app.route('/admin/logout',methods=['GET','POST'])
+def admin_logout():
+    session.pop('AdminAccess', None)
+    return redirect(url_for('home'))
+
+#Test methods are moved to myfile.py
 
 if __name__ == "__main__":
     app.run(debug=True)

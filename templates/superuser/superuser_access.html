@@ -1,0 +1,62 @@
+{%extends "adminbase.html"%}
+{%block content2%}
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="/static/formcss/style.css">
+
+
+<style>
+
+select{
+  border: 2px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 20px;
+  font-family: "Muli-Bold";
+  font-size: 12px;
+  cursor: pointer;
+ background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right 000;
+ background-position: 95% 50%;
+}
+input[type="text"]{font-size: 14px;}
+input[type="password"]{font-size: 14px;}
+
+.form-control:focus {
+    border: 1px solid #ae3c33; }
+}
+.form-control {
+  border: 2px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 40px;
+  padding: 20px 20px;
+  border-radius: 20px;
+  font-family: "Muli-Bold";
+  background: none; }
+  .form-control:focus {
+    border: 1px solid #ae3c33; }
+
+</style>
+
+<div class="wrapper js-animsition"
+     data-animsition-out-class="fade-out" style="background-image: url(/static/images/slider-1.jpg); z-index:0; padding-bottom:5%">
+
+    <div class="inner p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="800" style="border-color: #f7f8fa" >
+
+        <form action="" method="post">
+            <h3>SUPERUSER</h3>
+            <hr>
+            
+            <div class="form-wrapper">
+                <input type="password" name="su_password" id="su_password" maxlength="20" placeholder="Superuser password" class="form-control" pattern=".{6,20}" title="Password should be 6-20 characters long" required="required">
+            </div>
+
+            <button>GET SUPERUSER ACCESS</button>
+        </form>
+
+    </div>
+</div>
+
+{%endblock%}

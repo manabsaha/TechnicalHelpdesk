@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:background="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>TECHNICAL HELPDESK</title>
+    {% block head %}
+    {% endblock %}
+
+</head>
+<body>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="/static/css/style.css">
+<script src="/static/js/scripts-all.js"></script>
+<script src="/static/js/main.js"></script>
+
+<style>
+
+    hr{
+             border: 0;
+    height: 2px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+          }
+    .fixedbar {
+    height:90px;
+        min-height:0px;
+      overflow: hidden;
+      background-color: #333;
+      position: fixed; /* Set the navbar to fixed position */
+      top: 0; /* Position the navbar at the top of the page */
+      width: 100%; /* Full width */
+      -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    }
+</style>
+
+
+
+<div class="js-animsition animsition " id="site-wrap"  data-animsition-in-class="fade-in"
+     data-animsition-out-class="fade-out"  >
+
+    <header class="templateux-navbar dark shadow-lg p-4 mb-4 fixedbar" id="navbar" role="banner"
+        style=" z-index:10; background-image: url(/static/images/navbg.jpg); background-size:110%;  border-radius: 5px;">
+
+        <div class="container" data-aos="fade-down"  style="position: relative; z-index:12;">
+            <div class="row" >
+
+                <div class="col-3 templateux-logo">
+                    <a href="/" class="animsition-link">TECHNICAL HELPDESK</a>
+                </div>
+                <nav class="col-9 site-nav">
+                    <button class="d-block d-md-none hamburger hamburger--spin templateux-toggle templateux-toggle-light ml-auto templateux-toggle-menu"
+                            data-toggle="collapse" data-target="#mobile-menu" aria-controls="mobile-menu"
+                            aria-expanded="false" aria-label="Toggle navigation">
+              <span class="hamburger-box">
+                <span class="hamburger-inner"></span>
+              </span>
+                    </button> <!-- .templateux-toggle -->
+
+                    <ul class="sf-menu templateux-menu d-none d-md-block">
+                        <!-- <li class="active"> -->
+                            {%if desg=="SUPERUSER"%}
+                            <li><a href="/superuser/logout" style="color:darkred">LOGOUT SUPERUSER<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
+                            {%endif%}
+
+                            {%if desg=="ADMIN"%}
+                            <li><a href="/admin/logout" style="color:darkred">LOGOUT ADMIN<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
+                            {%endif%}
+                       
+                    </ul> <!-- .templateux-menu -->
+
+                </nav> <!-- .site-nav -->
+
+
+            </div> <!-- .row -->
+        </div> <!-- .container -->
+    </header> <!-- .templateux-navba -->
+
+
+
+    {% block content %}
+    {% endblock %}
+
+</div>
+
+    {% block content2 %}
+    {% endblock %}
+
+
+<script>
+$(window).on('load',function(){
+        $('#myModal').modal('show');
+    });
+    var prevScrollpos = window.pageYOffset;
+window.onscroll = function() {
+  var currentScrollPos = window.pageYOffset;
+  if (prevScrollpos > currentScrollPos) {
+    document.getElementById("navbar").style.top = "0";
+  } else {
+    document.getElementById("navbar").style.top = "-100px";
+  }
+  prevScrollpos = currentScrollPos;
+}
+
+setTimeout(fade_out, 3000);
+
+function fade_out() {
+  $('#myModal').modal('hide');
+}
+</script>
+
+</body>
+</html>
