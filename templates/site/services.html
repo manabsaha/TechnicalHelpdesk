@@ -4,7 +4,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <link href="/static/formcss/style.css" rel="stylesheet">
-<style> 
+<style>
     hr{
              border: 0;
     height: 2px;
@@ -12,7 +12,6 @@
           }
           .inner12 {
   min-width: 70%;
-  margin-top: 10%;
   margin-left:auto;
   margin-right:auto;
   border: 2px solid white;
@@ -45,7 +44,7 @@
         </div>
     </div> <!-- .templateux-cover -->
 
-    <div class="templateux-section">
+    <div class="templateux-section" style="padding-bottom:0px;">
 
         <div class="container">
 
@@ -121,15 +120,14 @@
             </div>
 
         </div><hr>
-        <div class="wrapper js-animsition"
-     data-animsition-out-class="fade-out" id="ticket" style=" background-color: #F8F8FF	; z-index:0;">
-     <div class="inner12 p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="800" style="margin-top:5%" >
-            <!-- action="" method="post" -->
+     <div class="wrapper js-animsition" data-animsition-out-class="fade-out" id="ticket" style="margin-top:0px; padding-bottom:100px; background-color: #F8F8FF	; z-index:0;">
+     <div class="inner12 p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="800" style="height:150%; margin-top:100px;" >
+
         <form>
-            <h3 style="text-align:center">TICKET RECORD</h3>
-            <hr>
+            <h3 style="text-align:center; padding-top:50px; padding-bottom:15px">TICKET RECORD</h3>
+            <hr style="margin-bottom:15px">
             <div class="item form-wrapper">
-                <table class="table table-bordered" style="text-align:center;">
+                <table class="table table-bordered" style="text-align:center; margin-bottom:100px;">
                     <tr>
                         <th>Ticket no.</th>
                         <th>Lodged on</th>
@@ -157,7 +155,7 @@
     </div>
 </div>
     </div> <!-- .templateux-section -->
-
+<hr>
 {%endblock%}
 
 
