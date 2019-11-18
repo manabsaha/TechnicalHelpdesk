@@ -26,6 +26,15 @@ config = {
     "measurementId": "G-KSX47MVXRN"
 }
 
+#SESSION VARIABLES: loggedin, id, designation, SuperuserAccess, AdminAccess, ManagerAccess
+
+def session_var(loggedin,id,designation,su_access,ad_access,mgr_access):
+    session['loggedin'] = loggedin
+    session['id'] = id
+    session['designation'] =  designation
+    session.pop('SuperuserAccess', su_access)
+    session.pop('AdminAccess', ad_access)
+    session.pop('ManagerAccess', mgr_access)
 
 #Register method.
 @app.route('/reg/', methods=['GET', 'POST'])
@@ -66,6 +75,9 @@ def reg():
             session['loggedin'] = True
             session['id'] = user_id['user_id']
             session['designation'] =  user_id['designation']
+            session.pop('SuperuserAccess', None)
+            session.pop('AdminAccess', None)
+            session.pop('ManagerAccess', None)
             mysql.connection.commit()
             gc.collect()
             return redirect(url_for('home'))
@@ -105,6 +117,9 @@ def login():
             session['loggedin'] = True
             session['id'] = id['user_id']
             session['designation']= id['designation']
+            session.pop('SuperuserAccess', None)
+            session.pop('AdminAccess', None)
+            session.pop('ManagerAccess', None)
             return redirect(url_for('home'))
         else:
             msg = '*Incorrect password!'
@@ -377,6 +392,8 @@ def super_access():
             session.pop('loggedin', None)
             session.pop('id', None)
             session.pop('designation',None)
+            session.pop('AdminAccess', None)
+            session.pop('ManagerAccess', None)
             return redirect(url_for('super_panel'))
     return render_template('superuser/superuser_access.html')
 
@@ -404,6 +421,8 @@ def admin_access():
             session.pop('loggedin', None)
             session.pop('id', None)
             session.pop('designation',None)
+            session.pop('SuperuserAccess', None)
+            session.pop('ManagerAccess', None)
             return redirect(url_for('admin_panel'))
     return render_template('admin/admin_login.html')
 
@@ -419,6 +438,37 @@ def admin_panel():
 def admin_logout():
     session.pop('AdminAccess', None)
     return redirect(url_for('home'))
+
+
+#MANAGER ACCESS METHOD
+@app.route('/manageraccess/',methods=['GET','POST'])
+def manager_access():
+    if request.method == 'POST':
+        #Manager_phone = request.form['phone']
+        Manager_password = request.form['manager_password']
+        if Manager_password == "managerpass":
+            session['ManagerAccess'] = True
+            session.pop('loggedin', None)
+            session.pop('id', None)
+            session.pop('designation',None)
+            session.pop('SuperuserAccess', None)
+            session.pop('AdminAccess', None)
+            return redirect(url_for('manager_panel'))
+    return render_template('manager/manager_login.html')
+
+#MANAGER PANEL
+@app.route('/managerpanel/',methods=['GET','POST'])
+def manager_panel():
+    if 'ManagerAccess' in session:
+        return render_template('manager/manager_panel.html',desg="MANAGER",log=session['ManagerAccess'])
+    return redirect(url_for('manager_access'))
+
+#MANAGER LOGOUT
+@app.route('/manager/logout',methods=['GET','POST'])
+def Manager_logout():
+    session.pop('ManagerAccess', None)
+    return redirect(url_for('home'))
+
 
 #Test methods are moved to myfile.py
 

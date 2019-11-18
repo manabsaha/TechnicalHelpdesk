@@ -46,19 +46,8 @@ input[type="password"]{font-size: 14px;}
     <div class="inner p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="800" style="border-color: #f7f8fa" >
 
         <form action="" method="post">
-            <h3>ADMIN PANEL</h3>
+            <h3>MANAGER LOGIN</h3>
             <hr>
-
-            <div class="form-wrapper">
-
-                    <select name="country" required="required">
-                        <option>Add Manager</option>
-                        <option>Remove Manager</option>
-                        <option>Add Technician</option>
-                        <option>Remove Technician</option>
-                    </select>
-
-                </div>
 
             <div class="form-phone">
                 <div class="form-wrapper">
@@ -74,10 +63,16 @@ input[type="password"]{font-size: 14px;}
                            pattern="[6-9]{1}[0-9]{9}" title="Number can only contain 10 digits">
                 </div>
             </div>
+            
+            <div class="form-wrapper">
+                <input type="password" name="manager_password" id="manager_password" maxlength="20" placeholder="Password" class="form-control" pattern=".{6,20}" title="Password should be 6-20 characters long" required="required">
+            </div>
 
-
-            <button>CONTINUE</button>
+            <div class="form-group">
+            <button id="admin">Manager Login</button>
+          </div>
         </form>
+
     </div>
 </div>
 
