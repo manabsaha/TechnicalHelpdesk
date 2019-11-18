@@ -14,6 +14,7 @@ app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'abc'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
+
 #Firebase config.
 config = {
     "apiKey": "AIzaSyBjlH55tLK6JRNlMybLMf5EX_BgrA7tbT4",
@@ -27,6 +28,31 @@ config = {
 }
 
 #SESSION VARIABLES: loggedin, id, designation, SuperuserAccess, AdminAccess, ManagerAccess
+
+def session_val(loggedin,id,designation,su_access,ad_access,mgr_access):
+
+    if loggedin==True:
+        session['loggedin'] = True
+        session['id'] = id
+        session['designation'] = designation
+        session['SuperuserAccess'] = su_access
+        session['AdminAccess'] = ad_access
+        session.pop('SuperuserAccess',su_access)
+        session.pop('AdminAccess',ad_access)
+        session.pop('ManagerAccess',mgr_access)
+
+    elif su_access==True:
+        session['SuperuserAccess'] = True
+        session.pop('AdminAccess',ad_access)
+        session.pop('ManagerAccess',mgr_access)
+    elif ad_access==True:
+        session['AdminAccess'] = True
+        session.pop('SuperuserAccess',su_access)
+        session.pop('ManagerAccess',mgr_access)
+    elif mgr_access==True:
+        session['ManagerAccess'] = True
+        session.pop('SuperuserAccess',su_access)
+        session.pop('AdminAccess',ad_access)
 
 #Register method.
 @app.route('/reg/', methods=['GET', 'POST'])
@@ -64,12 +90,7 @@ def reg():
             
             cur.execute("""SELECT user_id,designation from user where phone=%s""",(phone,))
             user_id=cur.fetchone()
-            session['loggedin'] = True
-            session['id'] = user_id['user_id']
-            session['designation'] =  user_id['designation']
-            session.pop('SuperuserAccess', None)
-            session.pop('AdminAccess', None)
-            session.pop('ManagerAccess', None)
+            session_val(True,user_id['user_id'],user_id['designation'],None,None,None)
             mysql.connection.commit()
             gc.collect()
             return redirect(url_for('home'))
@@ -106,12 +127,7 @@ def login():
         cur.execute("""SELECT user_id,designation FROM user where phone = %s""",(phone,))
         id=cur.fetchone()
         if(check_pass==hash_password.encode('utf8')):
-            session['loggedin'] = True
-            session['id'] = id['user_id']
-            session['designation']= id['designation']
-            session.pop('SuperuserAccess', None)
-            session.pop('AdminAccess', None)
-            session.pop('ManagerAccess', None)
+            session_val(True,id['user_id'],id['designation'],None,None,None)
             return redirect(url_for('home'))
         else:
             msg = '*Incorrect password!'
@@ -189,6 +205,15 @@ def home():
         name = cur.fetchone()
         name = name['fname']
         return render_template('site/index.html',designation=designation, user=user,name=name,login_flag=True)
+    if 'SuperuserAccess' in session:
+        return redirect(url_for('super_panel'))
+        #return render_template('superuser/superuser_panel.html',desg="SUPERUSER",log=session['SuperuserAccess'])
+    if 'AdminAccess' in session:
+        return redirect(url_for('admin_panel'))
+        #return render_template('admin/admin_panel.html',desg="ADMIN",log=session['AdminAccess'])
+    if 'ManagerAccess' in session:
+        return redirect(url_for('manager_panel'))
+        #return render_template('manager/manager_panel.html',desg="MANAGER",log=session['ManagerAccess'])
     return render_template('site/index.html')
 
 
@@ -377,17 +402,14 @@ def contact():
 #SUPERUSER ACCESS METHOD
 @app.route('/superuseraccess/',methods=['GET','POST'])
 def super_access():
-    if request.method == 'POST':
-        superuser_password = request.form['su_password']
-        if superuser_password == "superuser":
-            session['SuperuserAccess'] = True
-            session.pop('loggedin', None)
-            session.pop('id', None)
-            session.pop('designation',None)
-            session.pop('AdminAccess', None)
-            session.pop('ManagerAccess', None)
-            return redirect(url_for('super_panel'))
-    return render_template('superuser/superuser_access.html')
+    if 'loggedin' not in session:
+        if request.method == 'POST':
+            superuser_password = request.form['su_password']
+            if superuser_password == "superuser":
+                session_val(None,None,None,True,None,None)
+                return redirect(url_for('super_panel'))
+        return render_template('superuser/superuser_access.html')
+    return redirect(url_for('home'))
 
 #SUPERUSER PANEL
 @app.route('/superuserpanel/',methods=['GET','POST'])
@@ -405,18 +427,15 @@ def super_logout():
 #ADMIN ACCESS METHOD
 @app.route('/adminaccess/',methods=['GET','POST'])
 def admin_access():
-    if request.method == 'POST':
-        #admin_phone = request.form['phone']
-        admin_password = request.form['admin_password']
-        if admin_password == "adminpass":
-            session['AdminAccess'] = True
-            session.pop('loggedin', None)
-            session.pop('id', None)
-            session.pop('designation',None)
-            session.pop('SuperuserAccess', None)
-            session.pop('ManagerAccess', None)
-            return redirect(url_for('admin_panel'))
-    return render_template('admin/admin_login.html')
+    if 'loggedin' not in session:
+        if request.method == 'POST':
+            #admin_phone = request.form['phone']
+            admin_password = request.form['admin_password']
+            if admin_password == "adminpass":
+                session_val(None,None,None,None,True,None)
+                return redirect(url_for('admin_panel'))
+        return render_template('admin/admin_login.html')
+    return redirect(url_for('home'))
 
 #ADMIN PANEL
 @app.route('/adminpanel/',methods=['GET','POST'])
@@ -435,18 +454,15 @@ def admin_logout():
 #MANAGER ACCESS METHOD
 @app.route('/manageraccess/',methods=['GET','POST'])
 def manager_access():
-    if request.method == 'POST':
-        #Manager_phone = request.form['phone']
-        Manager_password = request.form['manager_password']
-        if Manager_password == "managerpass":
-            session['ManagerAccess'] = True
-            session.pop('loggedin', None)
-            session.pop('id', None)
-            session.pop('designation',None)
-            session.pop('SuperuserAccess', None)
-            session.pop('AdminAccess', None)
-            return redirect(url_for('manager_panel'))
-    return render_template('manager/manager_login.html')
+    if 'loggedin' not in session:
+        if request.method == 'POST':
+            #Manager_phone = request.form['phone']
+            Manager_password = request.form['manager_password']
+            if Manager_password == "managerpass":
+                session_val(None,None,None,None,None,True)
+                return redirect(url_for('manager_panel'))
+        return render_template('manager/manager_login.html')
+    return redirect(url_for('home'))
 
 #MANAGER PANEL
 @app.route('/managerpanel/',methods=['GET','POST'])

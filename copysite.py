@@ -28,14 +28,6 @@ config = {
 
 #SESSION VARIABLES: loggedin, id, designation, SuperuserAccess, AdminAccess, ManagerAccess
 
-def session_var(loggedin,id,designation,su_access,ad_access,mgr_access):
-    session['loggedin'] = loggedin
-    session['id'] = id
-    session['designation'] =  designation
-    session.pop('SuperuserAccess', su_access)
-    session.pop('AdminAccess', ad_access)
-    session.pop('ManagerAccess', mgr_access)
-
 #Register method.
 @app.route('/reg/', methods=['GET', 'POST'])
 def reg():
