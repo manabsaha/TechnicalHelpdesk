@@ -398,7 +398,49 @@ def contact():
 def emp_reg():
     if 'loggedin' not in session:
         if request.method == 'POST':
-            return redirect(url_for('emp'))
+
+            try:
+                fname = request.form['fname']
+                lname = request.form['lname']
+                phone = request.form['phone']
+                address = request.form['address']
+                pincode = request.form['pincode']
+                password = request.form['password']
+                hash_password = bcrypt.hashpw(password.encode('utf8'),bcrypt.gensalt())
+                cur = mysql.connection.cursor()
+                try:
+                    cur.execute("""INSERT INTO employee(fname, lname, phone,address,pincode,hash_password) 
+                        values(%s,%s,%s,%s,%s,%s)""", (fname, lname, phone,address,pincode,hash_password))
+                except:
+                    cur.execute("""CREATE TABLE employee (employee_id int AUTO_INCREMENT,
+                                                    fname varchar(20),
+                                                    lname varchar(20),
+                                                    phone bigint(10) UNIQUE,
+                                                    address varchar(100),
+                                                    pincode bigint(6),
+                                                    hash_password varchar(128),
+                                                    picture varchar(200) DEFAULT '/static/images/no_dp.png',
+                                                    designation varchar(50) DEFAULT 'employee',
+                                                    PRIMARY KEY (user_id))auto_increment=1001""")
+                    cur.execute("""INSERT INTO employee(fname, lname, phone,address,pincode,hash_password) 
+                        values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))
+                
+                cur.execute("""SELECT employee_id,designation from employee where phone=%s""",(phone,))
+                employee=cur.fetchone()
+                session_val(True,employee['employee_id'],employee['designation'],None,None)
+                mysql.connection.commit()
+                gc.collect()
+                return redirect(url_for('emp'))
+            
+            except:
+                cur.execute("""SELECT phone FROM employee WHERE phone=%s""",(phone,))
+                if cur.rowcount == 0:
+                    msg= "*Error. Try again"
+                    return render_template('employee/reg-login/reg.html',msg=msg)
+                else:
+                    msg= "*Number already used"
+                    return render_template('employee/reg-login/reg.html',msg=msg)
+
         return render_template('employee/reg-login/reg.html')
     return redirect(url_for('home'))
 
@@ -408,11 +450,27 @@ def emp_reg():
 def emp_access():
     if 'loggedin' not in session:
         if request.method == 'POST':
-            #admin_phone = request.form['phone']
-            admin_password = request.form['admin_password']
-            if admin_password == "employee":
-                session_val(None,None,None,None,True)
+
+            phone = request.form['emp_phone']
+            password = request.form['emp_password']
+            cur = mysql.connection.cursor()
+            cur.execute("""SELECT hash_password FROM employee where phone = %s""",(phone,))
+            if(cur.rowcount == 0):
+                msg = '*Number not registered'
+                return render_template('employee/reg-login/login.html',msg=msg)
+
+            psw=cur.fetchone()
+            hash_password = psw['hash_password']
+            check_pass = bcrypt.hashpw(password.encode('utf8'),hash_password.encode('utf8'))
+            if(check_pass==hash_password.encode('utf8')):
+                cur.execute("""SELECT user_id,designation FROM employee where phone = %s""",(phone,))
+                id=cur.fetchone()
+                session_val(True,id['user_id'],id['designation'],None,None)
                 return redirect(url_for('emp'))
+            else:
+                msg = '*Incorrect password!'
+                return render_template('employee/reg-login/login.html',msg=msg)
+
         return render_template('employee/reg-login/login.html')
     return redirect(url_for('home'))
 
