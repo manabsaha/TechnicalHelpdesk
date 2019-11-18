@@ -410,7 +410,7 @@ def emp_access():
         if request.method == 'POST':
             #admin_phone = request.form['phone']
             admin_password = request.form['admin_password']
-            if admin_password == "emppass":
+            if admin_password == "employee":
                 session_val(None,None,None,None,True)
                 return redirect(url_for('emp'))
         return render_template('employee/reg-login/login.html')
@@ -426,8 +426,8 @@ def emp_logout():
 #EMPLOYEE HOME
 @app.route('/emp',methods=['GET','POST'])
 def emp():
-    if 'AdminAccess' in session:
-        return 'log in success'
+    if 'EmpAccess' in session:
+        return render_template('/employee/employee.html',desg="EMPLOYEE")
     return redirect(url_for('emp_access'))
 
 
