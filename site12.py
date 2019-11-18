@@ -27,32 +27,23 @@ config = {
     "measurementId": "G-KSX47MVXRN"
 }
 
-#SESSION VARIABLES: loggedin, id, designation, SuperuserAccess, AdminAccess, ManagerAccess
+#SESSION VARIABLES: loggedin, id, designation, SuperuserAccess, EmpAccess
 
-def session_val(loggedin,id,designation,su_access,ad_access,mgr_access):
+def session_val(loggedin,id,designation,su_access,emp_access):
 
     if loggedin==True:
         session['loggedin'] = True
         session['id'] = id
         session['designation'] = designation
-        session['SuperuserAccess'] = su_access
-        session['AdminAccess'] = ad_access
         session.pop('SuperuserAccess',su_access)
-        session.pop('AdminAccess',ad_access)
-        session.pop('ManagerAccess',mgr_access)
+        session.pop('EmpAccess',emp_access)
 
     elif su_access==True:
         session['SuperuserAccess'] = True
-        session.pop('AdminAccess',ad_access)
-        session.pop('ManagerAccess',mgr_access)
-    elif ad_access==True:
-        session['AdminAccess'] = True
+        session.pop('EmpAccess',emp_access)
+    elif emp_access==True:
+        session['EmpAccess'] = True
         session.pop('SuperuserAccess',su_access)
-        session.pop('ManagerAccess',mgr_access)
-    elif mgr_access==True:
-        session['ManagerAccess'] = True
-        session.pop('SuperuserAccess',su_access)
-        session.pop('AdminAccess',ad_access)
 
 #Register method.
 @app.route('/reg/', methods=['GET', 'POST'])
@@ -90,7 +81,7 @@ def reg():
             
             cur.execute("""SELECT user_id,designation from user where phone=%s""",(phone,))
             user_id=cur.fetchone()
-            session_val(True,user_id['user_id'],user_id['designation'],None,None,None)
+            session_val(True,user_id['user_id'],user_id['designation'],None,None)
             mysql.connection.commit()
             gc.collect()
             return redirect(url_for('home'))
@@ -127,7 +118,7 @@ def login():
         cur.execute("""SELECT user_id,designation FROM user where phone = %s""",(phone,))
         id=cur.fetchone()
         if(check_pass==hash_password.encode('utf8')):
-            session_val(True,id['user_id'],id['designation'],None,None,None)
+            session_val(True,id['user_id'],id['designation'],None,None)
             return redirect(url_for('home'))
         else:
             msg = '*Incorrect password!'
@@ -399,84 +390,88 @@ def contact():
     return redirect(url_for('login'))
 
 
+#------------------------------------------EMPLOYEE---------------------------------------------------#
+
+
+#EMPLOYEE REGISTRATION METHOD
+@app.route('/emp/reg',methods=['GET','POST'])
+def emp_reg():
+    if 'loggedin' not in session:
+        if request.method == 'POST':
+            return redirect(url_for('emp'))
+        return render_template('employee/reg-login/reg.html')
+    return redirect(url_for('home'))
+
+
+#EMPLOYEE LOGIN METHOD
+@app.route('/emp/login',methods=['GET','POST'])
+def emp_access():
+    if 'loggedin' not in session:
+        if request.method == 'POST':
+            #admin_phone = request.form['phone']
+            admin_password = request.form['admin_password']
+            if admin_password == "emppass":
+                session_val(None,None,None,None,True)
+                return redirect(url_for('emp'))
+        return render_template('employee/reg-login/login.html')
+    return redirect(url_for('home'))
+
+
+#EMPLOYEE LOGOUT
+@app.route('/emp/logout',methods=['GET','POST'])
+def emp_logout():
+    session.pop('EmpAccess', None)
+    return redirect(url_for('home'))
+
+#EMPLOYEE HOME
+@app.route('/emp',methods=['GET','POST'])
+def emp():
+    if 'AdminAccess' in session:
+        return 'log in success'
+    return redirect(url_for('emp_access'))
+
+
+#ADMIN PANEL
+@app.route('/emp/adminpanel',methods=['GET','POST'])
+def admin_panel():
+    if 'AdminAccess' in session:
+        return render_template('employee/admin/admin_panel.html',desg="ADMIN",log=session['AdminAccess'])
+    return redirect(url_for('emp_access'))
+
+#MANAGER PANEL
+@app.route('/emp/managerpanel/',methods=['GET','POST'])
+def manager_panel():
+    if 'ManagerAccess' in session:
+        return render_template('employee/manager/manager_panel.html',desg="MANAGER",log=session['ManagerAccess'])
+    return redirect(url_for('emp_access'))
+
+
+#-----------------------------------------SUPERUSER------------------------------------------------#
+
 #SUPERUSER ACCESS METHOD
-@app.route('/superuseraccess/',methods=['GET','POST'])
+@app.route('/emp/superuser/access/',methods=['GET','POST'])
 def super_access():
     if 'loggedin' not in session:
         if request.method == 'POST':
             superuser_password = request.form['su_password']
             if superuser_password == "superuser":
-                session_val(None,None,None,True,None,None)
+                session_val(None,None,None,True,None)
                 return redirect(url_for('super_panel'))
-        return render_template('superuser/superuser_access.html')
+        return render_template('employee/superuser/superuser_access.html')
     return redirect(url_for('home'))
 
 #SUPERUSER PANEL
-@app.route('/superuserpanel/',methods=['GET','POST'])
+@app.route('/emp/superuser/panel/',methods=['GET','POST'])
 def super_panel():
     if 'SuperuserAccess' in session:
-        return render_template('superuser/superuser_panel.html',desg="SUPERUSER",log=session['SuperuserAccess'])
+        return render_template('employee/superuser/superuser_panel.html',desg="SUPERUSER",log=session['SuperuserAccess'])
     return redirect(url_for('super_access'))
 
 #SUPERUSER LOGOUT
-@app.route('/superuser/logout',methods=['GET','POST'])
+@app.route('/emp/superuser/logout',methods=['GET','POST'])
 def super_logout():
     session.pop('SuperuserAccess', None)
     return redirect(url_for('home'))
-
-#ADMIN ACCESS METHOD
-@app.route('/adminaccess/',methods=['GET','POST'])
-def admin_access():
-    if 'loggedin' not in session:
-        if request.method == 'POST':
-            #admin_phone = request.form['phone']
-            admin_password = request.form['admin_password']
-            if admin_password == "adminpass":
-                session_val(None,None,None,None,True,None)
-                return redirect(url_for('admin_panel'))
-        return render_template('admin/admin_login.html')
-    return redirect(url_for('home'))
-
-#ADMIN PANEL
-@app.route('/adminpanel/',methods=['GET','POST'])
-def admin_panel():
-    if 'AdminAccess' in session:
-        return render_template('admin/admin_panel.html',desg="ADMIN",log=session['AdminAccess'])
-    return redirect(url_for('admin_access'))
-
-#ADMIN LOGOUT
-@app.route('/admin/logout',methods=['GET','POST'])
-def admin_logout():
-    session.pop('AdminAccess', None)
-    return redirect(url_for('home'))
-
-
-#MANAGER ACCESS METHOD
-@app.route('/manageraccess/',methods=['GET','POST'])
-def manager_access():
-    if 'loggedin' not in session:
-        if request.method == 'POST':
-            #Manager_phone = request.form['phone']
-            Manager_password = request.form['manager_password']
-            if Manager_password == "managerpass":
-                session_val(None,None,None,None,None,True)
-                return redirect(url_for('manager_panel'))
-        return render_template('manager/manager_login.html')
-    return redirect(url_for('home'))
-
-#MANAGER PANEL
-@app.route('/managerpanel/',methods=['GET','POST'])
-def manager_panel():
-    if 'ManagerAccess' in session:
-        return render_template('manager/manager_panel.html',desg="MANAGER",log=session['ManagerAccess'])
-    return redirect(url_for('manager_access'))
-
-#MANAGER LOGOUT
-@app.route('/manager/logout',methods=['GET','POST'])
-def Manager_logout():
-    session.pop('ManagerAccess', None)
-    return redirect(url_for('home'))
-
 
 #Test methods are moved to myfile.py
 

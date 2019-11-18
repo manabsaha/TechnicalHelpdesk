@@ -1,0 +1,135 @@
+{%extends "employee/base_employee.html"%}
+{%block content2%}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+
+<!-- MATERIAL DESIGN ICONIC FONT -->
+<link rel="stylesheet" href="/static/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
+
+<!-- STYLE CSS -->
+<link rel="stylesheet" href="/static/formcss/style.css">
+
+<style>
+
+select{
+  border: 2px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 20px;
+  font-family: "Muli-Bold";
+  font-size: 12px;
+  cursor: pointer;
+ background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right 000;
+ background-position: 95% 50%;
+}
+input[type="text"]{font-size: 14px;}
+input[type="password"]{font-size: 14px;}
+
+.form-control:focus {
+    border: 1px solid #ae3c33; }
+}
+.form-control {
+  border: 2px solid #ccc;
+  display: block;
+  width: 100%;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 20px;
+  font-family: "Muli-Bold";
+  background: none; }
+  .form-control:focus {
+    border: 1px solid #ae3c33; }
+
+</style>
+
+<div class="wrapper js-animsition" data-animsition-in-class="fade-in"
+     data-animsition-out-class="fade-out" style="background-image: url(/static/images/slider-1.jpg); padding-top: 120px; padding-bottom: 50px">
+
+    <div class="inner" data-aos="fade-up" data-aos-delay="50" style="border-color: #f7f8fa">
+      
+
+
+        <form action="" method="post">
+            <h3>Employee Registration Form</h3>
+            <hr>
+            <div class="form-group">
+                <div class="form-wrapper">
+                    <input type="text" name="fname" id="fname" maxlength="20" placeholder="First Name" class="form-control" pattern="[a-zA-Z]{2,}" required="required">
+                </div>
+                <div class="form-wrapper">
+                    <input type="text" name="lname" id="lname" maxlength="20" placeholder="Last Name" class="form-control" pattern="[a-zA-Z]{2,}" required="required">
+                </div>
+            </div>
+
+            <div class="form-phone">
+                <div class="form-wrapper">
+
+                    <select name="country" required="required">
+                        <option>+91(INDIA)</option>
+                    </select>
+
+                </div>
+
+                <div class="form-wrapper">
+                    <input type="text" name="phone" id="phone" maxlength="10" placeholder="Mobile Number" style="width:385%" class="form-control" required="required"
+                           pattern="[6-9]{1}[0-9]{9}" title="Number can only contain 10 digits">
+                </div>
+            </div>
+
+            <div class="form-wrapper">
+                <label style="color:red;" for="">{{ msg }}</label>
+            </div>
+
+
+            <div class="form-wrapper">
+                <input type="text" name="address" id="address" maxlength="20" placeholder="Permenant Address" class="form-control" pattern="[a-zA-Z, ]{2,}" required="required">
+            </div>
+
+            <div class="form-wrapper">
+                <input type="text" name="pincode" id="pincode" maxlength="6" placeholder="Pincode" class="form-control" pattern="[0-9]{6}" required="required">
+            </div>
+
+            <div class="form-wrapper">
+                <input type="password" name="password" id="password" maxlength="20" placeholder="Create New Password" class="form-control" onkeyup='check();' pattern=".{6,20}" title="Password should be 6-20 characters long" required="required">
+            </div>
+
+            <div class="form-wrapper">
+                <input type="password" name="confirm_password" id="confirm_password" maxlength="20" placeholder="Confirm Password" onkeyup='check();' class="form-control" pattern=".{6,20}" title="Password should be 6-20 characters long" required="required">
+                <span id='message'></span>
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" required="required"> I accept the Terms of Use & Privacy Policy.
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+            <button id="regbutton">Register Now</button>
+            <div class="form-wrapper" style="text-align:center; padding-top: 20px;">
+              Already have an account? <a href="/emp/login">LOG IN</a>
+       </div>
+        </form>
+    </div>
+</div>
+<script>
+var check = function() {
+  if (document.getElementById('password').value == document.getElementById('confirm_password').value) {
+    document.getElementById('message').style.display = "none";
+    document.getElementById('regbutton').disabled = false
+  } 
+  else {
+    document.getElementById('message').style.display = "initial";
+    document.getElementById('message').style.color = 'red';
+    document.getElementById('message').innerHTML = ' Password doesn\'t match';
+    document.getElementById('regbutton').disabled = true
+  }
+}
+</script>
+{%endblock%}
+
+
+
+
+

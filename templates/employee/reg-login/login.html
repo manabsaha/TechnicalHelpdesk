@@ -1,4 +1,4 @@
-{%extends "base_employee.html"%}
+{%extends "employee/base_employee.html"%}
 {%block content2%}
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
@@ -46,7 +46,7 @@ input[type="password"]{font-size: 14px;}
     <div class="inner p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="800" style="border-color: #f7f8fa" >
 
         <form action="" method="post">
-            <h3>ADMIN LOGIN</h3>
+            <h3>EMPLOYEE LOGIN</h3>
             <hr>
 
             <div class="form-phone">
@@ -69,8 +69,9 @@ input[type="password"]{font-size: 14px;}
             </div>
 
             <div class="form-group">
-            <button id="admin">Admin Login</button>
+            <button id="admin">Employee Login</button>
           </div>
+          <div style="padding-top: 30px; text-align:center ">Don't have an account? <a href="/emp/reg">SIGN UP</a></div>
         </form>
 
     </div>
