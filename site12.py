@@ -421,13 +421,13 @@ def emp_reg():
                                                     hash_password varchar(128),
                                                     picture varchar(200) DEFAULT '/static/images/no_dp.png',
                                                     designation varchar(50) DEFAULT 'employee',
-                                                    PRIMARY KEY (user_id))auto_increment=1001""")
+                                                    PRIMARY KEY (employee_id))auto_increment=1001""")
                     cur.execute("""INSERT INTO employee(fname, lname, phone,address,pincode,hash_password) 
                         values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))
                 
                 cur.execute("""SELECT employee_id,designation from employee where phone=%s""",(phone,))
                 employee=cur.fetchone()
-                session_val(True,employee['employee_id'],employee['designation'],None,None)
+                session_val(None,employee['employee_id'],employee['designation'],None,True)
                 mysql.connection.commit()
                 gc.collect()
                 return redirect(url_for('emp'))
@@ -463,9 +463,9 @@ def emp_access():
             hash_password = psw['hash_password']
             check_pass = bcrypt.hashpw(password.encode('utf8'),hash_password.encode('utf8'))
             if(check_pass==hash_password.encode('utf8')):
-                cur.execute("""SELECT user_id,designation FROM employee where phone = %s""",(phone,))
+                cur.execute("""SELECT employee_id,designation FROM employee where phone = %s""",(phone,))
                 id=cur.fetchone()
-                session_val(True,id['user_id'],id['designation'],None,None)
+                session_val(None,id['employee_id'],id['designation'],None,True)
                 return redirect(url_for('emp'))
             else:
                 msg = '*Incorrect password!'
