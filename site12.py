@@ -405,11 +405,12 @@ def inventory_add(ticket_id):
         return redirect(url_for('home'))
 
 #Ticket details method
-app.route('/ticket_details/<int:id>')
+@app.route('/ticket_details/<int:id>')
 def ticket_details(id):
-    return "hi"
     if 'loggedin' in session and session['designation']=="customer_care":
-         return render_template('employee/ticket/ticket_details.html',ticket_id=id)
+        cur=mysql.connection.cursor()
+        cur.execute("""SELECT * FROM inventory WHERE ticket_id=%s""",(id,))
+        return render_template('employee/ticket/ticket_details.html',ticket=cur.fetchone())
     return redirect(url_for('home'))
 
 #Cancel Ticket method.

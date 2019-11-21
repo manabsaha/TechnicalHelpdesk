@@ -66,13 +66,12 @@ select{
         <form action="" method="post">
             <h3 style="text-align:center">TICKET DETAILS</h3>
             <hr>
-            <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
             <div class="form-group">
                 <div class="form-wrapper">
                     <label>Inventory ID:</label>
                 </div>
                 <div class="form-wrapper">
-                    <label></label>
+                    <label>{{ticket['inventory_id']}}</label>
                 </div>
             </div>
             <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
@@ -81,7 +80,7 @@ select{
                     <label>Ticket ID:</label>
                 </div>
                 <div class="form-wrapper">
-                    <label></label>
+                    <label>{{ticket['ticket_id']}}</label>
                 </div>
             </div>
              <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
@@ -90,7 +89,7 @@ select{
                     <label>Product Name:</label>
                 </div>
                 <div class="form-wrapper">
-                    <label></label>
+                    <label>{{ticket['product_name']}}</label>
                 </div>
             </div>
              <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
@@ -99,7 +98,7 @@ select{
                     <label>Product Type:</label>
                 </div>
                 <div class="form-wrapper">
-                    <label></label>
+                    <label>{{ticket['product_type']}}</label>
                 </div>
             </div>
             <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
@@ -108,7 +107,7 @@ select{
                     <label>Product Desc:</label>
                 </div>
                 <div class="form-wrapper">
-                    <label></label>
+                    <label>{{ticket['product_description']}}</label>
                 </div>
             </div>
             <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
@@ -117,7 +116,7 @@ select{
                     <label>Fault Type:</label>
                 </div>
                 <div class="form-wrapper">
-                    <label></label>
+                    <label>{{ticket['fault_type']}}</label>
                 </div>
             </div>
             <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
@@ -126,7 +125,16 @@ select{
                     <label>Fault Desc:</label>
                 </div>
                 <div class="form-wrapper">
-                    <label></label>
+                    <label>{{ticket['fault_description']}}</label>
+                </div>
+            </div>
+             <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
+             <div class="form-group">
+                <div class="form-wrapper">
+                    <label>Record date:</label>
+                </div>
+                <div class="form-wrapper">
+                    <label>{{ticket['record_date']}}</label>
                 </div>
             </div>
              <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
