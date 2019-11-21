@@ -2,10 +2,6 @@
 {%block content2%}
 
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport">
-
-    <!-- MATERIAL DESIGN ICONIC FONT -->
-    <!--<link rel="stylesheet" href="/static/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">-->
-
     <link href="/static/formcss/style.css" rel="stylesheet">
 
 
@@ -71,7 +67,7 @@ select{
             <h3 style="text-align:center">MY PROFILE</h3>
             <hr>
             <div class="item form-wrapper" style="margin-top:10%;margin-bottom:10%;">
-                    <img src={{ pic }} style="margin-left:auto;margin-right:auto;display:block;border-radius:50%;width:150px;height:150px;" alt="can't load" class="w3-round img-fluid">
+                    <img src={{ data['picture'] }} style="margin-left:auto;margin-right:auto;display:block;border-radius:50%;width:150px;height:150px;" alt="can't load" class="w3-round img-fluid">
             </div>
             <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
             <div class="form-group">

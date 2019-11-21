@@ -47,6 +47,31 @@ def session_val(loggedin,id,designation,su_access,emp_access):
         session['designation'] = designation
         session.pop('SuperuserAccess',su_access)
 
+#----------------------------------------------USER---------------------------------------------------#
+
+#HOME PAGE.
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    if 'loggedin' in session:
+        user = escape(session['id'])
+        designation=escape(session['designation'])
+        cur = mysql.connection.cursor()
+        cur.execute("""SELECT fname FROM user where user_id=%s""",(user,))
+        name = cur.fetchone()
+        name = name['fname']
+        return render_template('site/index.html',designation=designation, user=user,name=name,login_flag=True)
+    if 'SuperuserAccess' in session:
+        return redirect(url_for('super_panel'))
+        #return render_template('superuser/superuser_panel.html',desg="SUPERUSER",log=session['SuperuserAccess'])
+    if 'AdminAccess' in session:
+        return redirect(url_for('admin_panel'))
+        #return render_template('admin/admin_panel.html',desg="ADMIN",log=session['AdminAccess'])
+    if 'ManagerAccess' in session:
+        return redirect(url_for('manager_panel'))
+        #return render_template('manager/manager_panel.html',desg="MANAGER",log=session['ManagerAccess'])
+    return render_template('site/index.html')
+
+
 #Register method.
 @app.route('/reg/', methods=['GET', 'POST'])
 def reg():
@@ -129,86 +154,11 @@ def login():
     return render_template('reg-login/login.html')
 
 #Logout method.
-#@app.route('/logout/',methods=['GET','POST'])
 @app.route('/logout/',methods=['GET','POST'])
 def logout():
     session.pop('loggedin', None)
     session.pop('id', None)
     return redirect(url_for('home'))
-
-#Ticket Generate method
-@app.route('/ticket/', methods=['GET','POST'])
-def ticket():
-    if 'loggedin' not in session:
-         return redirect(url_for('login'))
-    cur=mysql.connection.cursor()
-    cur.execute("""select * from user where user_id= %s""", (session['id'],))
-    data=cur.fetchone()
-    if request.method=='POST':
-        fname=request.form['fname']
-        lname=request.form['lname']
-        phone = request.form['phone']
-        address = request.form['address']
-        pickup=request.form['pickup']
-        app_date = request.form['date']
-        curr_date = date.today()
-        if pickup=='True':
-            type='Pickup'
-        else:
-            type='Appointment'
-
-        try:
-            cur.execute("""INSERT INTO ticket(user_id, fname, lname, phone, address, app_date, curr_date,app_type) 
-                values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date, curr_date,type))
-            mysql.connection.commit()
-            return redirect(url_for('home'))
-        except:
-            cur.execute("""CREATE TABLE ticket (ticket_id int AUTO_INCREMENT,
-                                                user_id int NOT NULL,
-                                                fname varchar(20),
-                                                lname varchar(20),
-                                                phone bigint(10),
-                                                address varchar(100),
-                                                app_date date, 
-                                                curr_date date,
-                                                app_type varchar(20) CHECK(app_type IN ('Appointment','Pickup')),
-                                                status varchar(20) DEFAULT 'Processing',
-                                                PRIMARY KEY (ticket_id),
-                                                FOREIGN KEY (user_id)
-                                                REFERENCES user(user_id))AUTO_INCREMENT=10001""")
-            cur.execute("""INSERT INTO ticket(user_id,fname, lname, phone, address, app_date, curr_date,app_type) 
-                values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date,
-                curr_date, type))
-            mysql.connection.commit()
-            return redirect(url_for('services'))
-    gc.collect()
-    return render_template('forms/ticket.html',designation=escape(session['designation']), data=data,date=date.today(),
-        user=escape(session['id']))
-
-
-
-#HOME PAGE.
-@app.route('/', methods=['GET', 'POST'])
-def home():
-    if 'loggedin' in session:
-        user = escape(session['id'])
-        designation=escape(session['designation'])
-        cur = mysql.connection.cursor()
-        cur.execute("""SELECT fname FROM user where user_id=%s""",(user,))
-        name = cur.fetchone()
-        name = name['fname']
-        return render_template('site/index.html',designation=designation, user=user,name=name,login_flag=True)
-    if 'SuperuserAccess' in session:
-        return redirect(url_for('super_panel'))
-        #return render_template('superuser/superuser_panel.html',desg="SUPERUSER",log=session['SuperuserAccess'])
-    if 'AdminAccess' in session:
-        return redirect(url_for('admin_panel'))
-        #return render_template('admin/admin_panel.html',desg="ADMIN",log=session['AdminAccess'])
-    if 'ManagerAccess' in session:
-        return redirect(url_for('manager_panel'))
-        #return render_template('manager/manager_panel.html',desg="MANAGER",log=session['ManagerAccess'])
-    return render_template('site/index.html')
-
 
 #About us method.
 @app.route('/about/', methods=['GET', 'POST'])
@@ -330,36 +280,94 @@ def services():
         cur=mysql.connection.cursor()
         cur.execute("SELECT ticket_id,app_date,app_type,status FROM ticket where user_id=%s",(user,))
         data=cur.fetchall()
-        return render_template('site/services.html',data=data, designation=designation, user=user,success_msg = "Feedback sent")
+        return render_template('site/services.html',data=data, designation=designation, user=user)
     return redirect(url_for('login'))
 
+#Ticket Generate method.
+@app.route('/ticket/', methods=['GET','POST'])
+def ticket():
+    if 'loggedin' not in session:
+         return redirect(url_for('login'))
+    cur=mysql.connection.cursor()
+    cur.execute("""select * from user where user_id= %s""", (session['id'],))
+    data=cur.fetchone()
+    if request.method=='POST':
+        fname=request.form['fname']
+        lname=request.form['lname']
+        phone = request.form['phone']
+        address = request.form['address']
+        pickup=request.form['pickup']
+        app_date = request.form['date']
+        curr_date = date.today()
+        if pickup=='True':
+            type='Pickup'
+        else:
+            type='Appointment'
+
+        try:
+            cur.execute("""INSERT INTO ticket(user_id, fname, lname, phone, address, app_date, curr_date,app_type) 
+                values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date, curr_date,type))
+            mysql.connection.commit()
+            return redirect(url_for('home'))
+        except:
+            cur.execute("""CREATE TABLE ticket (ticket_id int AUTO_INCREMENT,
+                                                user_id int NOT NULL,
+                                                fname varchar(20),
+                                                lname varchar(20),
+                                                phone bigint(10),
+                                                address varchar(100),
+                                                app_date date, 
+                                                curr_date date,
+                                                app_type varchar(20) CHECK(app_type IN ('Appointment','Pickup')),
+                                                status varchar(20) DEFAULT 'Processing',
+                                                PRIMARY KEY (ticket_id),
+                                                FOREIGN KEY (user_id)
+                                                REFERENCES user(user_id))AUTO_INCREMENT=10001""")
+            cur.execute("""INSERT INTO ticket(user_id,fname, lname, phone, address, app_date, curr_date,app_type) 
+                values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date,
+                curr_date, type))
+            mysql.connection.commit()
+            return redirect(url_for('services'))
+    gc.collect()
+    return render_template('forms/ticket.html',designation=escape(session['designation']), data=data,date=date.today(),
+        user=escape(session['id']))
+
+#Cancel Ticket method.
+@app.route('/services/<int:id>')
+def cancel(id):
+    if 'loggedin' in session and session['designation']=="customer":
+        cur=mysql.connection.cursor()
+        status = "CANCELLED BY USER"
+        cur.execute("""UPDATE ticket SET status=%s WHERE ticket_id=%s""",(status,id))
+        mysql.connection.commit()
+        return redirect(url_for('services'))
+    return redirect(url_for('login'))
+
+
 #All_tickets method.
-@app.route('/all_tickets/', methods=['GET', 'POST'])
+@app.route('/emp/all_tickets/', methods=['GET', 'POST'])
 def all_tickets():
-    if 'loggedin' in session and session['designation']=="customer_care":
+    if 'EmpAccess' in session:
         user = escape(session['id'])
         designation = escape(session['designation'])
         cur=mysql.connection.cursor()
         cur.execute("SELECT ticket_id, user_id, fname, app_date,app_type,status FROM ticket")
         data=cur.fetchall()
-        return render_template('site/all_tickets.html',data=data, designation=designation, user=user,success_msg = "Feedback sent")
-    if 'loggedin' in session:
-        return redirect(url_for('services'))
-    return redirect(url_for('login'))
+        return render_template('employee/ticket/all_tickets.html',data=data,user=user,desg=session['designation'])
+    return redirect(url_for('emp'))
 
-#inventory redirect method
+#Inventory redirect method
 @app.route('/all_tickets/<int:id>', methods=['GET', 'POST'])
-def all_ticket(id):
-    if 'loggedin' in session and session['designation']=="customer_care":
+def inv_ticket(id):
+    if 'EmpAccess' in session:
         return redirect(url_for('inventory_add', ticket_id=id))
-    return redirect(url_for('login'))
+    return redirect(url_for('emp'))
 
 
-#inventory add method
+#Inventory add method
 @app.route('/inventory_add/<int:ticket_id>', methods=['GET', 'POST'])
 def inventory_add(ticket_id):
-    print(ticket_id)
-    if 'loggedin' in session and session['designation']=="customer_care":
+    if 'EmpAccess' in session:
         if request.method == 'POST':
             product_type = request.form['product_type']
             product_name = request.form['product_name']
@@ -369,7 +377,6 @@ def inventory_add(ticket_id):
             curr_date = date.today()
             cur=mysql.connection.cursor()
             try:
-                print('aca')
                 cur.execute("""INSERT INTO inventory(ticket_id, product_name,product_type, product_description, fault_type, 
                     fault_description, record_date) 
                     values(%s,%s,%s,%s,%s,%s,%s)""",
@@ -390,9 +397,9 @@ def inventory_add(ticket_id):
                                                     record_date date,
                                                     PRIMARY KEY (inventory_id),
                                                     FOREIGN KEY (ticket_id)
-                                                    REFERENCES ticket(ticket_id))AUTO_INCREMENT=10001""")
-                cur.execute("""INSERT INTO inventory(ticket_id, product_name,product_type, product_description, fault_type, 
-                               fault_description, record_date) 
+                                                    REFERENCES ticket(ticket_id))AUTO_INCREMENT=20001""")
+                cur.execute("""INSERT INTO inventory(ticket_id, product_name,product_type, product_description,
+                     fault_type, fault_description, record_date) 
                                values(%s,%s,%s,%s,%s,%s,%s)""",
                             (ticket_id, product_name, product_type, product_description, fault_type, fault_description, curr_date))
                 mysql.connection.commit()
@@ -400,30 +407,20 @@ def inventory_add(ticket_id):
                 mysql.connection.commit()
                 return redirect(url_for('all_tickets'))
         gc.collect()
-        return render_template('employee/add_inventory.html',date=date.today(), user=escape(session['id']))
+        return render_template('employee/ticket/add_inventory.html',date=date.today(), 
+            user=escape(session['id']),desg=session['designation'])
     else:
-        return redirect(url_for('home'))
+        return redirect(url_for('emp'))
 
 #Ticket details method
 @app.route('/ticket_details/<int:id>')
 def ticket_details(id):
-    if 'loggedin' in session and session['designation']=="customer_care":
+    if 'EmpAccess' in session:
         cur=mysql.connection.cursor()
         cur.execute("""SELECT * FROM inventory WHERE ticket_id=%s""",(id,))
-        return render_template('employee/ticket/ticket_details.html',ticket=cur.fetchone())
-    return redirect(url_for('home'))
-
-#Cancel Ticket method.
-@app.route('/services/<int:id>')
-def cancel(id):
-    if 'loggedin' in session and session['designation']=="customer":
-        cur=mysql.connection.cursor()
-        status = "CANCELLED BY USER"
-        cur.execute("""UPDATE ticket SET status=%s WHERE ticket_id=%s""",(status,id))
-        mysql.connection.commit()
-        return redirect(url_for('services'))
-    return redirect(url_for('login'))
-
+        return render_template('employee/ticket/ticket_details.html',ticket=cur.fetchone(),
+            desg=session['designation'])
+    return redirect(url_for('emp'))
 
 #------------------------------------------EMPLOYEE---------------------------------------------------#
 
@@ -454,10 +451,10 @@ def emp_reg():
                                                     address varchar(100),
                                                     pincode bigint(6),
                                                     job_status varchar(20) DEFAULT 'ACTIVE',
-                                                    designation varchar(20) DEFAULT 'EMPLOYEE',
+                                                    designation varchar(20) DEFAULT 'EXECUTIVE',
                                                     hash_password varchar(128),
                                                     picture varchar(200) DEFAULT '/static/images/no_dp.png',
-                                                    PRIMARY KEY (employee_id))auto_increment=1001""")
+                                                    PRIMARY KEY (employee_id))auto_increment=2001""")
                     cur.execute("""INSERT INTO employee(fname, lname, phone,address,pincode,hash_password) 
                         values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))
                 
@@ -478,7 +475,7 @@ def emp_reg():
                     return render_template('employee/reg-login/reg.html',msg=msg)
 
         return render_template('employee/reg-login/reg.html')
-    return redirect(url_for('home'))
+    return redirect(url_for('emp'))
 
 
 #EMPLOYEE LOGIN METHOD
@@ -508,14 +505,14 @@ def emp_access():
                 return render_template('employee/reg-login/login.html',msg=msg)
 
         return render_template('employee/reg-login/login.html')
-    return redirect(url_for('home'))
+    return redirect(url_for('emp'))
 
 
 #EMPLOYEE LOGOUT
 @app.route('/emp/logout',methods=['GET','POST'])
 def emp_logout():
     session.pop('EmpAccess', None)
-    return redirect(url_for('home'))
+    return redirect(url_for('emp'))
 
 #EMPLOYEE HOME
 @app.route('/emp',methods=['GET','POST'])
@@ -526,7 +523,7 @@ def emp():
     return redirect(url_for('emp_access'))
 
 #Employee Profile Method.
-@app.route('/emp_profile/', methods=['GET', 'POST'])
+@app.route('/emp/profile/', methods=['GET', 'POST'])
 def emp_profile():
     if 'EmpAccess' in session:
         user = escape(session['id'])
@@ -539,18 +536,18 @@ def emp_profile():
             if request.form['submit']=="edit":
                 return redirect(url_for('edit_emp_profile'))
             if request.form['submit']=="change":
-                return redirect(url_for('change_password'))
-        return render_template('employee/emp_profile.html',desg=session['designation'], data=d,user=user,pic=pic_url)
-    return redirect(url_for('login'))
+                return redirect(url_for('change_emp_password'))
+        return render_template('employee/profile/emp_profile.html',desg=session['designation'], data=d,user=user,pic=pic_url)
+    return redirect(url_for('emp'))
 
 #Edit Employee profile method.
-@app.route('/edit_emp_profile/', methods=['GET', 'POST'])
+@app.route('/emp/edit_profile/', methods=['GET', 'POST'])
 def edit_emp_profile():
-    if 'loggedin' in session:
+    if 'EmpAccess' in session:
         user = escape(session['id'])
         designation = escape(session['designation'])
         cur = mysql.connection.cursor()
-        cur.execute("""select * from user where user_id= %s""", (session['id'],))
+        cur.execute("""select * from employee where employee_id= %s""", (session['id'],))
         d = cur.fetchone()
         pic_url = d['picture']
         if request.method == 'POST':
@@ -561,25 +558,25 @@ def edit_emp_profile():
             pincode = request.form['pincode']
             file = request.files['display_pic']
             try:
-                cur.execute("""update user set fname=%s,lname=%s,phone=%s,address=%s,pincode=%s where user_id=%s""", (
+                cur.execute("""update employee set fname=%s,lname=%s,phone=%s,address=%s,pincode=%s where employee_id=%s""", (
                     fname, lname, phone, address, pincode, session['id'],))
                 if file.filename!= '':
                     firebase = pyrebase.initialize_app(config)
                     storage = firebase.storage()
-                    storage.child("images/"+user+"/new.jpg").put(file)
-                    new_pic_url = storage.child("images/" + user + "/new.jpg").get_url(None)
-                    cur.execute("""update user set picture=%s where user_id=%s""",(new_pic_url,session['id']))
+                    storage.child("images/employee/"+user+"/new.jpg").put(file)
+                    new_pic_url = storage.child("images/employee/" + user + "/new.jpg").get_url(None)
+                    cur.execute("""update employee set picture=%s where employee_id=%s""",(new_pic_url,session['id']))
             except:
                 pass
             mysql.connection.commit()
-            return redirect(url_for('profile'))
-        return render_template('reg-login/edit_profile.html',designation=designation, data=d,user=user,pic=pic_url)
-    return redirect(url_for('home'))
+            return redirect(url_for('emp_profile'))
+        return render_template('employee/profile/emp_edit_profile.html', data=d,user=user,pic=pic_url,desg=session['designation'])
+    return redirect(url_for('emp'))
 
 #Change employee password method.
-@app.route('/change_emp_password/', methods=['GET','POST'])
+@app.route('/emp/change_password/', methods=['GET','POST'])
 def change_emp_password():
-    if 'loggedin' in session:
+    if 'EmpAccess' in session:
         cur = mysql.connection.cursor()
         user = escape(session['id'])
         designation = escape(session['designation'])
@@ -587,21 +584,21 @@ def change_emp_password():
             old_pass = request.form['pass']
             password = request.form['password']
 
-            cur.execute("""SELECT hash_password FROM user where user_id = %s""", (session['id'],))
+            cur.execute("""SELECT hash_password FROM employee where employee_id = %s""", (session['id'],))
             psw = cur.fetchone()
             hash_password = psw['hash_password']
             check_pass = bcrypt.hashpw(old_pass.encode('utf8'), hash_password.encode('utf8'))
             if (check_pass == hash_password.encode('utf8')):
                 new_hash = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
-                cur.execute("""update user set hash_password=%s where user_id = %s""", (new_hash, session['id'],))
+                cur.execute("""update employee set hash_password=%s where employee_id = %s""", (new_hash, session['id'],))
 
             else:
                 msg = '*Incorrect password!'
-                return render_template('reg-login/change_pass.html',designation=designation, msg=msg,user=user)
+                return render_template('employee/profile/emp_change_pass.html',desg=session['designation'], msg=msg,user=user)
             mysql.connection.commit()
-            return redirect(url_for('profile'))
-        return render_template('reg-login/change_pass.html',designation=designation, user=user)
-    return redirect(url_for('home'))
+            return redirect(url_for('emp_profile'))
+        return render_template('employee/profile/emp_change_pass.html',user=user,desg=session['designation'])
+    return redirect(url_for('emp'))
 
 
 #ADMIN PANEL
@@ -652,7 +649,6 @@ def super_logout():
     session.pop('SuperuserAccess', None)
     return redirect(url_for('home'))
 
-#Test methods are moved to myfile.py
 
 if __name__ == "__main__":
     app.run(debug=True)
