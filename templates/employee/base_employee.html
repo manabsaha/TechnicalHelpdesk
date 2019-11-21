@@ -24,7 +24,7 @@
     .fixedbar {
     height:90px;
         min-height:0px;
-      overflow: hidden;
+      overflow: show;
       background-color: #333;
       position: fixed; /* Set the navbar to fixed position */
       top: 0; /* Position the navbar at the top of the page */
@@ -40,7 +40,7 @@
 
 
 <div class="js-animsition animsition " id="site-wrap"  data-animsition-in-class="fade-in"
-     data-animsition-out-class="fade-out"  >
+     data-animsition-out-class="fade-out" >
 
     <header class="templateux-navbar dark shadow-lg p-4 mb-4 fixed-top" id="navbar" role="banner"
         style=" z-index:10; background-image: url(/static/images/navbg.jpg); background-size:110%;  border-radius: 5px;">
@@ -74,19 +74,21 @@
                             {%endif%}
 
                             {%if desg=="MANAGER"%}
-                            <li><a href="#" class="animsition-link" style="color:black">Stats</a></li>
-                            <li style="z-index:1000;">
-                                <a href="#" class="animsition-link">Tickets</a>
+
+                            <li><a href="" class="animsition-link" style="color:black">Stats</a></li>
+                            <li>
+                                <a href="" class="animsition-link">Tickets</a>
                                 <ul>
                                   <li ><a href="#">Service 1</a></li>
-                                  <li style="z-index:1000;"><a href="#">Service 2</a></li>
+                                  <li><a href="#">Service 2</a></li>
                                 </ul>
                             </li>
-                            <li style="z-index:999;">
-                                <a href="#" class="animsition-link">Inventory</a>
+
+                            <li>
+                                <a href="" class="animsition-link">Inventory</a>
                                 <ul>
                                   <li ><a href="#">Service 1</a></li>
-                                  <li style="z-index:999;"><a href="#">Service 2</a></li>
+                                  <li><a href="#">Service 2</a></li>
                                 </ul>
                             </li>
                             <li><a href="/emp/profile" class="animsition-link" style="color:black">Profile</a></li>
@@ -132,7 +134,7 @@
 $(window).on('load',function(){
         $('#myModal').modal('show');
     });
-    var prevScrollpos = window.pageYOffset;
+var prevScrollpos = window.pageYOffset;
 window.onscroll = function() {
   var currentScrollPos = window.pageYOffset;
     console.log(currentScrollPos+1000+'px')
