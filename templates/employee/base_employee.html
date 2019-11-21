@@ -65,6 +65,27 @@
                             <li><a href="/emp/superuser/logout" style="color:darkred">LOGOUT SUPERUSER<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
                             {%endif%}
 
+                            {%if desg=="ADMIN"%}
+                            <li><a href="" class="animsition-link" style="color:black">Stats</a></li>
+                            <li><a href="" class="animsition-link" style="color:black">Task</a></li>
+                            <li><a href="" class="animsition-link" style="color:black">Profile</a></li>
+                            <li><a href="/emp/logout" style="color:darkred">LOGOUT ADMIN<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
+                            {%endif%}
+
+                            {%if desg=="MANAGER"%}
+                            <li><a href="" class="animsition-link" style="color:black">Stats</a></li>
+                            <li><a href="" class="animsition-link" style="color:black">Task</a></li>
+                            <li><a href="" class="animsition-link" style="color:black">Profile</a></li>
+                            <li><a href="/emp/logout" style="color:darkred">LOGOUT MANAGER<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
+                            {%endif%}
+
+                            {%if desg=="TECHNICIAN"%}
+                            <li><a href="" class="animsition-link" style="color:black">Stats</a></li>
+                            <li><a href="" class="animsition-link" style="color:black">Task</a></li>
+                            <li><a href="" class="animsition-link" style="color:black">Profile</a></li>
+                            <li><a href="/emp/logout" style="color:darkred">LOGOUT TECHNICIAN<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
+                            {%endif%}
+
                             {%if desg=="EMPLOYEE"%}
                             <li><a href="/emp/logout" style="color:darkred">LOGOUT EMPLOYEE<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
                             {%endif%}

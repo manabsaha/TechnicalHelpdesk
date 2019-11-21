@@ -43,6 +43,8 @@ def session_val(loggedin,id,designation,su_access,emp_access):
         session.pop('EmpAccess',emp_access)
     elif emp_access==True:
         session['EmpAccess'] = True
+        session['id'] = id
+        session['designation'] = designation
         session.pop('SuperuserAccess',su_access)
 
 #Register method.
@@ -418,16 +420,17 @@ def emp_reg():
                                                     phone bigint(10) UNIQUE,
                                                     address varchar(100),
                                                     pincode bigint(6),
+                                                    job_status varchar(20) DEFAULT 'ACTIVE',
+                                                    designation varchar(20) DEFAULT 'EMPLOYEE',
                                                     hash_password varchar(128),
                                                     picture varchar(200) DEFAULT '/static/images/no_dp.png',
-                                                    designation varchar(50) DEFAULT 'employee',
-                                                    PRIMARY KEY (user_id))auto_increment=1001""")
+                                                    PRIMARY KEY (employee_id))auto_increment=1001""")
                     cur.execute("""INSERT INTO employee(fname, lname, phone,address,pincode,hash_password) 
                         values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))
                 
                 cur.execute("""SELECT employee_id,designation from employee where phone=%s""",(phone,))
                 employee=cur.fetchone()
-                session_val(True,employee['employee_id'],employee['designation'],None,None)
+                session_val(None,employee['employee_id'],employee['designation'],None,True)
                 mysql.connection.commit()
                 gc.collect()
                 return redirect(url_for('emp'))
@@ -463,9 +466,9 @@ def emp_access():
             hash_password = psw['hash_password']
             check_pass = bcrypt.hashpw(password.encode('utf8'),hash_password.encode('utf8'))
             if(check_pass==hash_password.encode('utf8')):
-                cur.execute("""SELECT user_id,designation FROM employee where phone = %s""",(phone,))
+                cur.execute("""SELECT employee_id,designation FROM employee where phone = %s""",(phone,))
                 id=cur.fetchone()
-                session_val(True,id['user_id'],id['designation'],None,None)
+                session_val(None,id['employee_id'],id['designation'],None,True)
                 return redirect(url_for('emp'))
             else:
                 msg = '*Incorrect password!'
@@ -485,7 +488,7 @@ def emp_logout():
 @app.route('/emp',methods=['GET','POST'])
 def emp():
     if 'EmpAccess' in session:
-        return render_template('/employee/employee.html',desg="EMPLOYEE")
+        return render_template('/employee/employee.html',desg=session['designation'])
     return redirect(url_for('emp_access'))
 
 
@@ -522,6 +525,12 @@ def super_access():
 @app.route('/emp/superuser/panel/',methods=['GET','POST'])
 def super_panel():
     if 'SuperuserAccess' in session:
+        if request.method == 'POST':
+            su_query = request.form['su_query']
+            phone = request.form['phone']
+            cur = mysql.connection.cursor()
+            cur.execute("""UPDATE employee SET designation=%s WHERE phone=%s""",(su_query,phone))
+            mysql.connection.commit()
         return render_template('employee/superuser/superuser_panel.html',desg="SUPERUSER",log=session['SuperuserAccess'])
     return redirect(url_for('super_access'))
 
