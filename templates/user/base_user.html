@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:background="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>TECHNICAL HELPDESK</title>
+    {% block head %}
+    {% endblock %}
+
+    {%if 0%}
+     <!-- Modal -->
+  <div class="modal animsition js-animsition" data-aos-delay="5000" data-animsition-in-class="fadeIn" id="myModal" role="dialog">
+    <div class="modal-dialog" style="padding-top:20%;">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title" style="text-align:left">Info</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+        </div>
+        <div class="modal-body">
+          <h3 style="text-align:center">LOGIN SUCCESSFUL!</h3>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  {%endif%}
+
+</div>
+
+</head>
+<body>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="/static/css/style.css">
+<script src="/static/js/scripts-all.js"></script>
+<script src="/static/js/main.js"></script>
+
+<style>
+
+    hr{
+             border: 0;
+    height: 2px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+          }
+    .fixedbar {
+    height:90px;
+        min-height:0px;
+      overflow: hidden;
+      background-color: #333;
+      position: fixed; /* Set the navbar to fixed position */
+      top: 0; /* Position the navbar at the top of the page */
+      width: 100%; /* Full width */
+      -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    }
+</style>
+
+
+
+<div class="js-animsition animsition " id="site-wrap"  data-animsition-in-class="fade-in"
+     data-animsition-out-class="fade-out"  >
+
+    <header class="templateux-navbar dark shadow-lg p-4 mb-4 fixedbar" id="navbar" role="banner"
+        style=" z-index:10; background-image: url(/static/images/navbg.jpg); background-size:110%;  border-radius: 5px;">
+
+        <div class="container" data-aos="fade-down"  style="position: relative; z-index:12;">
+            <div class="row" >
+
+                <div class="col-3 templateux-logo">
+                    <a href="/" class="animsition-link">TECHNICAL HELPDESK</a>
+                </div>
+                <nav class="col-9 site-nav">
+                    <button class="d-block d-md-none hamburger hamburger--spin templateux-toggle templateux-toggle-light ml-auto templateux-toggle-menu"
+                            data-toggle="collapse" data-target="#mobile-menu" aria-controls="mobile-menu"
+                            aria-expanded="false" aria-label="Toggle navigation">
+              <span class="hamburger-box">
+                <span class="hamburger-inner"></span>
+              </span>
+                    </button> <!-- .templateux-toggle -->
+
+                    <ul class="sf-menu templateux-menu d-none d-md-block">
+                        <!-- <li class="active"> -->
+                        <li>
+                            <a href="/" class="animsition-link" style="color:black" ;>Home</a>
+                        </li>
+                        <li><a href="/about" class="animsition-link" style="color:black">About</a></li>
+
+                        <li>
+                            {% if designation=='customer' %}
+                            <a href="/services" class="animsition-link" style="color:black">Services</a>
+                            {% elif designation=='customer_care' %}
+                            <a href="/all_tickets" class="animsition-link" style="color:black">Tickets</a>
+                            {% endif %}
+                        </li>
+
+                        <li><a href="/contact" style="color:black" class="animsition-link">Contact</a></li>
+                        {% if user|length != 0 %}
+                            <li><a href="/profile" style="color:black" class="animsition-link">Profile</a></li>
+                        {%else%}
+                        <li><a href="/login" style="color:darkgreen" class="animsition-link">Log in
+                            <i class="animsition-link glyphicon glyphicon-log-in" style="color:darkgreen"></i></a></li>
+                        {% endif %}
+                        {% if user|length != 0 %}
+                        <li><a href="/logout" style="color:darkred">LOGOUT <i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
+                        {% endif %}
+                    </ul> <!-- .templateux-menu -->
+
+                </nav> <!-- .site-nav -->
+
+
+            </div> <!-- .row -->
+        </div> <!-- .container -->
+    </header> <!-- .templateux-navba -->
+
+
+
+    {% block content %}
+    {% endblock %}
+
+</div>
+
+    {% block content2 %}
+    {% endblock %}
+
+    <footer class="templateux-footer bg-light" style="border: 4px; border-radius: 14px; margin:16px; 
+            box-shadow:5px 5px 15px grey; z-index:10">
+        <div class="container" style=" ">
+
+            <div class="row mb-5">
+                <div class="col-md-4 pr-md-5">
+                    <div class="block-footer-widget" style="color:black">
+                        <h3>About</h3>
+                        <p>Speedy Fast technical support service provided at minimal cost.</p>
+                        <p style="color:grey">Copyright &copy;<script>document.write(new Date().getFullYear());</script>
+                        All rights reserved</p>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="block-footer-widget">
+                                <h3>Learn More</h3>
+                                <ul class="list-unstyled">
+                                    <li><a href="#">How it works?</a></li>
+                                    <li><a href="#">Useful Tools</a></li>
+                                    <li><a href="#">Pricing</a></li>
+                                    <li><a href="#">Sitemap</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="block-footer-widget">
+                                <h3>Support</h3>
+                                <ul class="list-unstyled">
+                                    <li><a href="#">FAQ</a></li>
+                                    <li><a href="#">Contact Us</a></li>
+                                    <li><a href="#">Help Desk</a></li>
+                                    <li><a href="#">Knowledgebase</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="block-footer-widget">
+                                <h3>About Us</h3>
+                                <ul class="list-unstyled">
+                                    <li><a href="#">About Us</a></li>
+                                    <li><a href="#">Careers</a></li>
+                                    <li><a href="#">Terms of Service</a></li>
+                                    <li><a href="#">Privacy Policy</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="block-footer-widget">
+                                <a href="#" class="btn btn-primary mb-3">Download for free</a>
+                                <p>Connect With Us</p>
+                                <ul class="list-unstyled block-social">
+                                    <li><a href="#" class="p-1"><span class="icon-facebook-square"></span></a></li>
+                                    <li><a href="#" class="p-1"><span class="icon-twitter"></span></a></li>
+                                    <li><a href="#" class="p-1"><span class="icon-github"></span></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div> <!-- .row -->
+
+                </div>
+            </div> <!-- .row -->
+
+        </div>
+    </footer>
+<script>
+$(window).on('load',function(){
+        $('#myModal').modal('show');
+    });
+    var prevScrollpos = window.pageYOffset;
+window.onscroll = function() {
+  var currentScrollPos = window.pageYOffset;
+  if (prevScrollpos > currentScrollPos) {
+    document.getElementById("navbar").style.top = "0";
+  } else {
+    document.getElementById("navbar").style.top = "-100px";
+  }
+  prevScrollpos = currentScrollPos;
+}
+
+setTimeout(fade_out, 3000);
+
+function fade_out() {
+  $('#myModal').modal('hide');
+}
+</script>
+
+</body>
+</html>

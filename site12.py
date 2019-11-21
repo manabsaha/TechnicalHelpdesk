@@ -219,96 +219,6 @@ def about():
         return render_template('site/about.html',designation=designation, user=user)
     return render_template('site/about.html')
 
-#All_tickets method.
-@app.route('/all_tickets/', methods=['GET', 'POST'])
-def all_tickets():
-    if 'loggedin' in session and session['designation']=="customer_care":
-        user = escape(session['id'])
-        designation = escape(session['designation'])
-        cur=mysql.connection.cursor()
-        cur.execute("SELECT ticket_id, user_id, fname, app_date,app_type,status FROM ticket")
-        data=cur.fetchall()
-        return render_template('site/all_tickets.html',data=data, designation=designation, user=user,success_msg = "Feedback sent")
-    if 'loggedin' in session:
-        return redirect(url_for('services'))
-    return redirect(url_for('login'))
-
-#inventory redirect method
-@app.route('/all_tickets/<int:id>', methods=['GET', 'POST'])
-def all_ticket(id):
-    if 'loggedin' in session and session['designation']=="customer_care":
-        return redirect(url_for('inventory_add', ticket_id=id))
-    return redirect(url_for('login'))
-
-
-#inventory add method
-@app.route('/inventory_add/<int:ticket_id>', methods=['GET', 'POST'])
-def inventory_add(ticket_id):
-    print(ticket_id)
-    if 'loggedin' in session and session['designation']=="customer_care":
-        if request.method == 'POST':
-            product_type = request.form['product_type']
-            product_name = request.form['product_name']
-            product_description = request.form['product_description']
-            fault_type = request.form['fault_type']
-            fault_description = request.form['fault_description']
-            curr_date = date.today()
-            cur=mysql.connection.cursor()
-            try:
-                print('aca')
-                cur.execute("""INSERT INTO inventory(ticket_id, product_name,product_type, product_description, fault_type, 
-                    fault_description, record_date) 
-                    values(%s,%s,%s,%s,%s,%s,%s)""",
-                            (ticket_id, product_name, product_type, product_description, fault_type, fault_description, curr_date))
-                mysql.connection.commit()
-                return redirect(url_for('home'))
-            except:
-                cur.execute("""CREATE TABLE inventory (inventory_id int AUTO_INCREMENT,
-                                                    ticket_id int NOT NULL,
-                                                    product_name varchar(50),
-                                                    product_type varchar(50),
-                                                    product_description varchar(100),
-                                                    fault_type varchar(50),
-                                                    fault_description varchar(200),
-                                                    record_date date,
-                                                    PRIMARY KEY (inventory_id),
-                                                    FOREIGN KEY (ticket_id)
-                                                    REFERENCES ticket(ticket_id))AUTO_INCREMENT=10001""")
-                cur.execute("""INSERT INTO inventory(ticket_id, product_name,product_type, product_description, fault_type, 
-                               fault_description, record_date) 
-                               values(%s,%s,%s,%s,%s,%s,%s)""",
-                            (ticket_id, product_name, product_type, product_description, fault_type, fault_description, curr_date))
-                mysql.connection.commit()
-                return redirect(url_for('all_tickets'))
-        gc.collect()
-        return render_template('employee/add_inventory.html',date=date.today(), user=escape(session['id']))
-    else:
-        return redirect(url_for('home'))
-
-
-#Services method.
-@app.route('/services/', methods=['GET', 'POST'])
-def services():
-    if 'loggedin' in session and session['designation']=="customer":
-        user = escape(session['id'])
-        designation = escape(session['designation'])
-        cur=mysql.connection.cursor()
-        cur.execute("SELECT ticket_id,app_date,app_type,status FROM ticket where user_id=%s",(user,))
-        data=cur.fetchall()
-        return render_template('site/services.html',data=data, designation=designation, user=user,success_msg = "Feedback sent")
-    return redirect(url_for('login'))
-
-#Cancel Ticket method.
-@app.route('/services/<int:id>')
-def cancel(id):
-    if 'loggedin' in session and session['designation']=="customer":
-        cur=mysql.connection.cursor()
-        status = "CANCELLED BY USER"
-        cur.execute("""UPDATE ticket SET status=%s WHERE ticket_id=%s""",(status,id))
-        mysql.connection.commit()
-        return redirect(url_for('services'))
-    return redirect(url_for('login'))
-
 
 #Profile Method.
 @app.route('/profile/', methods=['GET', 'POST'])
@@ -406,6 +316,111 @@ def contact():
             mysql.connection.commit()
             return redirect(url_for('home'))
         return render_template('site/contact.html', user=user, designation=designation)
+    return redirect(url_for('login'))
+
+
+#-----------------------------------------SERVICES---------------------------------------------#
+
+#Services method.
+@app.route('/services/', methods=['GET', 'POST'])
+def services():
+    if 'loggedin' in session and session['designation']=="customer":
+        user = escape(session['id'])
+        designation = escape(session['designation'])
+        cur=mysql.connection.cursor()
+        cur.execute("SELECT ticket_id,app_date,app_type,status FROM ticket where user_id=%s",(user,))
+        data=cur.fetchall()
+        return render_template('site/services.html',data=data, designation=designation, user=user,success_msg = "Feedback sent")
+    return redirect(url_for('login'))
+
+#All_tickets method.
+@app.route('/all_tickets/', methods=['GET', 'POST'])
+def all_tickets():
+    if 'loggedin' in session and session['designation']=="customer_care":
+        user = escape(session['id'])
+        designation = escape(session['designation'])
+        cur=mysql.connection.cursor()
+        cur.execute("SELECT ticket_id, user_id, fname, app_date,app_type,status FROM ticket")
+        data=cur.fetchall()
+        return render_template('site/all_tickets.html',data=data, designation=designation, user=user,success_msg = "Feedback sent")
+    if 'loggedin' in session:
+        return redirect(url_for('services'))
+    return redirect(url_for('login'))
+
+#inventory redirect method
+@app.route('/all_tickets/<int:id>', methods=['GET', 'POST'])
+def all_ticket(id):
+    if 'loggedin' in session and session['designation']=="customer_care":
+        return redirect(url_for('inventory_add', ticket_id=id))
+    return redirect(url_for('login'))
+
+
+#inventory add method
+@app.route('/inventory_add/<int:ticket_id>', methods=['GET', 'POST'])
+def inventory_add(ticket_id):
+    print(ticket_id)
+    if 'loggedin' in session and session['designation']=="customer_care":
+        if request.method == 'POST':
+            product_type = request.form['product_type']
+            product_name = request.form['product_name']
+            product_description = request.form['product_description']
+            fault_type = request.form['fault_type']
+            fault_description = request.form['fault_description']
+            curr_date = date.today()
+            cur=mysql.connection.cursor()
+            try:
+                print('aca')
+                cur.execute("""INSERT INTO inventory(ticket_id, product_name,product_type, product_description, fault_type, 
+                    fault_description, record_date) 
+                    values(%s,%s,%s,%s,%s,%s,%s)""",
+                            (ticket_id, product_name, product_type, product_description, fault_type, fault_description, curr_date))
+
+                mysql.connection.commit()
+                cur.execute("""UPDATE ticket SET status=%s WHERE ticket_id=%s""",('Inventory',ticket_id))
+                mysql.connection.commit()
+                return redirect(url_for('all_tickets'))
+            except:
+                cur.execute("""CREATE TABLE inventory (inventory_id int AUTO_INCREMENT,
+                                                    ticket_id int NOT NULL,
+                                                    product_name varchar(50),
+                                                    product_type varchar(50),
+                                                    product_description varchar(100),
+                                                    fault_type varchar(50),
+                                                    fault_description varchar(200),
+                                                    record_date date,
+                                                    PRIMARY KEY (inventory_id),
+                                                    FOREIGN KEY (ticket_id)
+                                                    REFERENCES ticket(ticket_id))AUTO_INCREMENT=10001""")
+                cur.execute("""INSERT INTO inventory(ticket_id, product_name,product_type, product_description, fault_type, 
+                               fault_description, record_date) 
+                               values(%s,%s,%s,%s,%s,%s,%s)""",
+                            (ticket_id, product_name, product_type, product_description, fault_type, fault_description, curr_date))
+                mysql.connection.commit()
+                cur.execute("""UPDATE ticket SET status=%s WHERE ticket_id=%s""",('Inventory',ticket_id))
+                mysql.connection.commit()
+                return redirect(url_for('all_tickets'))
+        gc.collect()
+        return render_template('employee/add_inventory.html',date=date.today(), user=escape(session['id']))
+    else:
+        return redirect(url_for('home'))
+
+#Ticket details method
+app.route('/ticket_details/<int:id>')
+def ticket_details(id):
+    return "hi"
+    if 'loggedin' in session and session['designation']=="customer_care":
+         return render_template('employee/ticket/ticket_details.html',ticket_id=id)
+    return redirect(url_for('home'))
+
+#Cancel Ticket method.
+@app.route('/services/<int:id>')
+def cancel(id):
+    if 'loggedin' in session and session['designation']=="customer":
+        cur=mysql.connection.cursor()
+        status = "CANCELLED BY USER"
+        cur.execute("""UPDATE ticket SET status=%s WHERE ticket_id=%s""",(status,id))
+        mysql.connection.commit()
+        return redirect(url_for('services'))
     return redirect(url_for('login'))
 
 
