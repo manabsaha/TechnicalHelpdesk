@@ -349,11 +349,31 @@ def cancel(id):
 def all_tickets():
     if 'EmpAccess' in session:
         user = escape(session['id'])
-        designation = escape(session['designation'])
         cur=mysql.connection.cursor()
-        cur.execute("SELECT ticket_id, user_id, fname, app_date,app_type,status FROM ticket")
+        cur.execute("SELECT ticket_id, user_id, fname, app_date,app_type,status FROM ticket where status='processing'")
         data=cur.fetchall()
         return render_template('employee/ticket/all_tickets.html',data=data,user=user,desg=session['designation'])
+    return redirect(url_for('emp'))
+
+#Inventory method.
+@app.route('/emp/inventory/', methods=['GET', 'POST'])
+def inventory():
+    if 'EmpAccess' in session:
+        user = escape(session['id'])
+        cur=mysql.connection.cursor()
+        cur.execute("SELECT * FROM inventory")
+        data=cur.fetchall()
+        return render_template('employee/ticket/inventory.html',data=data,user=user,desg=session['designation'])
+    return redirect(url_for('emp'))
+
+#Inventory details method
+@app.route('/emp/inventory/<int:id>')
+def inventory_details(id):
+    if 'EmpAccess' in session:
+        cur=mysql.connection.cursor()
+        cur.execute("""SELECT * FROM ticket WHERE ticket_id=%s""",(id,))
+        return render_template('employee/ticket/inventory_details.html',ticket=cur.fetchone(),
+            desg=session['designation'])
     return redirect(url_for('emp'))
 
 #Inventory redirect method
