@@ -13,6 +13,7 @@
 <script src="/static/js/scripts-all.js"></script>
 <script src="/static/js/main.js"></script>
 
+
 <style>
 
     hr{
@@ -41,7 +42,7 @@
 <div class="js-animsition animsition " id="site-wrap"  data-animsition-in-class="fade-in"
      data-animsition-out-class="fade-out"  >
 
-    <header class="templateux-navbar dark shadow-lg p-4 mb-4 fixedbar" id="navbar" role="banner"
+    <header class="templateux-navbar dark shadow-lg p-4 mb-4 fixed-top" id="navbar" role="banner"
         style=" z-index:10; background-image: url(/static/images/navbg.jpg); background-size:110%;  border-radius: 5px;">
 
         <div class="container" data-aos="fade-down"  style="position: relative; z-index:12;">
@@ -73,19 +74,19 @@
                             {%endif%}
 
                             {%if desg=="MANAGER"%}
-                            <li><a href="" class="animsition-link" style="color:black">Stats</a></li>
+                            <li><a href="#" class="animsition-link" style="color:black">Stats</a></li>
                             <li style="z-index:1000;">
-                                <a href="" class="animsition-link">Tickets</a>
+                                <a href="#" class="animsition-link">Tickets</a>
                                 <ul>
                                   <li ><a href="#">Service 1</a></li>
                                   <li style="z-index:1000;"><a href="#">Service 2</a></li>
                                 </ul>
                             </li>
-                            <li style="z-index:1000;">
-                                <a href="" class="animsition-link">Inventory</a>
+                            <li style="z-index:999;">
+                                <a href="#" class="animsition-link">Inventory</a>
                                 <ul>
                                   <li ><a href="#">Service 1</a></li>
-                                  <li style="z-index:1000;"><a href="#">Service 2</a></li>
+                                  <li style="z-index:999;"><a href="#">Service 2</a></li>
                                 </ul>
                             </li>
                             <li><a href="/emp/profile" class="animsition-link" style="color:black">Profile</a></li>
@@ -134,8 +135,9 @@ $(window).on('load',function(){
     var prevScrollpos = window.pageYOffset;
 window.onscroll = function() {
   var currentScrollPos = window.pageYOffset;
-  if (prevScrollpos > currentScrollPos) {
-    document.getElementById("navbar").style.top = "0";
+    console.log(currentScrollPos+1000+'px')
+if (prevScrollpos > currentScrollPos) {
+    document.getElementById("navbar").style.top = "0px";
   } else {
     document.getElementById("navbar").style.top = "-100px";
   }
