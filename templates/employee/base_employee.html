@@ -74,15 +74,28 @@
 
                             {%if desg=="MANAGER"%}
                             <li><a href="" class="animsition-link" style="color:black">Stats</a></li>
-                            <li><a href="" class="animsition-link" style="color:black">Tickets</a></li>
-                            <li><a href="" class="animsition-link" style="color:black">Profile</a></li>
+                            <li style="z-index:1000;">
+                                <a href="" class="animsition-link">Tickets</a>
+                                <ul>
+                                  <li ><a href="#">Service 1</a></li>
+                                  <li style="z-index:1000;"><a href="#">Service 2</a></li>
+                                </ul>
+                            </li>
+                            <li style="z-index:1000;">
+                                <a href="" class="animsition-link">Inventory</a>
+                                <ul>
+                                  <li ><a href="#">Service 1</a></li>
+                                  <li style="z-index:1000;"><a href="#">Service 2</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="/emp/profile" class="animsition-link" style="color:black">Profile</a></li>
                             <li><a href="/emp/logout" style="color:darkred">LOGOUT MANAGER<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
                             {%endif%}
 
                             {%if desg=="TECHNICIAN"%}
                             <li><a href="" class="animsition-link" style="color:black">Stats</a></li>
                             <li><a href="" class="animsition-link" style="color:black">Tickets</a></li>
-                            <li><a href="" class="animsition-link" style="color:black">Profile</a></li>
+                            <li><a href="/emp/profile" class="animsition-link" style="color:black">Profile</a></li>
                             <li><a href="/emp/logout" style="color:darkred">LOGOUT TECHNICIAN<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
                             {%endif%}
 
