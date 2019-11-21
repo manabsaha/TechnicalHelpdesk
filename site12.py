@@ -405,11 +405,10 @@ def inventory_add(ticket_id):
         return redirect(url_for('home'))
 
 #Ticket details method
-app.route('/ticket_details/<int:id>')
+@app.route('/ticket_details/<int:id>', methods=['GET', 'POST'])
 def ticket_details(id):
-    return "hi"
     if 'loggedin' in session and session['designation']=="customer_care":
-         return render_template('employee/ticket/ticket_details.html',ticket_id=id)
+         return render_template('employee/ticket/ticket_details.html', ticket_id=id)
     return redirect(url_for('home'))
 
 #Cancel Ticket method.
