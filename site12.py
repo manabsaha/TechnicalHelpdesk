@@ -231,40 +231,57 @@ def all_tickets():
         return redirect(url_for('services'))
     return redirect(url_for('login'))
 
-#inventory_add method
-@app.route('/all_tickets/<int:id>')
-def add_to_inventory(id):
+#inventory redirect method
+@app.route('/all_tickets/<int:id>', methods=['GET', 'POST'])
+def all_ticket(id):
     if 'loggedin' in session and session['designation']=="customer_care":
-        cur=mysql.connection.cursor()
-    try:
-        cur.execute("""INSERT INTO inventory(inventory_id, product_name, product_type, phone, address, app_date, curr_date,app_type) 
-              values(%s,%s,%s,%s,%s,%s,%s,%s)""",
-                    (session['id'], fname, lname, phone, address, app_date, curr_date, type))
-        mysql.connection.commit()
-        return redirect(url_for('home'))
-    except:
-        cur.execute("""CREATE TABLE ticket (ticket_id int AUTO_INCREMENT,
-                                              user_id int NOT NULL,
-                                              fname varchar(20),
-                                              lname varchar(20),
-                                              phone bigint(10),
-                                              address varchar(100),
-                                              app_date date, 
-                                              curr_date date,
-                                              app_type varchar(20) CHECK(app_type IN ('Appointment','Pickup')),
-                                              status varchar(20) DEFAULT 'Processing',
-                                              PRIMARY KEY (ticket_id),
-                                              FOREIGN KEY (user_id)
-                                              REFERENCES user(user_id))AUTO_INCREMENT=10001""")
-        cur.execute("""INSERT INTO ticket(user_id,fname, lname, phone, address, app_date, curr_date,app_type) 
-              values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date,
-                                                   curr_date, type))
-        mysql.connection.commit()
-        return redirect(url_for('home'))
-
-        mysql.connection.commit()
-        return redirect(url_for('all_tickets'))
+        return redirect(url_for('inventory_add', ticket_id=id))
     return redirect(url_for('login'))
+
+
+#inventory add method
+@app.route('/inventory_add/<int:ticket_id>', methods=['GET', 'POST'])
+def inventory_add(ticket_id):
+    print(ticket_id)
+    if 'loggedin' in session and session['designation']=="customer_care":
+        if request.method == 'POST':
+            product_type = request.form['product_type']
+            product_name = request.form['product_name']
+            product_description = request.form['product_description']
+            fault_type = request.form['fault_type']
+            fault_description = request.form['fault_description']
+            curr_date = date.today()
+            cur=mysql.connection.cursor()
+            try:
+                print('aca')
+                cur.execute("""INSERT INTO inventory(ticket_id, product_name,product_type, product_description, fault_type, 
+                    fault_description, record_date) 
+                    values(%s,%s,%s,%s,%s,%s,%s)""",
+                            (ticket_id, product_name, product_type, product_description, fault_type, fault_description, curr_date))
+                mysql.connection.commit()
+                return redirect(url_for('home'))
+            except:
+                cur.execute("""CREATE TABLE inventory (inventory_id int AUTO_INCREMENT,
+                                                    ticket_id int NOT NULL,
+                                                    product_name varchar(50),
+                                                    product_type varchar(50),
+                                                    product_description varchar(100),
+                                                    fault_type varchar(50),
+                                                    fault_description varchar(200),
+                                                    record_date date,
+                                                    PRIMARY KEY (inventory_id),
+                                                    FOREIGN KEY (ticket_id)
+                                                    REFERENCES ticket(ticket_id))AUTO_INCREMENT=10001""")
+                cur.execute("""INSERT INTO inventory(ticket_id, product_name,product_type, product_description, fault_type, 
+                               fault_description, record_date) 
+                               values(%s,%s,%s,%s,%s,%s,%s)""",
+                            (ticket_id, product_name, product_type, product_description, fault_type, fault_description, curr_date))
+                mysql.connection.commit()
+                return redirect(url_for('all_tickets'))
+        gc.collect()
+        return render_template('employee/add_inventory.html',date=date.today(), user=escape(session['id']))
+    else:
+        return redirect(url_for('home'))
 
 
 #Services method.

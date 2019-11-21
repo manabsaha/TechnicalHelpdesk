@@ -74,7 +74,9 @@
                         <td>{{ i['app_date'] }}</td>
                         <td>{{ i['app_type'] }}</td>
                         <td>{{ i['status'] }}</td>
-                        <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-primary" ><a href="/all_tickets/{{ i['ticket_id'] }}" style="color:white">View details</a></p></td>
+                        <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-primary" >
+                            
+                            <a href="/all_tickets/{{ i['ticket_id'] }}" style="color:white">Add to inventory</a></p></td>
 
                     </tr>
                     {% endfor %}
