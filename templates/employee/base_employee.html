@@ -24,7 +24,7 @@
     .fixedbar {
     height:90px;
         min-height:0px;
-      overflow: hidden;
+      overflow: show;
       background-color: #333;
       position: fixed; /* Set the navbar to fixed position */
       top: 0; /* Position the navbar at the top of the page */
@@ -42,7 +42,7 @@
 <div class="js-animsition animsition " id="site-wrap"  data-animsition-in-class="fade-in"
      data-animsition-out-class="fade-out"  >
 
-    <header class="templateux-navbar dark shadow-lg p-4 mb-4 fixed-top" id="navbar" role="banner"
+    <header class="templateux-navbar dark shadow-lg p-4 mb-4 fixedbar" id="navbar" role="banner"
         style=" z-index:10; background-image: url(/static/images/navbg.jpg); background-size:110%;  border-radius: 5px;">
 
         <div class="container" data-aos="fade-down"  style="position: relative; z-index:12;">
@@ -85,6 +85,7 @@
                             </li>
 
                             <li>
+
 
                                 <a href="" class="animsition-link">Inventory</a>
                                 <ul>
