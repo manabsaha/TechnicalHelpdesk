@@ -519,8 +519,87 @@ def emp_logout():
 @app.route('/emp',methods=['GET','POST'])
 def emp():
     if 'EmpAccess' in session:
+        print(session['designation'])
         return render_template('/employee/employee.html',desg=session['designation'])
     return redirect(url_for('emp_access'))
+
+#Employee Profile Method.
+@app.route('/emp_profile/', methods=['GET', 'POST'])
+def emp_profile():
+    if 'EmpAccess' in session:
+        user = escape(session['id'])
+        designation = escape(session['designation'])
+        cur = mysql.connection.cursor()
+        cur.execute("""select * from employee where employee_id= %s""", (user,))
+        d = cur.fetchone()
+        pic_url = d['picture']
+        if request.method=='POST':
+            if request.form['submit']=="edit":
+                return redirect(url_for('edit_emp_profile'))
+            if request.form['submit']=="change":
+                return redirect(url_for('change_password'))
+        return render_template('employee/emp_profile.html',desg=session['designation'], data=d,user=user,pic=pic_url)
+    return redirect(url_for('login'))
+
+#Edit Employee profile method.
+@app.route('/edit_emp_profile/', methods=['GET', 'POST'])
+def edit_emp_profile():
+    if 'loggedin' in session:
+        user = escape(session['id'])
+        designation = escape(session['designation'])
+        cur = mysql.connection.cursor()
+        cur.execute("""select * from user where user_id= %s""", (session['id'],))
+        d = cur.fetchone()
+        pic_url = d['picture']
+        if request.method == 'POST':
+            fname = request.form['fname']
+            lname = request.form['lname']
+            phone = request.form['phone']
+            address = request.form['address']
+            pincode = request.form['pincode']
+            file = request.files['display_pic']
+            try:
+                cur.execute("""update user set fname=%s,lname=%s,phone=%s,address=%s,pincode=%s where user_id=%s""", (
+                    fname, lname, phone, address, pincode, session['id'],))
+                if file.filename!= '':
+                    firebase = pyrebase.initialize_app(config)
+                    storage = firebase.storage()
+                    storage.child("images/"+user+"/new.jpg").put(file)
+                    new_pic_url = storage.child("images/" + user + "/new.jpg").get_url(None)
+                    cur.execute("""update user set picture=%s where user_id=%s""",(new_pic_url,session['id']))
+            except:
+                pass
+            mysql.connection.commit()
+            return redirect(url_for('profile'))
+        return render_template('reg-login/edit_profile.html',designation=designation, data=d,user=user,pic=pic_url)
+    return redirect(url_for('home'))
+
+#Change employee password method.
+@app.route('/change_emp_password/', methods=['GET','POST'])
+def change_emp_password():
+    if 'loggedin' in session:
+        cur = mysql.connection.cursor()
+        user = escape(session['id'])
+        designation = escape(session['designation'])
+        if request.method == 'POST':
+            old_pass = request.form['pass']
+            password = request.form['password']
+
+            cur.execute("""SELECT hash_password FROM user where user_id = %s""", (session['id'],))
+            psw = cur.fetchone()
+            hash_password = psw['hash_password']
+            check_pass = bcrypt.hashpw(old_pass.encode('utf8'), hash_password.encode('utf8'))
+            if (check_pass == hash_password.encode('utf8')):
+                new_hash = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
+                cur.execute("""update user set hash_password=%s where user_id = %s""", (new_hash, session['id'],))
+
+            else:
+                msg = '*Incorrect password!'
+                return render_template('reg-login/change_pass.html',designation=designation, msg=msg,user=user)
+            mysql.connection.commit()
+            return redirect(url_for('profile'))
+        return render_template('reg-login/change_pass.html',designation=designation, user=user)
+    return redirect(url_for('home'))
 
 
 #ADMIN PANEL
