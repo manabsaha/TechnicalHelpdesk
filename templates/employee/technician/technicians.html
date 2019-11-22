@@ -69,7 +69,7 @@
                     {% for i in data %}
                     <tr>
                         <td><img src={{ i['picture'] }} style="margin-left:auto;margin-right:auto;display:block;
-                            border-radius:50%;width:150px;height:150px;" alt="can't load" class="w3-round img-fluid"></td>
+                            border-radius:50%;width:50px;height:50px;" alt="can't load" class="w3-round img-fluid"></td>
                         <td>{{ i['employee_id'] }}</td>
                         <td>{{ i['fname']+" "+i['lname'] }}</td>
                         <td>{{ i['phone'] }}</td>
@@ -78,7 +78,7 @@
                         <td>{{ i['job_status'] }}</td>
                         <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-primary" style="color:white;width: 180px;" >
 
-                          <a href="" style="color:white">ACTIONS</a></p></td>
+                          <a href="" style="color:white">DETAILS</a></p></td>
 
                     </tr>
                     {% endfor %}
