@@ -63,6 +63,7 @@
                         <th>Product Type</th>
                         <th>Fault Type</th>
                         <th>Record Date</th>
+                        <th>Status</th>
                         <th>Options</th>
                     </tr>
                     {% for i in data %}
@@ -72,6 +73,7 @@
                         <td>{{ i['product_type'] }}</td>
                         <td>{{ i['fault_type'] }}</td>
                         <td>{{ i['record_date'] }}</td>
+                        <td>{{ i['status'] }}</td>
                         <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-primary" style="color:white;width: 180px;" >
 
                           <a href="/emp/inventory/{{ i['ticket_id'] }}" style="color:white">View ticket</a></p></td>
