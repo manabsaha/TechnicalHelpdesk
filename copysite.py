@@ -269,6 +269,18 @@ def contact():
     return redirect(url_for('login'))
 
 
+#-----------------------------------------TECHNICIAN--------------------------------------------#
+
+#All technicians method.
+@app.route('/emp/technicians/', methods=['GET', 'POST'])
+def technicians():
+    if 'EmpAccess' in session and session['designation']=='MANAGER':
+        user = escape(session['id'])
+        cur=mysql.connection.cursor()
+        cur.execute("SELECT * FROM employee where designation='TECHNICIAN';")
+        data=cur.fetchall()
+        return render_template('employee/technician/technicians.html',tab="TECHNICIAN",data=data,user=user,desg=session['designation'])
+    return redirect(url_for('emp'))
 #-----------------------------------------SERVICES---------------------------------------------#
 
 #Services method.
@@ -347,7 +359,7 @@ def cancel(id):
 #All_tickets method.
 @app.route('/emp/all_tickets/', methods=['GET', 'POST'])
 def all_tickets():
-    if 'EmpAccess' in session:
+    if 'EmpAccess' in session and session['designation']=='EXECUTIVE':
         user = escape(session['id'])
         cur=mysql.connection.cursor()
         cur.execute("SELECT ticket_id, user_id, fname, app_date,app_type,status FROM ticket where status='processing'")
@@ -361,7 +373,18 @@ def inventory():
     if 'EmpAccess' in session:
         user = escape(session['id'])
         cur=mysql.connection.cursor()
-        cur.execute("SELECT * FROM inventory")
+        cur.execute("SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id;")
+        data=cur.fetchall()
+        return render_template('employee/ticket/inventory.html',tab="inventory",data=data,user=user,desg=session['designation'])
+    return redirect(url_for('emp'))
+
+#Pending Inventory method(For manager).
+@app.route('/emp/pending_inventory/', methods=['GET', 'POST'])
+def pending_inventory():
+    if 'EmpAccess' in session:
+        user = escape(session['id'])
+        cur=mysql.connection.cursor()
+        cur.execute("SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id and status='inventory';")
         data=cur.fetchall()
         return render_template('employee/ticket/inventory.html',tab="inventory",data=data,user=user,desg=session['designation'])
     return redirect(url_for('emp'))
