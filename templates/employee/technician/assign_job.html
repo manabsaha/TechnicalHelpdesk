@@ -52,7 +52,7 @@
      <div class="inner12 p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="300" style="height:150%; margin-top:100px;background: url(/static/images/slider-5.jpg);background-size: 100%; background-repeat: repeat-y;" >
 
         <form>
-            <h3 style="text-align:center; padding-top:50px; padding-bottom:15px">TECHNICIAN RECORD</h3>
+            <h3 style="text-align:center; padding-top:50px; padding-bottom:15px">ASSIGN TICKET</h3>
             <hr style="margin-bottom:15px">
             <div class="item form-wrapper">
                 <table class="table table-bordered" style="text-align:center; margin-bottom:100px;">
@@ -60,9 +60,7 @@
                         <th>Photo</th>
                         <th>Employee ID</th>
                         <th>Name</th>
-                        <th>Phone</th>
                         <th>Tickets alloted</th>
-                        <th>Job Status</th>
                         <th>Options</th>
                     </tr>
                     {% for i in data %}
@@ -71,16 +69,14 @@
                             border-radius:50%;width:50px;height:50px;vertical-align: middle;" alt="can't load" class="w3-round img-fluid"></td>
                         <td style="vertical-align: middle;">{{ i['employee_id'] }}</td>
                         <td style="vertical-align: middle;">{{ i['fname']+" "+i['lname'] }}</td>
-                        <td style="vertical-align: middle;">{{ i['phone'] }}</td>
                         {% for c in count %}
                         {% if (i['employee_id']==c['employee_id'])%}
                             <td style="vertical-align: middle;">{{ c['count(*)'] }}</td>
                         {% endif %}
                         {% endfor %}
-                        <td style="vertical-align: middle;">{{ i['job_status'] }}</td>
                         <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-primary" style="color:white;width: 180px;vertical-align: middle;" >
 
-                          <a href="" style="color:white">DETAILS</a></p></td>
+                          <a href="" style="color:white">ASSIGN TICKET</a></p></td>
 
                     </tr>
                     {% endfor %}
