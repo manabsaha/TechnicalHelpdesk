@@ -59,7 +59,7 @@ def home():
         cur.execute("""SELECT fname FROM user where user_id=%s""",(user,))
         name = cur.fetchone()
         name = name['fname']
-        return render_template('site/index.html',designation=designation, user=user,name=name,login_flag=True)
+        return render_template('site/index.html',designation=designation, user=user,name=name,login_flag=True,tab="home")
     if 'SuperuserAccess' in session:
         return redirect(url_for('super_panel'))
         #return render_template('superuser/superuser_panel.html',desg="SUPERUSER",log=session['SuperuserAccess'])
@@ -69,7 +69,7 @@ def home():
     if 'ManagerAccess' in session:
         return redirect(url_for('manager_panel'))
         #return render_template('manager/manager_panel.html',desg="MANAGER",log=session['ManagerAccess'])
-    return render_template('site/index.html')
+    return render_template('site/index.html',tab="home")
 
 
 #Register method.
@@ -166,8 +166,8 @@ def about():
     if 'loggedin' in session:
         user = escape(session['id'])
         designation = escape(session['designation'])
-        return render_template('site/about.html',designation=designation, user=user)
-    return render_template('site/about.html')
+        return render_template('site/about.html',designation=designation, user=user,tab="about")
+    return render_template('site/about.html',tab="about")
 
 
 #Profile Method.
@@ -185,7 +185,7 @@ def profile():
                 return redirect(url_for('edit_profile'))
             if request.form['submit']=="change":
                 return redirect(url_for('change_password'))
-        return render_template('site/profile.html',designation=designation, data=d,user=user,pic=pic_url)
+        return render_template('site/profile.html',tab="profile",designation=designation, data=d,user=user,pic=pic_url)
     return redirect(url_for('login'))
 
 #Edit profile method.
@@ -218,7 +218,7 @@ def edit_profile():
                 pass
             mysql.connection.commit()
             return redirect(url_for('profile'))
-        return render_template('reg-login/edit_profile.html',designation=designation, data=d,user=user,pic=pic_url)
+        return render_template('reg-login/edit_profile.html',tab="profile",designation=designation, data=d,user=user,pic=pic_url)
     return redirect(url_for('home'))
 
 #Change password method.
@@ -242,10 +242,10 @@ def change_password():
 
             else:
                 msg = '*Incorrect password!'
-                return render_template('reg-login/change_pass.html',designation=designation, msg=msg,user=user)
+                return render_template('reg-login/change_pass.html',tab="profile",designation=designation, msg=msg,user=user)
             mysql.connection.commit()
             return redirect(url_for('profile'))
-        return render_template('reg-login/change_pass.html',designation=designation, user=user)
+        return render_template('reg-login/change_pass.html',tab="profile",designation=designation, user=user)
     return redirect(url_for('home'))
 
 
@@ -265,7 +265,7 @@ def contact():
                 cur.execute("""INSERT INTO feedback values(%s,%s)""", (user,feedback))
             mysql.connection.commit()
             return redirect(url_for('home'))
-        return render_template('site/contact.html', user=user, designation=designation)
+        return render_template('site/contact.html',tab="contact", user=user, designation=designation)
     return redirect(url_for('login'))
 
 
@@ -280,7 +280,7 @@ def services():
         cur=mysql.connection.cursor()
         cur.execute("SELECT ticket_id,app_date,app_type,status FROM ticket where user_id=%s",(user,))
         data=cur.fetchall()
-        return render_template('site/services.html',data=data, designation=designation, user=user)
+        return render_template('site/services.html',tab="services",data=data, designation=designation, user=user)
     return redirect(url_for('login'))
 
 #Ticket Generate method.
@@ -329,7 +329,7 @@ def ticket():
             mysql.connection.commit()
             return redirect(url_for('services'))
     gc.collect()
-    return render_template('forms/ticket.html',designation=escape(session['designation']), data=data,date=date.today(),
+    return render_template('forms/ticket.html',tab="services",designation=escape(session['designation']), data=data,date=date.today(),
         user=escape(session['id']))
 
 #Cancel Ticket method.
@@ -352,7 +352,7 @@ def all_tickets():
         cur=mysql.connection.cursor()
         cur.execute("SELECT ticket_id, user_id, fname, app_date,app_type,status FROM ticket where status='processing'")
         data=cur.fetchall()
-        return render_template('employee/ticket/all_tickets.html',data=data,user=user,desg=session['designation'])
+        return render_template('employee/ticket/all_tickets.html',tab="tickets",data=data,user=user,desg=session['designation'])
     return redirect(url_for('emp'))
 
 #Inventory method.
@@ -363,7 +363,7 @@ def inventory():
         cur=mysql.connection.cursor()
         cur.execute("SELECT * FROM inventory")
         data=cur.fetchall()
-        return render_template('employee/ticket/inventory.html',data=data,user=user,desg=session['designation'])
+        return render_template('employee/ticket/inventory.html',tab="inventory",data=data,user=user,desg=session['designation'])
     return redirect(url_for('emp'))
 
 #Inventory details method
@@ -372,7 +372,7 @@ def inventory_details(id):
     if 'EmpAccess' in session:
         cur=mysql.connection.cursor()
         cur.execute("""SELECT * FROM ticket WHERE ticket_id=%s""",(id,))
-        return render_template('employee/ticket/inventory_details.html',ticket=cur.fetchone(),
+        return render_template('employee/ticket/inventory_details.html',tab="inventory",ticket=cur.fetchone(),
             desg=session['designation'])
     return redirect(url_for('emp'))
 
@@ -427,7 +427,7 @@ def inventory_add(ticket_id):
                 mysql.connection.commit()
                 return redirect(url_for('all_tickets'))
         gc.collect()
-        return render_template('employee/ticket/add_inventory.html',date=date.today(), 
+        return render_template('employee/ticket/add_inventory.html',tab="tickets",date=date.today(), 
             user=escape(session['id']),desg=session['designation'])
     else:
         return redirect(url_for('emp'))
@@ -438,7 +438,7 @@ def ticket_details(id):
     if 'EmpAccess' in session:
         cur=mysql.connection.cursor()
         cur.execute("""SELECT * FROM inventory WHERE ticket_id=%s""",(id,))
-        return render_template('employee/ticket/ticket_details.html',ticket=cur.fetchone(),
+        return render_template('employee/ticket/ticket_details.html',tab="inventory",ticket=cur.fetchone(),
             desg=session['designation'])
     return redirect(url_for('emp'))
 
@@ -539,7 +539,7 @@ def emp_logout():
 def emp():
     if 'EmpAccess' in session:
         print(session['designation'])
-        return render_template('/employee/employee.html',desg=session['designation'])
+        return render_template('/employee/employee.html',desg=session['designation'],tab="stats")
     return redirect(url_for('emp_access'))
 
 #Employee Profile Method.
@@ -557,7 +557,7 @@ def emp_profile():
                 return redirect(url_for('edit_emp_profile'))
             if request.form['submit']=="change":
                 return redirect(url_for('change_emp_password'))
-        return render_template('employee/profile/emp_profile.html',desg=session['designation'], data=d,user=user,pic=pic_url)
+        return render_template('employee/profile/emp_profile.html',tab="profile",desg=session['designation'], data=d,user=user,pic=pic_url)
     return redirect(url_for('emp'))
 
 #Edit Employee profile method.
@@ -590,7 +590,7 @@ def edit_emp_profile():
                 pass
             mysql.connection.commit()
             return redirect(url_for('emp_profile'))
-        return render_template('employee/profile/emp_edit_profile.html', data=d,user=user,pic=pic_url,desg=session['designation'])
+        return render_template('employee/profile/emp_edit_profile.html',tab="profile", data=d,user=user,pic=pic_url,desg=session['designation'])
     return redirect(url_for('emp'))
 
 #Change employee password method.
@@ -614,10 +614,10 @@ def change_emp_password():
 
             else:
                 msg = '*Incorrect password!'
-                return render_template('employee/profile/emp_change_pass.html',desg=session['designation'], msg=msg,user=user)
+                return render_template('employee/profile/emp_change_pass.html',tab="profile",desg=session['designation'], msg=msg,user=user)
             mysql.connection.commit()
             return redirect(url_for('emp_profile'))
-        return render_template('employee/profile/emp_change_pass.html',user=user,desg=session['designation'])
+        return render_template('employee/profile/emp_change_pass.html',tab="profile",user=user,desg=session['designation'])
     return redirect(url_for('emp'))
 
 
