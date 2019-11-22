@@ -381,6 +381,20 @@ def assign_job():
         data=cur.fetchall()
         return render_template('employee/technician/assign_job.html',tab="TECHNICIAN",data=data,user=user,desg=session['designation'])
     return redirect(url_for('emp'))
+
+#Assign_job method.
+@app.route('/emp/assign_job/<int:id>', methods=['GET', 'POST'])
+def assign_job_redirect(id):
+    if 'EmpAccess' in session and session['designation']=='MANAGER':
+        user = escape(session['id'])
+        cur=mysql.connection.cursor()
+        cur.execute("SELECT *,count(*) FROM assignment,employee where designation='TECHNICIAN' and "
+                    "assignment.employee_id= employee.employee_id group by employee.employee_id order by count(*)")
+        data=cur.fetchall()
+        return render_template('employee/technician/assign_job.html',tab="TECHNICIAN",data=data,user=user,desg=session['designation'])
+    return redirect(url_for('emp'))
+
+
 #-----------------------------------------SERVICES---------------------------------------------#
 
 #Services method.
