@@ -63,18 +63,19 @@
 
                     <ul class="sf-menu templateux-menu d-none d-md-block">
                         <!-- <li class="active"> -->
-                        <li>
-                            <a href="/" class="animsition-link" style="color:black" ;>Home</a>
+                        <li id="home">
+                            <a href="/" class="animsition-link">Home</a>
                         </li>
-                        <li><a href="/about" class="animsition-link" style="color:black">About</a></li>
+                        <li id="about">
+                            <a href="/about" class="animsition-link">About</a></li>
 
-                        <li>
-                            <a href="/services" class="animsition-link" style="color:black">Services</a>
+                        <li id="services">
+                            <a href="/services" class="animsition-link">Services</a>
                         </li>
 
-                        <li><a href="/contact" style="color:black" class="animsition-link">Contact</a></li>
+                        <li id="contact"><a href="/contact" class="animsition-link">Contact</a></li>
                         {% if user|length != 0 %}
-                            <li><a href="/profile" style="color:black" class="animsition-link">Profile</a></li>
+                            <li id="profile"><a href="/profile" class="animsition-link">Profile</a></li>
                         {%else%}
                         <li><a href="/login" style="color:darkgreen" class="animsition-link">Log in
                             <i class="animsition-link glyphicon glyphicon-log-in" style="color:darkgreen"></i></a></li>
@@ -188,6 +189,10 @@ setTimeout(fade_out, 3000);
 
 function fade_out() {
   $('#myModal').modal('hide');
+}
+
+window.onload = function(){
+    document.getElementById("{{tab}}").classList.add("active");
 }
 </script>
 

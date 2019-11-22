@@ -66,44 +66,44 @@
                             {%endif%}
 
                             {%if desg=="ADMIN"%}
-                            <li><a href="" class="animsition-link" style="color:black">Stats</a></li>
-                            <li><a href="" class="animsition-link" style="color:black">Tickets</a></li>
-                            <li><a href="" class="animsition-link" style="color:black">Profile</a></li>
+                            <li><a href="" class="animsition-link">Stats</a></li>
+                            <li><a href="" class="animsition-link">Tickets</a></li>
+                            <li><a href="" class="animsition-link">Profile</a></li>
                             <li><a href="/emp/logout" style="color:darkred">LOGOUT ADMIN<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
                             {%endif%}
 
                             {%if desg=="MANAGER"%}
-                            <li><a href="" class="animsition-link" style="color:black">Stats</a></li>
-                            <li>
+                            <li id="stats"><a href="/emp" class="animsition-link">Stats</a></li>
+                            <li id="tickets">
                                 <a href="" class="animsition-link">Tickets</a>
                                 <ul>
                                   <li ><a href="#">Service 1</a></li>
                                   <li><a href="#">Service 2</a></li>
                                 </ul>
                             </li>
-                            <li>
+                            <li id="inventory">
                                 <a href="" class="animsition-link">Inventory</a>
                                 <ul>
                                   <li ><a href="#">Service 1</a></li>
                                   <li><a href="#">Service 2</a></li>
                                 </ul>
                             </li>
-                            <li><a href="/emp/profile" class="animsition-link" style="color:black">Profile</a></li>
+                            <li id="profile"><a href="/emp/profile" class="animsition-link">Profile</a></li>
                             <li><a href="/emp/logout" style="color:darkred">LOGOUT MANAGER<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
                             {%endif%}
 
                             {%if desg=="TECHNICIAN"%}
-                            <li><a href="" class="animsition-link" style="color:black">Stats</a></li>
-                            <li><a href="" class="animsition-link" style="color:black">Tickets</a></li>
-                            <li><a href="/emp/profile" class="animsition-link" style="color:black">Profile</a></li>
+                            <li id="stats"><a href="/emp" class="animsition-link">Stats</a></li>
+                            <li id="tickets"><a href="" class="animsition-link">Tickets</a></li>
+                            <li id="profile"><a href="/emp/profile" class="animsition-link">Profile</a></li>
                             <li><a href="/emp/logout" style="color:darkred">LOGOUT TECHNICIAN<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
                             {%endif%}
 
                             {%if desg=="EXECUTIVE"%}
-                            <li><a href="" class="animsition-link" style="color:black">Stats</a></li>
-                            <li><a href="/emp/all_tickets" class="animsition-link" style="color:black">Tickets</a></li>
-                            <li><a href="/emp/inventory" class="animsition-link" style="color:black">Inventory</a></li>
-                            <li><a href="/emp/profile" class="animsition-link" style="color:black">Profile</a></li>
+                            <li id="stats"><a href="/emp" class="animsition-link">Stats</a></li>
+                            <li id="tickets"><a href="/emp/all_tickets" class="animsition-link">Tickets</a></li>
+                            <li id="inventory"><a href="/emp/inventory" class="animsition-link">Inventory</a></li>
+                            <li id="profile"><a href="/emp/profile" class="animsition-link">Profile</a></li>
                             <li><a href="/emp/logout" style="color:darkred">LOGOUT EXECUTIVE<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
                             {%endif%}
                        
@@ -146,6 +146,10 @@ setTimeout(fade_out, 3000);
 
 function fade_out() {
   $('#myModal').modal('hide');
+}
+
+window.onload = function(){
+    document.getElementById("{{tab}}").classList.add("active");
 }
 </script>
 
