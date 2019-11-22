@@ -65,6 +65,9 @@
                         <th>Record Date</th>
                         <th>Status</th>
                         <th>Options</th>
+                        {%if assign==true%}
+                        <th>Technician</th>
+                        {%endif%}
                     </tr>
                     {% for i in data %}
                     <tr>
@@ -74,9 +77,16 @@
                         <td>{{ i['fault_type'] }}</td>
                         <td>{{ i['record_date'] }}</td>
                         <td>{{ i['status'] }}</td>
+                        
                         <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-primary" style="color:white;width: 180px;" >
 
                           <a href="/emp/inventory/{{ i['ticket_id'] }}" style="color:white">View ticket</a></p></td>
+                        
+                        {%if assign==true%}
+                        <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-success" style="color:white;width: 180px;" >
+
+                          <a href="/emp/assigned/{{ i['ticket_id'] }}/{{tech_id}}" style="color:white">Assign</a></p></td>
+                        {%endif%}
 
                     </tr>
                     {% endfor %}

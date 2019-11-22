@@ -29,6 +29,93 @@ config = {
 
 #SESSION VARIABLES: loggedin, id, designation, SuperuserAccess, EmpAccess
 
+def init():
+    cur=mysql.connection.cursor()
+    try:
+        cur.execute("""CREATE TABLE user (
+                                        user_id int AUTO_INCREMENT,
+                                        fname varchar(20),
+                                        lname varchar(20),
+                                        phone bigint(10) UNIQUE,
+                                        address varchar(100),
+                                        pincode bigint(6),
+                                        hash_password varchar(128),
+                                        picture varchar(200) DEFAULT '/static/images/no_dp.png',
+                                        designation varchar(50) DEFAULT 'customer',
+                                        PRIMARY KEY (user_id))auto_increment=1001""")
+    except:
+        pass
+    try:
+        cur.execute("""CREATE TABLE feedback (phone bigint(10),message varchar(200))""")
+    except:
+        pass
+    try:
+        cur.execute("""CREATE TABLE ticket (ticket_id int AUTO_INCREMENT,
+                                                        user_id int NOT NULL,
+                                                        fname varchar(20),
+                                                        lname varchar(20),
+                                                        phone bigint(10),
+                                                        address varchar(100),
+                                                        app_date date, 
+                                                        curr_date date,
+                                                        app_type varchar(20) CHECK(app_type IN ('Appointment','Pickup')),
+                                                        status varchar(20) DEFAULT 'Processing',
+                                                        PRIMARY KEY (ticket_id),
+                                                        FOREIGN KEY (user_id)
+                                                        REFERENCES user(user_id))AUTO_INCREMENT=10001""")
+    except:
+        pass
+    try:
+        cur.execute("""CREATE TABLE inventory (inventory_id int AUTO_INCREMENT,
+                                                            ticket_id int NOT NULL,
+                                                            product_name varchar(50),
+                                                            product_type varchar(50),
+                                                            product_description varchar(100),
+                                                            fault_type varchar(50),
+                                                            fault_description varchar(200),
+                                                            record_date date,
+                                                            PRIMARY KEY (inventory_id),
+                                                            FOREIGN KEY (ticket_id)
+                                                            REFERENCES ticket(ticket_id))AUTO_INCREMENT=20001""")
+    except:
+        pass
+    try:
+        cur.execute("""CREATE TABLE employee (employee_id int AUTO_INCREMENT,
+                                                            fname varchar(20),
+                                                            lname varchar(20),
+                                                            phone bigint(10) UNIQUE,
+                                                            address varchar(100),
+                                                            pincode bigint(6),
+                                                            job_status varchar(20) DEFAULT 'ACTIVE',
+                                                            designation varchar(20) DEFAULT 'EXECUTIVE',
+                                                            hash_password varchar(128),
+                                                            picture varchar(200) DEFAULT '/static/images/no_dp.png',
+                                                            PRIMARY KEY (employee_id))auto_increment=2001""")
+    except:
+        pass
+    try:
+        cur.execute("""CREATE TABLE assignment (ticket_id int UNIQUE,
+                                                employee_id int,
+                                                spare_billing decimal default 000,
+                                                FOREIGN KEY(employee_id)
+                                                REFERENCES employee(employee_id),
+                                                FOREIGN KEY(ticket_id)
+                                                REFERENCES ticket(ticket_id))""")
+    except:
+        pass
+    try:
+        cur.execute("""CREATE TABLE employee_superior (employee_id int,
+                                                        superior_id int,
+                                                        FOREIGN KEY(employee_id)
+                                                        REFERENCES employee(employee_id),
+                                                        FOREIGN KEY(superior_id)
+                                                        REFERENCES employee(employee_id))""")
+    except:
+        pass
+    mysql.connection.commit()
+
+
+
 def session_val(loggedin,id,designation,su_access,emp_access):
 
     if loggedin==True:
@@ -52,6 +139,7 @@ def session_val(loggedin,id,designation,su_access,emp_access):
 #HOME PAGE.
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    init()
     if 'loggedin' in session:
         user = escape(session['id'])
         designation=escape(session['designation'])
@@ -63,12 +151,9 @@ def home():
     if 'SuperuserAccess' in session:
         return redirect(url_for('super_panel'))
         #return render_template('superuser/superuser_panel.html',desg="SUPERUSER",log=session['SuperuserAccess'])
-    if 'AdminAccess' in session:
-        return redirect(url_for('admin_panel'))
+    if 'EmpAccess' in session:
+        return redirect(url_for('emp'))
         #return render_template('admin/admin_panel.html',desg="ADMIN",log=session['AdminAccess'])
-    if 'ManagerAccess' in session:
-        return redirect(url_for('manager_panel'))
-        #return render_template('manager/manager_panel.html',desg="MANAGER",log=session['ManagerAccess'])
     return render_template('site/index.html',tab="home")
 
 
@@ -92,19 +177,21 @@ def reg():
                 cur.execute("""INSERT INTO user(fname, lname, phone,address,pincode,hash_password) 
                     values(%s,%s,%s,%s,%s,%s)""", (fname, lname, phone,address,pincode,hash_password))
             except:
-                cur.execute("""CREATE TABLE user (
-                                                user_id int AUTO_INCREMENT,
-                                                fname varchar(20),
-                                                lname varchar(20),
-                                                phone bigint(10) UNIQUE,
-                                                address varchar(100),
-                                                pincode bigint(6),
-                                                hash_password varchar(128),
-                                                picture varchar(200) DEFAULT '/static/images/no_dp.png',
-                                                designation varchar(50) DEFAULT 'customer',
-                                                PRIMARY KEY (user_id))auto_increment=1001""")
-                cur.execute("""INSERT INTO user(fname, lname, phone,address,pincode,hash_password) 
-                    values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))
+                pass
+            # except:
+            #     cur.execute("""CREATE TABLE user (
+            #                                     user_id int AUTO_INCREMENT,
+            #                                     fname varchar(20),
+            #                                     lname varchar(20),
+            #                                     phone bigint(10) UNIQUE,
+            #                                     address varchar(100),
+            #                                     pincode bigint(6),
+            #                                     hash_password varchar(128),
+            #                                     picture varchar(200) DEFAULT '/static/images/no_dp.png',
+            #                                     designation varchar(50) DEFAULT 'customer',
+            #                                     PRIMARY KEY (user_id))auto_increment=1001""")
+            #     cur.execute("""INSERT INTO user(fname, lname, phone,address,pincode,hash_password) 
+            #         values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))
             
             cur.execute("""SELECT user_id,designation from user where phone=%s""",(phone,))
             user_id=cur.fetchone()
@@ -269,7 +356,7 @@ def contact():
     return redirect(url_for('login'))
 
 
-#-----------------------------------------TECHNICIAN--------------------------------------------#
+#-----------------------------------------TECHNICIAN(MANAGER VIEW)--------------------------------------------#
 
 #All technicians method.
 @app.route('/emp/technicians/', methods=['GET', 'POST'])
@@ -277,10 +364,68 @@ def technicians():
     if 'EmpAccess' in session and session['designation']=='MANAGER':
         user = escape(session['id'])
         cur=mysql.connection.cursor()
-        cur.execute("SELECT * FROM employee where designation='TECHNICIAN';")
-        data=cur.fetchall()
-        return render_template('employee/technician/technicians.html',tab="TECHNICIAN",data=data,user=user,desg=session['designation'])
+        # cur.execute("SELECT *,count(*) FROM assignment,employee where designation='TECHNICIAN' and "
+        #             "assignment.employee_id= employee.employee_id group by employee.employee_id order by count(*)")
+        cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s 
+            and employee.employee_id = employee_superior.employee_id and designation='TECHNICIAN'""",(user,))
+        data = cur.fetchall()
+        #print(data)
+        return render_template('employee/technician/technicians.html',tab="tickets",data=data, user=user,desg=session['designation'])
     return redirect(url_for('emp'))
+
+#View technician profile.
+@app.route('/emp/technician/<int:tech_id>',methods=['GET','POST'])
+def technician_profile(tech_id):
+    cur=mysql.connection.cursor()
+    cur.execute("""SELECT * FROM employee WHERE employee_id=%s""",(tech_id,))
+    return render_template('/employee/read_profile.html',data=cur.fetchone(),tab="tickets",desg=session['designation'])
+
+#Assign_job method.
+@app.route('/emp/assign_job/', methods=['GET', 'POST'])
+def assign_job():
+    if 'EmpAccess' in session and session['designation']=='MANAGER':
+        user = escape(session['id'])
+        cur=mysql.connection.cursor()
+        # cur.execute("SELECT *,count(*) FROM assignment,employee where designation='TECHNICIAN' and "
+        #             "assignment.employee_id= employee.employee_id group by employee.employee_id order by count(*)")
+        cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s 
+            and employee.employee_id = employee_superior.employee_id and designation='TECHNICIAN'""",(user,))
+        data=cur.fetchall()
+        return render_template('employee/technician/assign_job.html',tab="TECHNICIAN",data=data,user=user,desg=session['designation'])
+    return redirect(url_for('emp'))
+
+#Assign_job method.
+@app.route('/emp/assign_job/<int:tech_id>', methods=['GET', 'POST'])
+def assign_job_redirect(tech_id):
+    if 'EmpAccess' in session and session['designation']=='MANAGER':
+        user = escape(session['id'])
+        return redirect(url_for('assign_pending_inventory',tech_id=tech_id))
+    return redirect(url_for('emp'))
+
+#Job assigned
+@app.route('/emp/assigned/<int:tktid>/<int:techid>',methods=['GET','POST'])
+def assigned_job(tktid,techid):
+    if 'EmpAccess' in session and session['designation']=='MANAGER':
+        cur = mysql.connection.cursor()
+        cur.execute("""insert into assignment values(%s,%s,%s)""",(tktid,techid,0))
+        mysql.connection.commit()
+        cur.execute("""update ticket set status='Assigned' where ticket_id=%s""",(tktid,))
+        mysql.connection.commit()
+        return redirect(url_for('assign_job'))
+    return redirect(url_for('emp'))
+
+#----------------------------------------TECHNICIAN---------------------------------------------#
+#Technician Tickets
+@app.route('/emp/jobs',methods=['GET','POST'])
+def tech_tickets():
+    if 'EmpAccess' in session:
+        user = escape(session['id'])
+        cur = mysql.connection.cursor()
+        cur.execute("""SELECT * FROM assignment where employee_id=%s""",(user,))
+        return render_template('/employee/technician/technician_tickets.html',data=cur.fetchall(),
+            tab="tickets",user=user,desg=session['designation'])
+    return redirect(url_for('emp'))
+
 #-----------------------------------------SERVICES---------------------------------------------#
 
 #Services method.
@@ -322,24 +467,26 @@ def ticket():
             mysql.connection.commit()
             return redirect(url_for('home'))
         except:
-            cur.execute("""CREATE TABLE ticket (ticket_id int AUTO_INCREMENT,
-                                                user_id int NOT NULL,
-                                                fname varchar(20),
-                                                lname varchar(20),
-                                                phone bigint(10),
-                                                address varchar(100),
-                                                app_date date, 
-                                                curr_date date,
-                                                app_type varchar(20) CHECK(app_type IN ('Appointment','Pickup')),
-                                                status varchar(20) DEFAULT 'Processing',
-                                                PRIMARY KEY (ticket_id),
-                                                FOREIGN KEY (user_id)
-                                                REFERENCES user(user_id))AUTO_INCREMENT=10001""")
-            cur.execute("""INSERT INTO ticket(user_id,fname, lname, phone, address, app_date, curr_date,app_type) 
-                values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date,
-                curr_date, type))
-            mysql.connection.commit()
-            return redirect(url_for('services'))
+            pass
+        # except:
+        #     cur.execute("""CREATE TABLE ticket (ticket_id int AUTO_INCREMENT,
+        #                                         user_id int NOT NULL,
+        #                                         fname varchar(20),
+        #                                         lname varchar(20),
+        #                                         phone bigint(10),
+        #                                         address varchar(100),
+        #                                         app_date date, 
+        #                                         curr_date date,
+        #                                         app_type varchar(20) CHECK(app_type IN ('Appointment','Pickup')),
+        #                                         status varchar(20) DEFAULT 'Processing',
+        #                                         PRIMARY KEY (ticket_id),
+        #                                         FOREIGN KEY (user_id)
+        #                                         REFERENCES user(user_id))AUTO_INCREMENT=10001""")
+        #     cur.execute("""INSERT INTO ticket(user_id,fname, lname, phone, address, app_date, curr_date,app_type) 
+        #         values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date,
+        #         curr_date, type))
+        #     mysql.connection.commit()
+        #    return redirect(url_for('services'))
     gc.collect()
     return render_template('forms/ticket.html',tab="services",designation=escape(session['designation']), data=data,date=date.today(),
         user=escape(session['id']))
@@ -386,7 +533,20 @@ def pending_inventory():
         cur=mysql.connection.cursor()
         cur.execute("SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id and status='inventory';")
         data=cur.fetchall()
-        return render_template('employee/ticket/inventory.html',tab="inventory",data=data,user=user,desg=session['designation'])
+        return render_template('employee/ticket/inventory.html',tab="inventory",data=data,user=user,
+            desg=session['designation'])
+    return redirect(url_for('emp'))
+
+#Pending inventory items assignment.
+@app.route('/emp/pending_inventory/<int:tech_id>', methods=['GET', 'POST'])
+def assign_pending_inventory(tech_id):
+    if 'EmpAccess' in session:
+        user = escape(session['id'])
+        cur=mysql.connection.cursor()
+        cur.execute("SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id and status='inventory';")
+        data=cur.fetchall()
+        return render_template('employee/ticket/inventory.html',tab="inventory",data=data,user=user,
+            desg=session['designation'],assign=True,tech_id=tech_id)
     return redirect(url_for('emp'))
 
 #Inventory details method
@@ -430,25 +590,27 @@ def inventory_add(ticket_id):
                 mysql.connection.commit()
                 return redirect(url_for('all_tickets'))
             except:
-                cur.execute("""CREATE TABLE inventory (inventory_id int AUTO_INCREMENT,
-                                                    ticket_id int NOT NULL,
-                                                    product_name varchar(50),
-                                                    product_type varchar(50),
-                                                    product_description varchar(100),
-                                                    fault_type varchar(50),
-                                                    fault_description varchar(200),
-                                                    record_date date,
-                                                    PRIMARY KEY (inventory_id),
-                                                    FOREIGN KEY (ticket_id)
-                                                    REFERENCES ticket(ticket_id))AUTO_INCREMENT=20001""")
-                cur.execute("""INSERT INTO inventory(ticket_id, product_name,product_type, product_description,
-                     fault_type, fault_description, record_date) 
-                               values(%s,%s,%s,%s,%s,%s,%s)""",
-                            (ticket_id, product_name, product_type, product_description, fault_type, fault_description, curr_date))
-                mysql.connection.commit()
-                cur.execute("""UPDATE ticket SET status=%s WHERE ticket_id=%s""",('Inventory',ticket_id))
-                mysql.connection.commit()
-                return redirect(url_for('all_tickets'))
+                pass
+            # except:
+            #     cur.execute("""CREATE TABLE inventory (inventory_id int AUTO_INCREMENT,
+            #                                         ticket_id int NOT NULL,
+            #                                         product_name varchar(50),
+            #                                         product_type varchar(50),
+            #                                         product_description varchar(100),
+            #                                         fault_type varchar(50),
+            #                                         fault_description varchar(200),
+            #                                         record_date date,
+            #                                         PRIMARY KEY (inventory_id),
+            #                                         FOREIGN KEY (ticket_id)
+            #                                         REFERENCES ticket(ticket_id))AUTO_INCREMENT=20001""")
+            #     cur.execute("""INSERT INTO inventory(ticket_id, product_name,product_type, product_description,
+            #          fault_type, fault_description, record_date) 
+            #                    values(%s,%s,%s,%s,%s,%s,%s)""",
+            #                 (ticket_id, product_name, product_type, product_description, fault_type, fault_description, curr_date))
+            #     mysql.connection.commit()
+            #     cur.execute("""UPDATE ticket SET status=%s WHERE ticket_id=%s""",('Inventory',ticket_id))
+            #     mysql.connection.commit()
+            #     return redirect(url_for('all_tickets'))
         gc.collect()
         return render_template('employee/ticket/add_inventory.html',tab="tickets",date=date.today(), 
             user=escape(session['id']),desg=session['designation'])
@@ -471,6 +633,7 @@ def ticket_details(id):
 #EMPLOYEE REGISTRATION METHOD
 @app.route('/emp/reg',methods=['GET','POST'])
 def emp_reg():
+    init()
     if 'loggedin' not in session:
         if request.method == 'POST':
 
@@ -487,19 +650,21 @@ def emp_reg():
                     cur.execute("""INSERT INTO employee(fname, lname, phone,address,pincode,hash_password) 
                         values(%s,%s,%s,%s,%s,%s)""", (fname, lname, phone,address,pincode,hash_password))
                 except:
-                    cur.execute("""CREATE TABLE employee (employee_id int AUTO_INCREMENT,
-                                                    fname varchar(20),
-                                                    lname varchar(20),
-                                                    phone bigint(10) UNIQUE,
-                                                    address varchar(100),
-                                                    pincode bigint(6),
-                                                    job_status varchar(20) DEFAULT 'ACTIVE',
-                                                    designation varchar(20) DEFAULT 'EXECUTIVE',
-                                                    hash_password varchar(128),
-                                                    picture varchar(200) DEFAULT '/static/images/no_dp.png',
-                                                    PRIMARY KEY (employee_id))auto_increment=2001""")
-                    cur.execute("""INSERT INTO employee(fname, lname, phone,address,pincode,hash_password) 
-                        values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))
+                    pass
+                # except:
+                #     cur.execute("""CREATE TABLE employee (employee_id int AUTO_INCREMENT,
+                #                                     fname varchar(20),
+                #                                     lname varchar(20),
+                #                                     phone bigint(10) UNIQUE,
+                #                                     address varchar(100),
+                #                                     pincode bigint(6),
+                #                                     job_status varchar(20) DEFAULT 'ACTIVE',
+                #                                     designation varchar(20) DEFAULT 'EXECUTIVE',
+                #                                     hash_password varchar(128),
+                #                                     picture varchar(200) DEFAULT '/static/images/no_dp.png',
+                #                                     PRIMARY KEY (employee_id))auto_increment=2001""")
+                #     cur.execute("""INSERT INTO employee(fname, lname, phone,address,pincode,hash_password) 
+                #         values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))
                 
                 cur.execute("""SELECT employee_id,designation from employee where phone=%s""",(phone,))
                 employee=cur.fetchone()
@@ -524,6 +689,7 @@ def emp_reg():
 #EMPLOYEE LOGIN METHOD
 @app.route('/emp/login',methods=['GET','POST'])
 def emp_access():
+    init()
     if 'loggedin' not in session:
         if request.method == 'POST':
 

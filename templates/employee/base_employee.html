@@ -35,6 +35,10 @@
     -ms-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
     }
+    .disabled {
+    pointer-events: none;
+    cursor: pointer;
+}
 </style>
 
 
@@ -67,16 +71,16 @@
                             {%endif%}
 
                             {%if desg=="ADMIN"%}
-                            <li><a href="" class="animsition-link">Stats</a></li>
+                            <li><a href="" class="animsition-link">Home</a></li>
                             <li><a href="" class="animsition-link">Tickets</a></li>
                             <li><a href="" class="animsition-link">Profile</a></li>
                             <li><a href="/emp/logout" style="color:darkred">LOGOUT ADMIN<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
                             {%endif%}
 
                             {%if desg=="MANAGER"%}
-                            <li id="stats"><a href="/emp" class="animsition-link">Stats</a></li>
+                            <li id="stats"><a href="/emp" class="animsition-link">Home</a></li>
                             <li id="tickets">
-                                <a href="" onclick="return false;" class="animsition-link">Technicians</a>
+                                <a class="animsition-link disabled">Technicians</a>
                                 <ul>
                                   <li ><a href="/emp/technicians">VIEW ALL</a></li>
                                     <li><hr></li>
@@ -86,7 +90,7 @@
                                 </ul>
                             </li>
                             <li id="inventory">
-                                <a href="" onclick="return false;" class="animsition-link">Inventory</a>
+                                <a class="animsition-link disabled">Inventory</a>
                                 <ul>
                                   <li ><a href="/emp/inventory">VIEW ALL</a></li>
                                    <li><hr></li>
@@ -98,14 +102,14 @@
                             {%endif%}
 
                             {%if desg=="TECHNICIAN"%}
-                            <li id="stats"><a href="/emp" class="animsition-link">Stats</a></li>
-                            <li id="tickets"><a href="" class="animsition-link">Tickets</a></li>
+                            <li id="stats"><a href="/emp" class="animsition-link">Home</a></li>
+                            <li id="tickets"><a href="/emp/jobs" class="animsition-link">Jobs</a></li>
                             <li id="profile"><a href="/emp/profile" class="animsition-link">Profile</a></li>
                             <li><a href="/emp/logout" style="color:darkred">LOGOUT TECHNICIAN<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
                             {%endif%}
 
                             {%if desg=="EXECUTIVE"%}
-                            <li id="stats"><a href="/emp" class="animsition-link">Stats</a></li>
+                            <li id="stats"><a href="/emp" class="animsition-link">Home</a></li>
                             <li id="tickets"><a href="/emp/all_tickets" class="animsition-link">Tickets</a></li>
                             <li id="inventory"><a href="/emp/inventory" class="animsition-link">Inventory</a></li>
                             <li id="profile"><a href="/emp/profile" class="animsition-link">Profile</a></li>
