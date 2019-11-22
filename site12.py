@@ -364,12 +364,10 @@ def technicians():
     if 'EmpAccess' in session and session['designation']=='MANAGER':
         user = escape(session['id'])
         cur=mysql.connection.cursor()
-        cur.execute("SELECT * FROM employee where designation='TECHNICIAN';")
-        data=cur.fetchall()
-        cur.execute("""select employee.employee_id, count(*) from assignment, employee where 
-        assignment.employee_id= employee.employee_id group by employee.employee_id;""")
-        count=cur.fetchall()
-        return render_template('employee/technician/technicians.html',tab="TECHNICIAN",data=data,count=count, user=user,desg=session['designation'])
+        cur.execute("SELECT *,count(*) FROM assignment,employee where designation='TECHNICIAN' and "
+                    "assignment.employee_id= employee.employee_id group by employee.employee_id order by count(*)")
+        data = cur.fetchall()
+        return render_template('employee/technician/technicians.html',tab="TECHNICIAN",data=data, user=user,desg=session['designation'])
     return redirect(url_for('emp'))
 
 #Assign_job method.
@@ -378,12 +376,10 @@ def assign_job():
     if 'EmpAccess' in session and session['designation']=='MANAGER':
         user = escape(session['id'])
         cur=mysql.connection.cursor()
-        cur.execute("SELECT * FROM employee where designation='TECHNICIAN' and job_status='ACTIVE';")
+        cur.execute("SELECT *,count(*) FROM assignment,employee where designation='TECHNICIAN' and "
+                    "assignment.employee_id= employee.employee_id group by employee.employee_id order by count(*)")
         data=cur.fetchall()
-        cur.execute("""select employee.employee_id, count(*) from assignment, employee where 
-                assignment.employee_id= employee.employee_id group by employee.employee_id;""")
-        count = cur.fetchall()
-        return render_template('employee/technician/assign_job.html',tab="TECHNICIAN",count=count,data=data,user=user,desg=session['designation'])
+        return render_template('employee/technician/assign_job.html',tab="TECHNICIAN",data=data,user=user,desg=session['designation'])
     return redirect(url_for('emp'))
 #-----------------------------------------SERVICES---------------------------------------------#
 

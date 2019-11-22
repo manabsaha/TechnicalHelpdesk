@@ -72,11 +72,12 @@
                         <td style="vertical-align: middle;">{{ i['employee_id'] }}</td>
                         <td style="vertical-align: middle;">{{ i['fname']+" "+i['lname'] }}</td>
                         <td style="vertical-align: middle;">{{ i['phone'] }}</td>
-                        {% for c in count %}
+                        <!--{% for c in count %}
                         {% if (i['employee_id']==c['employee_id'])%}
                             <td style="vertical-align: middle;">{{ c['count(*)'] }}</td>
                         {% endif %}
-                        {% endfor %}
+                        {% endfor %}-->
+                        <td style="vertical-align: middle;">{{ i['count(*)'] }}</td>
                         <td style="vertical-align: middle;">{{ i['job_status'] }}</td>
                         <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-primary" style="color:white;width: 180px;vertical-align: middle;" >
 

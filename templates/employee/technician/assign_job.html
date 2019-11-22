@@ -48,8 +48,8 @@
         <div class="container">
 
         </div>
-        <div class="wrapper js-animsition" data-animsition-out-class="fade-out" id="ticket" style=" box-shadow:5px 5px 15px grey; margin-top:-90px; background-image: url(/static/images/table_bg.jpg);background-size: 100%; background-repeat: repeat-y ;z-index:0;">
-     <div class="inner12 p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="300" style="height:150%; margin-top:100px;background: url(/static/images/slider-5.jpg);background-size: 100%; background-repeat: repeat-y;" >
+        <div class="wrapper js-animsition" data-animsition-out-class="fade-out" id="ticket" style=" box-shadow:5px 5px 15px grey; margin-top:-90px; background-image: url(/static/images/texture1.jpg);background-size: 100%; background-repeat: repeat-y ;z-index:0;">
+     <div class="inner12 p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="300" style="height:150%; margin-top:100px;background: url(/static/images/texture3.jpg);background-size: 100%; background-repeat: repeat-y;" >
 
         <form>
             <h3 style="text-align:center; padding-top:50px; padding-bottom:15px">ASSIGN TICKET</h3>
@@ -69,11 +69,7 @@
                             border-radius:50%;width:50px;height:50px;vertical-align: middle;" alt="can't load" class="w3-round img-fluid"></td>
                         <td style="vertical-align: middle;">{{ i['employee_id'] }}</td>
                         <td style="vertical-align: middle;">{{ i['fname']+" "+i['lname'] }}</td>
-                        {% for c in count %}
-                        {% if (i['employee_id']==c['employee_id'])%}
-                            <td style="vertical-align: middle;">{{ c['count(*)'] }}</td>
-                        {% endif %}
-                        {% endfor %}
+                        <td style="vertical-align: middle;">{{ i['count(*)'] }}</td>
                         <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-primary" style="color:white;width: 180px;vertical-align: middle;" >
 
                           <a href="" style="color:white">ASSIGN TICKET</a></p></td>
