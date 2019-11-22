@@ -13,6 +13,7 @@
 <script src="/static/js/scripts-all.js"></script>
 <script src="/static/js/main.js"></script>
 
+
 <style>
 
     hr{
@@ -39,7 +40,7 @@
 
 
 <div class="js-animsition animsition " id="site-wrap"  data-animsition-in-class="fade-in"
-     data-animsition-out-class="fade-out" >
+     data-animsition-out-class="fade-out"  >
 
     <header class="templateux-navbar dark shadow-lg p-4 mb-4 fixedbar" id="navbar" role="banner"
         style=" z-index:10; background-image: url(/static/images/navbg.jpg); background-size:110%;  border-radius: 5px;">
@@ -78,14 +79,14 @@
                                 <a href="" class="animsition-link">Tickets</a>
                                 <ul>
                                   <li ><a href="#">Service 1</a></li>
-                                  <li><a href="#">Service 2</a></li>
+                                  <li style="z-index:1000;"><a href="#">Service 2</a></li>
                                 </ul>
                             </li>
                             <li id="inventory">
                                 <a href="" class="animsition-link">Inventory</a>
                                 <ul>
                                   <li ><a href="#">Service 1</a></li>
-                                  <li><a href="#">Service 2</a></li>
+                                  <li style="z-index:1000;"><a href="#">Service 2</a></li>
                                 </ul>
                             </li>
                             <li id="profile"><a href="/emp/profile" class="animsition-link">Profile</a></li>
@@ -131,11 +132,12 @@
 $(window).on('load',function(){
         $('#myModal').modal('show');
     });
-var prevScrollpos = window.pageYOffset;
+    var prevScrollpos = window.pageYOffset;
 window.onscroll = function() {
   var currentScrollPos = window.pageYOffset;
-  if (prevScrollpos > currentScrollPos) {
-    document.getElementById("navbar").style.top = "0";
+    console.log(currentScrollPos+1000+'px')
+if (prevScrollpos > currentScrollPos) {
+    document.getElementById("navbar").style.top = "0px";
   } else {
     document.getElementById("navbar").style.top = "-100px";
   }

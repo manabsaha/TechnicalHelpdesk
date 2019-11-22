@@ -6,6 +6,27 @@
     {% block head %}
     {% endblock %}
 
+    {%if 0%}
+     <!-- Modal -->
+  <div class="modal animsition js-animsition" data-aos-delay="5000" data-animsition-in-class="fadeIn" id="myModal" role="dialog">
+    <div class="modal-dialog" style="padding-top:20%;">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title" style="text-align:left">Info</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+        </div>
+        <div class="modal-body">
+          <h3 style="text-align:center">LOGIN SUCCESSFUL!</h3>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  {%endif%}
+
 </div>
 
 </head>
@@ -25,7 +46,7 @@
     .fixedbar {
     height:90px;
         min-height:0px;
-      overflow: show;
+      overflow: hidden;
       background-color: #333;
       position: fixed; /* Set the navbar to fixed position */
       top: 0; /* Position the navbar at the top of the page */
@@ -196,29 +217,5 @@ window.onload = function(){
 }
 </script>
 
-   {%if 0%}
-     <!-- Modal -->
-  <div class="modal animsition js-animsition" data-aos-delay="5000" data-animsition-in-class="fadeIn" id="myModal" role="dialog">
-    <div class="modal-dialog" style="padding-top:20%;">
-
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-            <h4 class="modal-title" style="text-align:left">Info</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-
-        </div>
-        <div class="modal-body">
-          <h3 style="text-align:center">LOGIN SUCCESSFUL!</h3>
-        </div>
-      </div>
-
-    </div>
-  </div>
-  {%endif%}
-
 </body>
 </html>
-
-
-
