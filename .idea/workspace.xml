@@ -20,6 +20,25 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/site/profile.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="193">
+              <caret line="74" column="9" selection-start-line="73" selection-start-column="20" selection-end-line="74" selection-end-column="9" />
+              <folding>
+                <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#h3#0;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#img#0;n#div#0;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#hr#1;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#hr#2;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#hr#3;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#hr#4;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/site/index.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="17">
@@ -33,11 +52,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/employee/base_employee.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="82" column="60" selection-start-line="82" selection-start-column="60" selection-end-line="82" selection-end-column="60" />
+            <state relative-caret-position="289">
+              <caret line="80" column="64" selection-start-line="80" selection-start-column="64" selection-end-line="80" selection-end-column="64" />
               <folding>
                 <element signature="n#style#0;n#header#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#header#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -56,11 +75,24 @@
           </provider>
         </entry>
       </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/templates/employee/technician/technicians.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="323">
+              <caret line="73" column="46" selection-start-line="73" selection-start-column="46" selection-end-line="73" selection-end-column="46" />
+              <folding>
+                <element signature="n#style#0;n#div#1;n#div#1;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#1;n#div#1;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/site12.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="279">
-              <caret line="374" column="116" selection-start-line="374" selection-start-column="116" selection-end-line="374" selection-end-column="116" />
+            <state relative-caret-position="194">
+              <caret line="279" column="75" selection-start-line="279" selection-start-column="75" selection-end-line="279" selection-end-column="75" />
               <folding>
                 <element signature="e#0#91#0" expanded="true" />
               </folding>
@@ -89,8 +121,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/employee/ticket/inventory.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="66" column="21" lean-forward="true" selection-start-line="66" selection-start-column="21" selection-end-line="66" selection-end-column="21" />
+            <state relative-caret-position="85">
+              <caret line="65" column="39" lean-forward="true" selection-end-line="94" selection-end-column="7" />
               <folding>
                 <element signature="n#style#0;n#div#1;n#div#1;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#1;n#div#1;n#!!top" expanded="true" />
@@ -196,8 +228,9 @@
         <option value="$PROJECT_DIR$/static/css/style.css" />
         <option value="$PROJECT_DIR$/templates/employee/ticket/ticket_details.html" />
         <option value="$PROJECT_DIR$/templates/employee/ticket/inventory.html" />
-        <option value="$PROJECT_DIR$/site12.py" />
         <option value="$PROJECT_DIR$/templates/employee/base_employee.html" />
+        <option value="$PROJECT_DIR$/site12.py" />
+        <option value="$PROJECT_DIR$/templates/employee/technician/technicians.html" />
       </list>
     </option>
   </component>
@@ -247,20 +280,6 @@
               <item name="mysite" type="462c0819:PsiDirectoryNode" />
               <item name="templates" type="462c0819:PsiDirectoryNode" />
               <item name="employee" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mysite" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mysite" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-              <item name="employee" type="462c0819:PsiDirectoryNode" />
-              <item name="manager" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mysite" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mysite" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-              <item name="employee" type="462c0819:PsiDirectoryNode" />
-              <item name="ticket" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="mysite" type="b2602c69:ProjectViewProjectNode" />
@@ -640,23 +659,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/site/profile.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="105" column="39" lean-forward="true" selection-end-line="126" selection-end-column="12" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#h3#0;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#div#0;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#hr#1;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#hr#2;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#hr#3;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#hr#4;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/base.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -741,28 +743,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/employee/ticket/inventory.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="66" column="21" lean-forward="true" selection-start-line="66" selection-start-column="21" selection-end-line="66" selection-end-column="21" />
-          <folding>
-            <element signature="n#style#0;n#div#1;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#1;n#div#1;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/employee/manager/manager_panel.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-612" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/site12.py">
+    <entry file="file://$PROJECT_DIR$/templates/employee/ticket/inventory.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="279">
-          <caret line="374" column="116" selection-start-line="374" selection-start-column="116" selection-end-line="374" selection-end-column="116" />
+        <state relative-caret-position="85">
+          <caret line="65" column="39" lean-forward="true" selection-end-line="94" selection-end-column="7" />
           <folding>
-            <element signature="e#0#91#0" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#1;n#div#1;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -785,8 +777,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/employee/base_employee.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="82" column="60" selection-start-line="82" selection-start-column="60" selection-end-line="82" selection-end-column="60" />
+        <state relative-caret-position="289">
+          <caret line="80" column="64" selection-start-line="80" selection-start-column="64" selection-end-line="80" selection-end-column="64" />
           <folding>
             <element signature="n#style#0;n#header#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#header#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -800,6 +792,44 @@
             <element signature="n#style#0;n#i#0;n#a#0;n#li#13;n#ul#0;n#nav#0;n#div#0;n#div#0;n#header#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#a#0;n#li#18;n#ul#0;n#nav#0;n#div#0;n#div#0;n#header#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#i#0;n#a#0;n#li#18;n#ul#0;n#nav#0;n#div#0;n#div#0;n#header#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/site12.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="279" column="75" selection-start-line="279" selection-start-column="75" selection-end-line="279" selection-end-column="75" />
+          <folding>
+            <element signature="e#0#91#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/site/profile.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="74" column="9" selection-start-line="73" selection-start-column="20" selection-end-line="74" selection-end-column="9" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#h3#0;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#0;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#hr#1;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#hr#2;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#hr#3;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#hr#4;n#form#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/employee/technician/technicians.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="73" column="46" selection-start-line="73" selection-start-column="46" selection-end-line="73" selection-end-column="46" />
+          <folding>
+            <element signature="n#style#0;n#div#1;n#div#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#1;n#div#1;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -269,6 +269,18 @@ def contact():
     return redirect(url_for('login'))
 
 
+#-----------------------------------------TECHNICIAN--------------------------------------------#
+
+#All technicians method.
+@app.route('/emp/technicians/', methods=['GET', 'POST'])
+def technicians():
+    if 'EmpAccess' in session and session['designation']=='MANAGER':
+        user = escape(session['id'])
+        cur=mysql.connection.cursor()
+        cur.execute("SELECT * FROM employee where designation='TECHNICIAN';")
+        data=cur.fetchall()
+        return render_template('employee/technician/technicians.html',tab="TECHNICIAN",data=data,user=user,desg=session['designation'])
+    return redirect(url_for('emp'))
 #-----------------------------------------SERVICES---------------------------------------------#
 
 #Services method.
