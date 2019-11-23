@@ -65,14 +65,24 @@
                     {% for i in data %}
                     <tr>
                         <td style="vertical-align: middle;">{{ i['ticket_id'] }}</td>
-                        <td style="vertical-align: middle;">----</td>
+                        <td style="vertical-align: middle;">{{ i['record_date'] }}</td>
                         <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-primary" style="color:white;width: 180px;vertical-align: middle;" >
 
                           <a href="/ticket_details/{{ i['ticket_id'] }}" style="color:white">VIEW DETAILS</a></p></td>
 
+                        {%if i['status']=="Assigned"%}
+                        <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-basic" style="color:white;width: 180px;vertical-align: middle;" >
+
+                          <a href="/emp/jobs/Working/{{i['ticket_id']}}" style="color:white">Set to working</a></p></td>
+                        {%elif i['status']=="Working"%}
+                        <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-warning" style="color:white;width: 180px;vertical-align: middle;" >
+
+                          <a href="/emp/jobs/Completed/{{i['ticket_id']}}" style="color:white">Set to completed</a></p></td>
+                        {%else%}
                         <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-success" style="color:white;width: 180px;vertical-align: middle;" >
 
-                          <a href="" style="color:white">Set to working</a></p></td>
+                          <a style="color:white">Completed</a></p></td>
+                        {%endif%}
 
                     </tr>
                     {% endfor %}
