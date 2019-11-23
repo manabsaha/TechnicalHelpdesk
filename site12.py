@@ -366,11 +366,14 @@ def technicians():
         cur=mysql.connection.cursor()
         # cur.execute("SELECT *,count(*) FROM assignment,employee where designation='TECHNICIAN' and "
         #             "assignment.employee_id= employee.employee_id group by employee.employee_id order by count(*)")
-        cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s 
-            and employee.employee_id = employee_superior.employee_id and designation='TECHNICIAN'""",(user,))
+        cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
+           and employee.employee_id = employee_superior.employee_id and designation='TECHNICIAN'""",(user,))
         data = cur.fetchall()
+        cur.execute("""select *, count(*) from employee, assignment where employee.employee_id=assignment.employee_id group 
+        by employee.employee_id""")
+        count = cur.fetchall()
         #print(data)
-        return render_template('employee/technician/technicians.html',tab="tickets",data=data, user=user,desg=session['designation'])
+        return render_template('employee/technician/technicians.html',flag={'value':'False'}, count=count,tab="tickets",data=data, user=user,desg=session['designation'])
     return redirect(url_for('emp'))
 
 #View technician profile.
@@ -388,10 +391,13 @@ def assign_job():
         cur=mysql.connection.cursor()
         # cur.execute("SELECT *,count(*) FROM assignment,employee where designation='TECHNICIAN' and "
         #             "assignment.employee_id= employee.employee_id group by employee.employee_id order by count(*)")
-        cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s 
-            and employee.employee_id = employee_superior.employee_id and designation='TECHNICIAN'""",(user,))
-        data=cur.fetchall()
-        return render_template('employee/technician/assign_job.html',tab="TECHNICIAN",data=data,user=user,desg=session['designation'])
+        cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
+                   and employee.employee_id = employee_superior.employee_id and designation='TECHNICIAN'""", (user,))
+        data = cur.fetchall()
+        cur.execute("""select *, count(*) from employee, assignment where employee.employee_id=assignment.employee_id group 
+                by employee.employee_id""")
+        count = cur.fetchall()
+        return render_template('employee/technician/assign_job.html',tab="TECHNICIAN",flag={'value':'False'}, count=count,data=data,user=user,desg=session['designation'])
     return redirect(url_for('emp'))
 
 #Assign_job method.
