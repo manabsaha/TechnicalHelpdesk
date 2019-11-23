@@ -71,7 +71,7 @@
                             {%endif%}
 
                             {%if desg=="ADMIN"%}
-                            <li><a href="" class="animsition-link">Home</a></li>
+                            <li><a href="/emp" class="animsition-link">Home</a></li>
                             <li><a href="" class="animsition-link">Manager</a>
                             <ul>
                                   <li ><a href="/emp/allot_technician">ALLOT TECHNICIAN</a></li>
@@ -82,7 +82,7 @@
                             </li>
 
                             <li><a href="" class="animsition-link">Tickets</a></li>
-                            <li><a href="" class="animsition-link">Profile</a></li>
+                            <li><a href="/emp/profile" class="animsition-link">Profile</a></li>
                             <li><a href="/emp/logout" style="color:darkred">LOGOUT ADMIN<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
                             {%endif%}
 
@@ -123,6 +123,12 @@
                             <li id="inventory"><a href="/emp/inventory" class="animsition-link">Inventory</a></li>
                             <li id="profile"><a href="/emp/profile" class="animsition-link">Profile</a></li>
                             <li><a href="/emp/logout" style="color:darkred">LOGOUT EXECUTIVE<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
+                            {%endif%}
+
+                            {%if desg=="EMPLOYEE"%}
+                            <li id="stats"><a href="/emp" class="animsition-link">Home</a></li>
+                            <li id="tickets"><a href="/emp/profile" class="animsition-link">Profile</a></li>
+                            <li><a href="/emp/logout" style="color:darkred">LOGOUT EMPLOYEE<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
                             {%endif%}
                        
                     </ul> <!-- .templateux-menu -->
