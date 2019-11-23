@@ -96,7 +96,7 @@ def init():
     try:
         cur.execute("""CREATE TABLE assignment (ticket_id int UNIQUE,
                                                 employee_id int,
-                                                spare_billing decimal default 000,
+                                                record_date date,
                                                 FOREIGN KEY(employee_id)
                                                 REFERENCES employee(employee_id),
                                                 FOREIGN KEY(ticket_id)
@@ -549,10 +549,30 @@ def assign_pending_inventory(tech_id):
     if 'EmpAccess' in session:
         user = escape(session['id'])
         cur=mysql.connection.cursor()
-        cur.execute("SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id and status='inventory';")
-        data=cur.fetchall()
-        return render_template('employee/ticket/inventory.html',tab="inventory",data=data,user=user,
-            desg=session['designation'],assign=True,tech_id=tech_id)
+        #cur.execute("SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id and status='inventory';")
+        #data=cur.fetchall()
+        cur.execute("""SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id and status='inventory';""")
+        pending=cur.fetchall()
+        cur.execute("""SELECT * FROM assignment, ticket,inventory where inventory.ticket_id=assignment.ticket_id and assignment.ticket_id=ticket.ticket_id and assignment.employee_id=%s;""",(tech_id,))
+        assigned = cur.fetchall()
+        cur.execute(
+            """SELECT * FROM employee where employee_id=%s;""",(tech_id,))
+        emp = cur.fetchone()
+        return render_template('employee/ticket/pending_inventory.html',tab="inventory",pending=pending,assigned=assigned, user=user,
+            desg=session['designation'],assign=True,tech_id=tech_id,emp=emp)
+    return redirect(url_for('emp'))
+
+#Pending inventory items assignment redirect.
+@app.route('/emp/pending_inventory/<int:tech_id>/<int:ticket_id>', methods=['GET', 'POST'])
+def assign_pending_redirect(tech_id,ticket_id):
+    if 'EmpAccess' in session:
+        user = escape(session['id'])
+        cur=mysql.connection.cursor()
+        cur.execute("""insert into assignment values(%s,%s,%s) ;""",(ticket_id,tech_id,date.today(),))
+        cur.execute("""update ticket set status='Assigned' where ticket_id=%s""",(ticket_id,))
+        mysql.connection.commit()
+
+        return redirect(url_for('assign_pending_inventory',tech_id=tech_id))
     return redirect(url_for('emp'))
 
 #Inventory details method
