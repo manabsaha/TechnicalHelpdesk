@@ -511,6 +511,18 @@ def manager_profile(mgr_id):
         cur.execute("""SELECT * FROM employee WHERE employee_id=%s""",(mgr_id,))
         return render_template('/employee/read_profile.html',data=cur.fetchone(),tab="tickets",desg=session['designation'])
     return redirect(url_for('emp'))
+@app.route('/emp/admin/tickets')
+def admin_tickets():
+    if 'EmpAccess' in session and session['designation'] == 'ADMIN':
+        cur = mysql.connection.cursor()
+        cur.execute("""SELECT * from ticket, employee, assignment, employee_superior where ticket.ticket_id=assignment.ticket_id
+            and assignment.employee_id=employee.employee_id and employee.employee_id=employee_superior.employee_id""",)
+        tickets=cur.fetchall()
+
+        return render_template('/employee/manager/view_tickets.html', tab="tickets", tickets=tickets,
+                               desg=session['designation'])
+    return redirect(url_for('emp'))
+
 
 #----------------------------------------TECHNICIAN---------------------------------------------#
 #Technician Tickets
