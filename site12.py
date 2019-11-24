@@ -751,10 +751,25 @@ def inventory_add(ticket_id):
 def completed_tickets():
     if 'EmpAccess' in session:
         cur=mysql.connection.cursor()
-        cur.execute("""SELECT * FROM inventory,ticket WHERE status='Completed' 
-            and inventory.ticket_id=ticket.ticket_id;""")
+        cur.execute("""SELECT * FROM inventory,ticket WHERE inventory.ticket_id=ticket.ticket_id and (status='Completed' or status='Ready for delivery');""")
         return render_template('/employee/ticket/completed_tickets.html',data=cur.fetchall(),tab="inventory",
             user=session['id'],desg=session['designation'])
+    return redirect(url_for('emp'))
+
+#Ticket ready for delivery.
+#Ticket delivered and removed from inventory.
+@app.route('/emp/completed_tickets/<int:tkt_id>/<string:status>',methods=['GET','POST'])
+def completed_ticket(tkt_id,status):
+    if 'EmpAccess' in session:
+        cur=mysql.connection.cursor()
+        if status=="ready":
+            cur.execute("""UPDATE ticket SET status='Ready for delivery' WHERE ticket_id=%s""",(tkt_id,))
+            mysql.connection.commit()
+        elif status=="delivered":
+            cur.execute("""UPDATE ticket SET status='DELIVERED' WHERE ticket_id=%s""",(tkt_id,))
+            mysql.connection.commit()
+            cur.execute("""DELETE FROM inventory WHERE ticket_id=%s""",(tkt_id,))
+        return redirect(url_for('completed_tickets'))
     return redirect(url_for('emp'))
 
 #Ticket details method

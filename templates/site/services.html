@@ -72,8 +72,12 @@
                         <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-danger" ><a href="/services/{{ i['ticket_id'] }}" style="color:white;width: 140px;">Cancel Ticket</a></p></td>
                         {% elif i['status'] == 'CANCELLED BY USER' %}
                         <td class="text-center align-middle"><p class="btn btn-primary" style="color:white;width: 140px;">Cancelled</p></td>
+                        {% elif i['status'] == 'Ready for delivery' %}
+                        <td class="text-center align-middle"><p class="btn btn-info" style="color:white;width: 140px;">READY</p></td>
+                        {% elif i['status'] == 'DELIVERED' %}
+                        <td class="text-center align-middle"><p class="btn btn-success" style="color:white;width: 140px;">DELIVERED</p></td>
                         {% else %}
-                        <td class="text-center align-middle"><p class="btn btn-success" style="color:white;width: 140px;">Processed</p></td>
+                        <td class="text-center align-middle"><p class="btn btn-warning" style="color:white;width: 140px;">Processed</p></td>
                         {% endif %}
                     </tr>
                     {% endfor %}

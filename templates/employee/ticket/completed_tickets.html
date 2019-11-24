@@ -80,9 +80,15 @@
 
                           <a href="/emp/inventory/{{ i['ticket_id'] }}" style="color:white">View ticket</a></p></td>
 
-                        <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-success" style="color:white;width: 180px;" >
+                        {%if i['status']=="Completed"%}
+                        <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-info" style="color:white;width: 190px;" >
 
-                          <a href="" style="color:white">Ready to deliver</a></p></td>
+                          <a href="/emp/completed_tickets/{{i['ticket_id']}}/ready" style="color:white">Ready for delivery</a></p></td>
+                        {%elif i['status']=="Ready for delivery"%}
+                        <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-success" style="color:white;width: 190px;" >
+
+                          <a href="/emp/completed_tickets/{{i['ticket_id']}}/delivered" style="color:white">Set to delivered</a></p></td>
+                        {%endif%}
 
                     </tr>
                     {% endfor %}
