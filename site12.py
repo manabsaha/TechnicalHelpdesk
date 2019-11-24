@@ -114,7 +114,10 @@ def init():
         pass
     mysql.connection.commit()
 
-
+@app.route('/create_all')
+def create_all():
+    init()
+    return redirect(url_for('home'))
 
 def session_val(loggedin,id,designation,su_access,emp_access):
 
@@ -139,7 +142,6 @@ def session_val(loggedin,id,designation,su_access,emp_access):
 #HOME PAGE.
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    init()
     if 'loggedin' in session:
         user = escape(session['id'])
         designation=escape(session['designation'])
@@ -160,7 +162,6 @@ def home():
 #Register method.
 @app.route('/reg/', methods=['GET', 'POST'])
 def reg():
-    init()
     if 'loggedin' in session or 'EmpAccess' in session:
         return redirect(url_for('home'))
     cur=mysql.connection.cursor()
@@ -215,7 +216,6 @@ def reg():
 #Login method.
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-    init()
     if 'loggedin' in session or 'EmpAccess' in session:
         return redirect(url_for('home'))
     cur=mysql.connection.cursor()
@@ -544,7 +544,7 @@ def services():
         user = escape(session['id'])
         designation = escape(session['designation'])
         cur=mysql.connection.cursor()
-        cur.execute("SELECT ticket_id,app_date,app_type,status FROM ticket where user_id=%s",(user,))
+        cur.execute("SELECT ticket_id,app_date,app_type,status FROM ticket where user_id=%s ORDER BY curr_date DESC",(user,))
         data=cur.fetchall()
         return render_template('site/services.html',tab="services",data=data, designation=designation, user=user)
     return redirect(url_for('login'))
@@ -788,7 +788,6 @@ def ticket_details(id):
 #EMPLOYEE REGISTRATION METHOD
 @app.route('/emp/reg',methods=['GET','POST'])
 def emp_reg():
-    init()
     if 'loggedin' not in session and 'EmpAccess' not in session:
         if request.method == 'POST':
 
@@ -844,7 +843,6 @@ def emp_reg():
 #EMPLOYEE LOGIN METHOD
 @app.route('/emp/login',methods=['GET','POST'])
 def emp_access():
-    init()
     if 'loggedin' not in session and 'EmpAccess' not in session:
         if request.method == 'POST':
 

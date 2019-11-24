@@ -114,7 +114,10 @@ def init():
         pass
     mysql.connection.commit()
 
-
+@app.route('/create_all')
+def create_all():
+    init()
+    return redirect(url_for('home'))
 
 def session_val(loggedin,id,designation,su_access,emp_access):
 
@@ -139,7 +142,6 @@ def session_val(loggedin,id,designation,su_access,emp_access):
 #HOME PAGE.
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    init()
     if 'loggedin' in session:
         user = escape(session['id'])
         designation=escape(session['designation'])
@@ -160,7 +162,6 @@ def home():
 #Register method.
 @app.route('/reg/', methods=['GET', 'POST'])
 def reg():
-    init()
     if 'loggedin' in session or 'EmpAccess' in session:
         return redirect(url_for('home'))
     cur=mysql.connection.cursor()
@@ -215,7 +216,6 @@ def reg():
 #Login method.
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-    init()
     if 'loggedin' in session or 'EmpAccess' in session:
         return redirect(url_for('home'))
     cur=mysql.connection.cursor()
@@ -467,19 +467,49 @@ def allocate(mgr_id):
     if 'EmpAccess' in session and session['designation']=='ADMIN':
         user = escape(session['id'])
         cur = mysql.connection.cursor()
-        cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
-                           and employee.employee_id = employee_superior.employee_id and designation='MANAGER'""",
-                    (user,))
+        cur.execute("""select * from employee,employee_superior where superior_id=%s and 
+            employee.employee_id = employee_superior.employee_id and designation='TECHNICIAN'""", (mgr_id,))
+        technicians = cur.fetchall()
+        cur.execute("""select * from employee where employee_id not in(select employee_id from employee_superior where 
+        superior_id=%s) and designation='TECHNICIAN' or designation='EMPLOYEE'""",(mgr_id,))
         pending = cur.fetchall()
-        cur.execute(
-            """SELECT * FROM assignment, ticket,inventory where inventory.ticket_id=assignment.ticket_id and assignment.ticket_id=ticket.ticket_id and assignment.employee_id=%s;""",
-            (mgr_id,))
-        assigned = cur.fetchall()
         cur.execute(
             """SELECT * FROM employee where employee_id=%s;""", (mgr_id,))
         emp = cur.fetchone()
-        return render_template('employee/manager/allocation.html', tab="manager", user=user,
-                               desg=session['designation'])
+        return render_template('employee/manager/allocation.html', tab="manager", user=user, emp=emp,technicians=technicians,
+                               pending=pending, desg=session['designation'])
+    return redirect(url_for('emp'))
+
+#Allot technician to manager final gateway
+@app.route('/emp/allot_technician/<int:mgr_id>/<int:emp_id>', methods=['GET', 'POST'])
+def allocation_redirect(mgr_id,emp_id):
+    if 'EmpAccess' in session:
+        user = escape(session['id'])
+        cur=mysql.connection.cursor()
+        cur.execute("""insert into employee_superior values(%s,%s) ;""",(emp_id,mgr_id,))
+        cur.execute("""update employee set designation='TECHNICIAN' where employee_id=%s""",(emp_id,))
+        mysql.connection.commit()
+        return redirect(url_for('allocate',mgr_id=mgr_id))
+    return redirect(url_for('emp'))
+
+#Remove technician to manager final gateway
+@app.route('/emp/remove_technician/<int:mgr_id>/<int:emp_id>', methods=['GET', 'POST'])
+def deallocation_redirect(mgr_id,emp_id):
+    if 'EmpAccess' in session:
+        user = escape(session['id'])
+        cur=mysql.connection.cursor()
+        cur.execute("""delete from employee_superior where employee_id=%s""",(emp_id,))
+        mysql.connection.commit()
+        return redirect(url_for('allocate',mgr_id=mgr_id))
+    return redirect(url_for('emp'))
+
+#View manager profile.
+@app.route('/emp/manager/<int:mgr_id>',methods=['GET','POST'])
+def manager_profile(mgr_id):
+    if 'EmpAccess' in session and session['designation'] == 'ADMIN':
+        cur=mysql.connection.cursor()
+        cur.execute("""SELECT * FROM employee WHERE employee_id=%s""",(mgr_id,))
+        return render_template('/employee/read_profile.html',data=cur.fetchone(),tab="tickets",desg=session['designation'])
     return redirect(url_for('emp'))
 
 #----------------------------------------TECHNICIAN---------------------------------------------#
@@ -514,7 +544,7 @@ def services():
         user = escape(session['id'])
         designation = escape(session['designation'])
         cur=mysql.connection.cursor()
-        cur.execute("SELECT ticket_id,app_date,app_type,status FROM ticket where user_id=%s",(user,))
+        cur.execute("SELECT ticket_id,app_date,app_type,status FROM ticket where user_id=%s ORDER BY curr_date DESC",(user,))
         data=cur.fetchall()
         return render_template('site/services.html',tab="services",data=data, designation=designation, user=user)
     return redirect(url_for('login'))
@@ -721,10 +751,25 @@ def inventory_add(ticket_id):
 def completed_tickets():
     if 'EmpAccess' in session:
         cur=mysql.connection.cursor()
-        cur.execute("""SELECT * FROM inventory,ticket WHERE status='Completed' 
-            and inventory.ticket_id=ticket.ticket_id;""")
+        cur.execute("""SELECT * FROM inventory,ticket WHERE inventory.ticket_id=ticket.ticket_id and (status='Completed' or status='Ready for delivery');""")
         return render_template('/employee/ticket/completed_tickets.html',data=cur.fetchall(),tab="inventory",
             user=session['id'],desg=session['designation'])
+    return redirect(url_for('emp'))
+
+#Ticket ready for delivery.
+#Ticket delivered and removed from inventory.
+@app.route('/emp/completed_tickets/<int:tkt_id>/<string:status>',methods=['GET','POST'])
+def completed_ticket(tkt_id,status):
+    if 'EmpAccess' in session:
+        cur=mysql.connection.cursor()
+        if status=="ready":
+            cur.execute("""UPDATE ticket SET status='Ready for delivery' WHERE ticket_id=%s""",(tkt_id,))
+            mysql.connection.commit()
+        elif status=="delivered":
+            cur.execute("""UPDATE ticket SET status='DELIVERED' WHERE ticket_id=%s""",(tkt_id,))
+            mysql.connection.commit()
+            cur.execute("""DELETE FROM inventory WHERE ticket_id=%s""",(tkt_id,))
+        return redirect(url_for('completed_tickets'))
     return redirect(url_for('emp'))
 
 #Ticket details method
@@ -743,7 +788,6 @@ def ticket_details(id):
 #EMPLOYEE REGISTRATION METHOD
 @app.route('/emp/reg',methods=['GET','POST'])
 def emp_reg():
-    init()
     if 'loggedin' not in session and 'EmpAccess' not in session:
         if request.method == 'POST':
 
@@ -799,7 +843,6 @@ def emp_reg():
 #EMPLOYEE LOGIN METHOD
 @app.route('/emp/login',methods=['GET','POST'])
 def emp_access():
-    init()
     if 'loggedin' not in session and 'EmpAccess' not in session:
         if request.method == 'POST':
 
