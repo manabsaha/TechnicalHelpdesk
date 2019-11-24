@@ -49,8 +49,9 @@
         <div class="container">
 
         </div>
-        <div class="wrapper js-animsition" data-animsition-out-class="fade-out" id="ticket" style=" box-shadow:5px 5px 15px grey; margin-top:0px;  padding:5px; background: url(/static/images/texture1.jpg);background-size: 100%; background-repeat: repeat-y;	;margin-top:-90px; z-index:0;">
-     <div class="inner12 p-4 mb-4" data-aos="fade-up" data-aos-delay="300" style="height:150%;padding-left:5px; margin-top:100px;background: url(/static/images/texture3.jpg);background-size: 110%; background-repeat: repeat-y;" >
+        <div class="wrapper js-animsition" data-animsition-out-class="fade-out" id="ticket" style=" box-shadow:5px 5px 15px grey; margin-top:0px;  padding:5px; background: url(/static/images/texture1.jpg);background-size: 30%; background-repeat: repeat;	;margin-top:-90px; z-index:0;">
+     
+     <div class="inner12 p-4 mb-4" data-aos="fade-up" data-aos-delay="300" style="height:150%;padding-left:5px; margin-top:100px;background: url(/static/images/texture3.jpg);background-size: 50%; background-repeat: repeat;" >
 
         <form>
 
@@ -87,10 +88,10 @@
                                 </tr>
                                 {% for a in assigned %}
                                 <tr>
-                                    <td>{{a['ticket_id']}}</td>
-                                    <td>{{a['inventory_id']}}</td>
-                                    <td>{{a['fault_type']}}</td>
-                                    <td>{{a['record_date']}}</td>
+                                    <td style="vertical-align: middle;">{{a['ticket_id']}}</td>
+                                    <td style="vertical-align: middle;">{{a['inventory_id']}}</td>
+                                    <td style="vertical-align: middle;">{{a['fault_type']}}</td>
+                                    <td style="vertical-align: middle;">{{a['record_date']}}</td>
                                     <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-primary" style="color:white;width: 180px;" >
 
                                 <a href="/emp/inventory/{{ a['ticket_id'] }}" style="color:white">View details</a></p></td>
@@ -107,8 +108,8 @@
                                 </tr>
                                 {% for p in pending %}
                                 <tr>
-                                    <td>{{p['ticket_id']}}</td>
-                                    <td>{{p['inventory_id']}}</td>
+                                    <td style="vertical-align: middle;">{{p['ticket_id']}}</td>
+                                    <td style="vertical-align: middle;">{{p['inventory_id']}}</td>
                                     <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-success" style="color:white;width: 180px;" >
 
                                 <a href="/emp/pending_inventory/{{ emp['employee_id'] }}/{{p['ticket_id']}}" style="color:white">Assign Ticket</a></p></td>

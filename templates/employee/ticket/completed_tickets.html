@@ -49,8 +49,9 @@
         <div class="container">
 
         </div>
-        <div class="wrapper js-animsition" data-animsition-out-class="fade-out" id="ticket" style=" box-shadow:5px 5px 15px grey; margin-top:0px;  padding:5px; background: url(/static/images/texture1.jpg);background-size: 100%; background-repeat: repeat-y;	;margin-top:-90px; z-index:0;">
-     <div class="inner12 p-4 mb-4" data-aos="fade-up" data-aos-delay="300" style="height:150%; margin-top:100px;background: url(/static/images/texture3.jpg);background-size: 110%; background-repeat: repeat-y;" >
+        <div class="wrapper js-animsition" data-animsition-out-class="fade-out" id="ticket" style=" box-shadow:5px 5px 15px grey; margin-top:0px;  padding:5px; background: url(/static/images/texture1.jpg);background-size: 30%; background-repeat: repeat;	;margin-top:-90px; z-index:0;">
+     
+     <div class="inner12 p-4 mb-4" data-aos="fade-up" data-aos-delay="300" style="height:150%; margin-top:100px;background: url(/static/images/texture3.jpg);background-size: 50%; background-repeat: repeat;" >
 
         <form>
             <h3 style="text-align:center; padding-top:50px; padding-bottom:15px">INVENTORY RECORD</h3>
@@ -69,12 +70,12 @@
                     </tr>
                     {% for i in data %}
                     <tr>
-                        <td>{{ i['inventory_id'] }}</td>
-                        <td>{{ i['ticket_id'] }}</td>
-                        <td>{{ i['product_type'] }}</td>
-                        <td>{{ i['fault_type'] }}</td>
-                        <td>{{ i['record_date'] }}</td>
-                        <td>{{ i['status'] }}</td>
+                        <td style="vertical-align: middle;">{{ i['inventory_id'] }}</td>
+                        <td style="vertical-align: middle;">{{ i['ticket_id'] }}</td>
+                        <td style="vertical-align: middle;">{{ i['product_type'] }}</td>
+                        <td style="vertical-align: middle;">{{ i['fault_type'] }}</td>
+                        <td style="vertical-align: middle;">{{ i['record_date'] }}</td>
+                        <td style="vertical-align: middle;">{{ i['status'] }}</td>
                         
                         <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-warning" style="color:white;width: 180px;" >
 

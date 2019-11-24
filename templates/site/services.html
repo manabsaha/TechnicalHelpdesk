@@ -47,8 +47,9 @@
 
     <div class="templateux-section" style="padding-bottom:0px; margin-top: 80px;">
 
-        <div class="wrapper js-animsition" data-animsition-out-class="fade-out" id="ticket" style=" box-shadow:5px 5px 15px grey; border: 4px; padding-bottom:100px;margin-top:-80px; background-image: url(/static/images/texture1.jpg);background-size: 100%; background-repeat: repeat-y; z-index:0;">
-     <div class="inner12 p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="300" style="height:150%; margin-top:100px;background: url(/static/images/texture3.jpg);background-size: 100%; background-repeat: repeat-y;" >
+        <div class="wrapper js-animsition" data-animsition-out-class="fade-out" id="ticket" style=" box-shadow:5px 5px 15px grey; border: 4px; padding-bottom:100px;margin-top:-80px; background-image: url(/static/images/texture1.jpg);background-size: 30%; background-repeat: repeat; z-index:0;">
+     
+     <div class="inner12 p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="300" style="height:150%; margin-top:100px;background: url(/static/images/texture3.jpg);background-size: 50%; background-repeat: repeat;" >
 
         <form>
             <h3 style="text-align:center; padding-top:50px; padding-bottom:15px">TICKET RECORD</h3>
@@ -64,20 +65,25 @@
                     </tr>
                     {% for i in data %}
                     <tr>
-                        <td>{{ i['ticket_id'] }}</td>
-                        <td>{{ i['app_date'] }}</td>
-                        <td>{{ i['app_type'] }}</td>
-                        <td>{{ i['status'] }}</td>
+                        <td style="vertical-align: middle;">{{ i['ticket_id'] }}</td>
+                        <td style="vertical-align: middle;">{{ i['app_date'] }}</td>
+                        <td style="vertical-align: middle;">{{ i['app_type'] }}</td>
+                        <td style="vertical-align: middle;">{{ i['status'] }}</td>
+                        
                         {% if i['status'] == 'Processing' %}
                         <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-danger" ><a href="/services/{{ i['ticket_id'] }}" style="color:white;width: 140px;">Cancel Ticket</a></p></td>
+                        
                         {% elif i['status'] == 'CANCELLED BY USER' %}
-                        <td class="text-center align-middle"><p class="btn btn-primary" style="color:white;width: 140px;">Cancelled</p></td>
+                        <td class="text-center align-middle"><p class="btn" style="color:white;width: 140px;background-color: grey;">Cancelled</p></td>
+                        
                         {% elif i['status'] == 'Ready for delivery' %}
-                        <td class="text-center align-middle"><p class="btn btn-info" style="color:white;width: 140px;">READY</p></td>
+                        <td class="text-center align-middle"><p class="btn" style="color:white;width: 140px;background-color: grey;">READY</p></td>
+                        
                         {% elif i['status'] == 'DELIVERED' %}
                         <td class="text-center align-middle"><p class="btn btn-success" style="color:white;width: 140px;">DELIVERED</p></td>
+                        
                         {% else %}
-                        <td class="text-center align-middle"><p class="btn btn-warning" style="color:white;width: 140px;">Processed</p></td>
+                        <td class="text-center align-middle"><p class="btn" style="color:white;width: 140px; background-color: grey;">Processed</p></td>
                         {% endif %}
                     </tr>
                     {% endfor %}
