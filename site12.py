@@ -421,6 +421,66 @@ def assigned_job(tktid,techid):
         return redirect(url_for('assign_job'))
     return redirect(url_for('emp'))
 
+
+#----------------------------------------MANAGER(ADMIN)---------------------------------------------#
+
+#Managers method
+@app.route('/emp/managers', methods=['GET','POST'])
+def managers():
+    if 'EmpAccess' in session and session['designation']=='ADMIN':
+        user = escape(session['id'])
+        cur=mysql.connection.cursor()
+        # cur.execute("SELECT *,count(*) FROM assignment,employee where designation='TECHNICIAN' and "
+        #             "assignment.employee_id= employee.employee_id group by employee.employee_id order by count(*)")
+        cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
+           and employee.employee_id = employee_superior.employee_id and designation='MANAGER'""",(user,))
+        data = cur.fetchall()
+        cur.execute("""select *, count(*) from employee, employee_superior where employee.employee_id=employee_superior.superior_id group 
+        by employee.employee_id""")
+        count = cur.fetchall()
+        #print(data)
+        return render_template('employee/manager/managers.html',flag={'value':'False'}, count=count,tab="manager",data=data, user=user,desg=session['designation'])
+    return redirect(url_for('emp'))
+
+#Technician_allot method
+@app.route('/emp/allot_technician', methods=['GET','POST'])
+def allot_technician():
+    if 'EmpAccess' in session and session['designation']=='ADMIN':
+        user = escape(session['id'])
+        cur=mysql.connection.cursor()
+        #cur.execute("SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id and status='inventory';")
+        #data=cur.fetchall()
+        cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
+                   and employee.employee_id = employee_superior.employee_id and designation='MANAGER'""", (user,))
+        alloted=cur.fetchall()
+        cur.execute("""select *, count(*) from employee, employee_superior where employee.employee_id=employee_superior.superior_id group 
+                by employee.employee_id""")
+        count = cur.fetchall()
+        return render_template('employee/manager/allot_technician.html',tab="inventory",alloted=alloted, user=user,
+            desg=session['designation'],emp=emp,flag={'value':'False'}, count=count)
+    return redirect(url_for('emp'))
+
+#Allocate redirect method
+@app.route('/emp/allot_technician/<int:mgr_id>', methods=['GET','POST'])
+def allocate(mgr_id):
+    if 'EmpAccess' in session and session['designation']=='ADMIN':
+        user = escape(session['id'])
+        cur = mysql.connection.cursor()
+        cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
+                           and employee.employee_id = employee_superior.employee_id and designation='MANAGER'""",
+                    (user,))
+        pending = cur.fetchall()
+        cur.execute(
+            """SELECT * FROM assignment, ticket,inventory where inventory.ticket_id=assignment.ticket_id and assignment.ticket_id=ticket.ticket_id and assignment.employee_id=%s;""",
+            (mgr_id,))
+        assigned = cur.fetchall()
+        cur.execute(
+            """SELECT * FROM employee where employee_id=%s;""", (mgr_id,))
+        emp = cur.fetchone()
+        return render_template('employee/manager/allocation.html', tab="manager", user=user,
+                               desg=session['designation'])
+    return redirect(url_for('emp'))
+
 #----------------------------------------TECHNICIAN---------------------------------------------#
 #Technician Tickets
 @app.route('/emp/jobs',methods=['GET','POST'])
