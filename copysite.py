@@ -716,6 +716,17 @@ def inventory_add(ticket_id):
     else:
         return redirect(url_for('emp'))
 
+#Inventory completed tickets
+@app.route('/emp/completed_tickets',methods=['GET','POST'])
+def completed_tickets():
+    if 'EmpAccess' in session:
+        cur=mysql.connection.cursor()
+        cur.execute("""SELECT * FROM inventory,ticket WHERE status='Completed' 
+            and inventory.ticket_id=ticket.ticket_id;""")
+        return render_template('/employee/ticket/completed_tickets.html',data=cur.fetchall(),tab="inventory",
+            user=session['id'],desg=session['designation'])
+    return redirect(url_for('emp'))
+
 #Ticket details method
 @app.route('/ticket_details/<int:id>')
 def ticket_details(id):

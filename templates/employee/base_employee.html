@@ -119,8 +119,16 @@
 
                             {%if desg=="EXECUTIVE"%}
                             <li id="stats"><a href="/emp" class="animsition-link">Home</a></li>
-                            <li id="tickets"><a href="/emp/all_tickets" class="animsition-link">Tickets</a></li>
-                            <li id="inventory"><a href="/emp/inventory" class="animsition-link">Inventory</a></li>
+                            <li id="tickets"><a href="/emp/all_tickets" class="animsition-link">Tickets</a>
+                            </li>
+                            <li id="inventory"><a class="animsition-link disabled">Inventory</a>
+                                <ul>
+                                  <li ><a href="/emp/completed_tickets">COMPLETED</a></li>
+                                   <li><hr></li>
+                                  <li ><a href="/emp/inventory">VIEW ALL</a></li>
+                                    <li><hr></li>
+                                </ul>
+                            </li>
                             <li id="profile"><a href="/emp/profile" class="animsition-link">Profile</a></li>
                             <li><a href="/emp/logout" style="color:darkred">LOGOUT EXECUTIVE<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
                             {%endif%}
