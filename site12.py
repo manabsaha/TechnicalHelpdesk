@@ -466,19 +466,49 @@ def allocate(mgr_id):
     if 'EmpAccess' in session and session['designation']=='ADMIN':
         user = escape(session['id'])
         cur = mysql.connection.cursor()
-        cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
-                           and employee.employee_id = employee_superior.employee_id and designation='MANAGER'""",
-                    (user,))
+        cur.execute("""select * from employee,employee_superior where superior_id=%s and 
+            employee.employee_id = employee_superior.employee_id and designation='TECHNICIAN'""", (mgr_id,))
+        technicians = cur.fetchall()
+        cur.execute("""select * from employee where employee_id not in(select employee_id from employee_superior where 
+        superior_id=%s) and designation='TECHNICIAN' or designation='EMPLOYEE'""",(mgr_id,))
         pending = cur.fetchall()
-        cur.execute(
-            """SELECT * FROM assignment, ticket,inventory where inventory.ticket_id=assignment.ticket_id and assignment.ticket_id=ticket.ticket_id and assignment.employee_id=%s;""",
-            (mgr_id,))
-        assigned = cur.fetchall()
         cur.execute(
             """SELECT * FROM employee where employee_id=%s;""", (mgr_id,))
         emp = cur.fetchone()
-        return render_template('employee/manager/allocation.html', tab="manager", user=user,
-                               desg=session['designation'])
+        return render_template('employee/manager/allocation.html', tab="manager", user=user, emp=emp,technicians=technicians,
+                               pending=pending, desg=session['designation'])
+    return redirect(url_for('emp'))
+
+#Allot technician to manager final gateway
+@app.route('/emp/allot_technician/<int:mgr_id>/<int:emp_id>', methods=['GET', 'POST'])
+def allocation_redirect(mgr_id,emp_id):
+    if 'EmpAccess' in session:
+        user = escape(session['id'])
+        cur=mysql.connection.cursor()
+        cur.execute("""insert into employee_superior values(%s,%s) ;""",(emp_id,mgr_id,))
+        cur.execute("""update employee set designation='TECHNICIAN' where employee_id=%s""",(emp_id,))
+        mysql.connection.commit()
+        return redirect(url_for('allocate',mgr_id=mgr_id))
+    return redirect(url_for('emp'))
+
+#Remove technician to manager final gateway
+@app.route('/emp/remove_technician/<int:mgr_id>/<int:emp_id>', methods=['GET', 'POST'])
+def deallocation_redirect(mgr_id,emp_id):
+    if 'EmpAccess' in session:
+        user = escape(session['id'])
+        cur=mysql.connection.cursor()
+        cur.execute("""delete from employee_superior where employee_id=%s""",(emp_id,))
+        mysql.connection.commit()
+        return redirect(url_for('allocate',mgr_id=mgr_id))
+    return redirect(url_for('emp'))
+
+#View manager profile.
+@app.route('/emp/manager/<int:mgr_id>',methods=['GET','POST'])
+def manager_profile(mgr_id):
+    if 'EmpAccess' in session and session['designation'] == 'ADMIN':
+        cur=mysql.connection.cursor()
+        cur.execute("""SELECT * FROM employee WHERE employee_id=%s""",(mgr_id,))
+        return render_template('/employee/read_profile.html',data=cur.fetchone(),tab="tickets",desg=session['designation'])
     return redirect(url_for('emp'))
 
 #----------------------------------------TECHNICIAN---------------------------------------------#

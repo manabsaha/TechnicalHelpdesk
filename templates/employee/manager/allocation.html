@@ -54,14 +54,14 @@
 
         <form>
 
-            <h3 style="text-align:center; padding-top:50px; padding-bottom:15px">INVENTORY RECORD</h3>
+            <h3 style="text-align:center; padding-top:50px; padding-bottom:15px">ALLOCATE TECHNICIAN</h3>
             <hr style="margin-bottom:15px">
             <div class="item form-wrapper">
 
                 <table class="table table-bordered" style="text-align:center; margin-bottom:100px;">
 
                     <tr>
-                        <th>Technician Name</th>
+                        <th>Manager Name</th>
                         <td>{{emp['fname']+" "+emp['lname']}}</td>
                     </tr>
                     <tr>
@@ -71,29 +71,30 @@
                     <tr><td colspan="2"><hr></td>
                     </tr>
                     <tr>
-                        <th>Inventory Assigned {{assigned['count(*)']}}</th>
-                        <th>Pending Inventory {{pending['count(*)']}}</th>
+                        <th>Technicians Assigned </th>
+                        <th>Available Technicians </th>
                     </tr>
 
                     <tr>
                         <td>
                             <table class="table table-bordered" style="text-align:center; margin-bottom:100px;">
                                 <tr>
-                                    <th>Ticket_id</th>
-                                    <th>Inventory_id</th>
-                                    <th>Fault type</th>
-                                    <th>Record date</th>
+                                    <th>Employee ID</th>
+                                    <th>Name</th>
+                                    <th>Job Status</th>
                                     <th>Options</th>
                                 </tr>
-                                {% for a in assigned %}
+                                {% for i in technicians %}
                                 <tr>
-                                    <td>{{a['ticket_id']}}</td>
-                                    <td>{{a['inventory_id']}}</td>
-                                    <td>{{a['fault_type']}}</td>
-                                    <td>{{a['record_date']}}</td>
-                                    <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-primary" style="color:white;width: 180px;" >
-
-                                <a href="/emp/inventory/{{ a['ticket_id'] }}" style="color:white">View details</a></p></td>
+                                    <td>{{i['employee_id']}}</td>
+                                    <td>{{i['fname']+" "+i['lname']}}</td>
+                                    <td>{{i['job_status']}}</td>
+                                    <td class="text-center align-middle">
+                                        <p id="btn1" value="remove" class="btn btn-warning" style="color:white;width: 180px;" >
+                                            <a href="/emp/remove_technician/{{ emp['employee_id'] }}/{{i['employee_id']}}" style="color:white">Remove</a></p>
+                                        <p id="btn1" value="cancel" class="btn btn-secondary" style="color:white;width: 180px;" >
+                                            <a href="/emp/manager/{{ i['employee_id'] }}" style="color:white">Details</a></p>
+                                        </td>
                                 </tr>
                                 {% endfor %}
                             </table>
@@ -101,17 +102,27 @@
                         <td>
                             <table class="table table-bordered" style="text-align:center; margin-bottom:100px;">
                                 <tr>
-                                    <th>Ticket_id</th>
-                                    <th>Inventory_id</th>
+                                    <th>Employee ID</th>
+                                    <th>Name</th>
+                                    <th>Job Status</th>
                                     <th>Options</th>
                                 </tr>
                                 {% for p in pending %}
                                 <tr>
-                                    <td>{{p['ticket_id']}}</td>
-                                    <td>{{p['inventory_id']}}</td>
-                                    <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-primary" style="color:white;width: 180px;" >
+                                    <td>{{p['employee_id']}}</td>
+                                    <td>{{p['fname']+p['lname']}}</td>
+                                    <td>{{p['job_status']}}</td>
+                                    <td class="text-center align-middle"><p class="btn btn-primary" id="btn1"
+                                                                            style="color:white;width: 180px;"
+                                                                            value="cancel">
 
-                                <a href="/emp/pending_inventory/{{ emp['employee_id'] }}/{{p['ticket_id']}}" style="color:white">Assign Ticket</a></p></td>
+                                        <a href="/emp/allot_technician/{{ emp['employee_id'] }}/{{p['employee_id']}}"
+                                           style="color:white">Assign</a></p>
+                                        <p class="btn btn-secondary" id="btn1" style="color:white;width: 180px;"
+                                           value="cancel">
+
+                                            <a href="/emp/manager/{{ p['employee_id'] }}"
+                                               style="color:white">Details</a></p></td>
                                 </tr>
                                 {% endfor %}
                             </table>
