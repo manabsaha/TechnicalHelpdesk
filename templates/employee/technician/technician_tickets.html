@@ -71,7 +71,7 @@
                           <a href="/ticket_details/{{ i['ticket_id'] }}" style="color:white">VIEW DETAILS</a></p></td>
 
                         {%if i['status']=="Assigned"%}
-                        <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-basic" style="color:white;width: 180px;vertical-align: middle;" >
+                        <td class="text-center align-middle"><p id="btn1" value="cancel" class="btn btn-info" style="color:white;width: 180px;vertical-align: middle;" >
 
                           <a href="/emp/jobs/Working/{{i['ticket_id']}}" style="color:white">Set to working</a></p></td>
                         {%elif i['status']=="Working"%}
