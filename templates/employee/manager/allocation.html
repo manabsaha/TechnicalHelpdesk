@@ -49,8 +49,9 @@
         <div class="container">
 
         </div>
-        <div class="wrapper js-animsition" data-animsition-out-class="fade-out" id="ticket" style=" box-shadow:5px 5px 15px grey; margin-top:0px;  padding:5px; background: url(/static/images/texture1.jpg);background-size: 100%; background-repeat: repeat-y;	;margin-top:-90px; z-index:0;">
-     <div class="inner12 p-4 mb-4" data-aos="fade-up" data-aos-delay="300" style="height:150%;padding-left:5px; margin-top:100px;background: url(/static/images/texture3.jpg);background-size: 110%; background-repeat: repeat-y;" >
+        <div class="wrapper js-animsition" data-animsition-out-class="fade-out" id="ticket" style=" box-shadow:5px 5px 15px grey; margin-top:0px;  padding:5px; background: url(/static/images/texture1.jpg);background-size: 30%; background-repeat: repeat;margin-top:-90px; z-index:0;">
+     
+     <div class="inner12 p-4 mb-4" data-aos="fade-up" data-aos-delay="300" style="height:150%;padding-left:5px; margin-top:100px;background: url(/static/images/texture3.jpg);background-size: 30%; background-repeat: repeat;" >
 
         <form>
 
@@ -76,7 +77,7 @@
                     </tr>
 
                     <tr>
-                        <td>
+                        <td style="width: 50%">
                             <table class="table table-bordered" style="text-align:center; margin-bottom:100px;">
                                 <tr>
                                     <th>Employee ID</th>
@@ -86,20 +87,20 @@
                                 </tr>
                                 {% for i in technicians %}
                                 <tr>
-                                    <td>{{i['employee_id']}}</td>
-                                    <td>{{i['fname']+" "+i['lname']}}</td>
-                                    <td>{{i['job_status']}}</td>
-                                    <td class="text-center align-middle">
-                                        <p id="btn1" value="remove" class="btn btn-warning" style="color:white;width: 180px;" >
+                                    <td style="vertical-align: middle;">{{i['employee_id']}}</td>
+                                    <td style="vertical-align: middle;">{{i['fname']+" "+i['lname']}}</td>
+                                    <td style="vertical-align: middle;">{{i['job_status']}}</td>
+                                    <td class="text-center align-middle" style="width: 20%">
+                                        <p id="btn1" value="remove" class="btn btn-warning" style="color:white;width: 180px;margin-bottom: 1px;" >
                                             <a href="/emp/remove_technician/{{ emp['employee_id'] }}/{{i['employee_id']}}" style="color:white">Remove</a></p>
-                                        <p id="btn1" value="cancel" class="btn btn-secondary" style="color:white;width: 180px;" >
+                                        <p id="btn1" value="cancel" class="btn btn-secondary" style="color:white;width: 180px;margin-top: 1px;" >
                                             <a href="/emp/manager/{{ i['employee_id'] }}" style="color:white">Details</a></p>
                                         </td>
                                 </tr>
                                 {% endfor %}
                             </table>
                         </td>
-                        <td>
+                        <td style="width: 50%">
                             <table class="table table-bordered" style="text-align:center; margin-bottom:100px;">
                                 <tr>
                                     <th>Employee ID</th>
@@ -109,16 +110,15 @@
                                 </tr>
                                 {% for p in pending %}
                                 <tr>
-                                    <td>{{p['employee_id']}}</td>
-                                    <td>{{p['fname']+p['lname']}}</td>
-                                    <td>{{p['job_status']}}</td>
-                                    <td class="text-center align-middle"><p class="btn btn-primary" id="btn1"
-                                                                            style="color:white;width: 180px;"
-                                                                            value="cancel">
+                                    <td style="vertical-align: middle;">{{p['employee_id']}}</td>
+                                    <td style="vertical-align: middle;">{{p['fname']+" "+p['lname']}}</td>
+                                    <td style="vertical-align: middle;">{{p['job_status']}}</td>
+                                    <td class="text-center align-middle" style="width: 20%">
+                                        <p class="btn btn-primary" id="btn1"style="color:white;width: 180px;margin-bottom: 1px;"value="cancel">
 
                                         <a href="/emp/allot_technician/{{ emp['employee_id'] }}/{{p['employee_id']}}"
                                            style="color:white">Assign</a></p>
-                                        <p class="btn btn-secondary" id="btn1" style="color:white;width: 180px;"
+                                        <p class="btn btn-secondary" id="btn1" style="color:white;width: 180px;margin-top: 1px;"
                                            value="cancel">
 
                                             <a href="/emp/manager/{{ p['employee_id'] }}"
