@@ -10,5 +10,9 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
 @app.route('/', methods=['GET', 'POST'])
-def home():
+def index():
    return '<h1>DEPLOY SUCCESSFULL</h1>'
+
+
+if __name__ == "__main__":
+    app.run()
