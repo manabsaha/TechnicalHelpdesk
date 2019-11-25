@@ -118,6 +118,14 @@ def logout():
     session.pop('id', None)
     return redirect(url_for('home'))
 
+#About us method.
+@app.route('/about/', methods=['GET', 'POST'])
+def about():
+    if 'loggedin' in session:
+        user = escape(session['id'])
+        designation = escape(session['designation'])
+        return render_template('site/about.html',designation=designation, user=user,tab="about")
+    return render_template('site/about.html',tab="about")
 
 if __name__ == "__main__":
     app.run()
