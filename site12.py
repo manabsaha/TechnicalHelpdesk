@@ -7,6 +7,7 @@ import pyrebase
 from datetime import date
 
 app = Flask(__name__)
+
 app.config['SECRET_KEY'] = os.urandom(32)
 #MySQL config.
 app.config['MYSQL_USER'] = 'root'
@@ -983,5 +984,5 @@ def super_logout():
     return redirect(url_for('home'))
 
 
-# if __name__ == "__main__":
-#     app.run(debug=True)
+if __name__ == "__main__":
+    app.run()
