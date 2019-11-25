@@ -12,21 +12,7 @@ app.config['SECRET_KEY'] = os.urandom(32)
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-app.config['MYSQL_DB'] = 'abc'
 mysql = MySQL(app)
-
-# def create_db():
-#     try:
-#         print("Hi0")
-#         cur=mysql.connection.cursor()
-#         print("Hi1")
-#         cur.execute("""CREATE DATABASE xyyz;""")
-#         app.config['MYSQL_DB'] = 'xyyz'
-#         mysql.connection.commit()
-#     except:
-#         print("Hey")
-#         app.config['MYSQL_DB'] = 'xyyz'
-# create_db()
 
 #Firebase config.
 config = {
@@ -40,7 +26,25 @@ config = {
     "measurementId": "G-KSX47MVXRN"
 }
 
+def check_db():
+    cur=mysql.connection.cursor()
+    try:
+        cur.execute("""USE abc""")
+        print("Database exits!")
+        app.config['MYSQL_DB'] = 'abc'
+    except:
+        print("Database doesn't exists!")
+        init()
+
+def create_db():
+    cur=mysql.connection.cursor()
+    cur.execute("""CREATE DATABASE abc;""")
+    app.config['MYSQL_DB'] = 'abc'
+    mysql.connection.commit()
+    print("Database created!")
+
 def init():
+    create_db()
     cur=mysql.connection.cursor()
     try:
         cur.execute("""CREATE TABLE user (
@@ -125,10 +129,10 @@ def init():
         print("employee_superior table exists!")
     mysql.connection.commit()
 
-@app.route('/create_all')
-def create_all():
-    init()
-    return redirect(url_for('home'))
+# @app.route('/create_all')
+# def create_all():
+#     init()
+#     return redirect(url_for('home'))
 
 #SESSION VARIABLES: loggedin, id, designation, SuperuserAccess, EmpAccess
 def session_val(loggedin,id,designation,su_access,emp_access):
@@ -154,6 +158,7 @@ def session_val(loggedin,id,designation,su_access,emp_access):
 #HOME PAGE.
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    check_db()
     if 'loggedin' in session:
         user = escape(session['id'])
         designation=escape(session['designation'])
@@ -844,6 +849,7 @@ def emp_logout():
 #EMPLOYEE HOME
 @app.route('/emp',methods=['GET','POST'])
 def emp():
+    check_db()
     if 'EmpAccess' in session:
         print(session['designation'])
         return render_template('/employee/employee.html',desg=session['designation'],tab="stats")
