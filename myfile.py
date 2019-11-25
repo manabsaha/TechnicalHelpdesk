@@ -11,7 +11,7 @@ mysql = MySQL(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-   return '<h1>DEPLOY SUCCESSFULL</h1>'
+   return render_template('site/index.html')
 
 
 if __name__ == "__main__":
