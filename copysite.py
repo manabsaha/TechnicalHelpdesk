@@ -11,9 +11,22 @@ app.config['SECRET_KEY'] = os.urandom(32)
 #MySQL config.
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
-app.config['MYSQL_DB'] = 'abc'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+app.config['MYSQL_DB'] = 'abc'
 mysql = MySQL(app)
+
+# def create_db():
+#     try:
+#         print("Hi0")
+#         cur=mysql.connection.cursor()
+#         print("Hi1")
+#         cur.execute("""CREATE DATABASE xyyz;""")
+#         app.config['MYSQL_DB'] = 'xyyz'
+#         mysql.connection.commit()
+#     except:
+#         print("Hey")
+#         app.config['MYSQL_DB'] = 'xyyz'
+# create_db()
 
 #Firebase config.
 config = {
@@ -26,8 +39,6 @@ config = {
     "appId": "1:448324302994:web:da49238fd03eab01f3ce4b",
     "measurementId": "G-KSX47MVXRN"
 }
-
-#SESSION VARIABLES: loggedin, id, designation, SuperuserAccess, EmpAccess
 
 def init():
     cur=mysql.connection.cursor()
@@ -44,11 +55,11 @@ def init():
                                         designation varchar(50) DEFAULT 'customer',
                                         PRIMARY KEY (user_id))auto_increment=1001""")
     except:
-        pass
+        print("user table exists!")
     try:
         cur.execute("""CREATE TABLE feedback (phone bigint(10),message varchar(200))""")
     except:
-        pass
+        print("feedback table exists!")
     try:
         cur.execute("""CREATE TABLE ticket (ticket_id int AUTO_INCREMENT,
                                                         user_id int NOT NULL,
@@ -64,7 +75,7 @@ def init():
                                                         FOREIGN KEY (user_id)
                                                         REFERENCES user(user_id))AUTO_INCREMENT=10001""")
     except:
-        pass
+        print("ticket table exists!")
     try:
         cur.execute("""CREATE TABLE inventory (inventory_id int AUTO_INCREMENT,
                                                             ticket_id int NOT NULL,
@@ -78,7 +89,7 @@ def init():
                                                             FOREIGN KEY (ticket_id)
                                                             REFERENCES ticket(ticket_id))AUTO_INCREMENT=20001""")
     except:
-        pass
+        print("inventory table exists!")
     try:
         cur.execute("""CREATE TABLE employee (employee_id int AUTO_INCREMENT,
                                                             fname varchar(20),
@@ -92,7 +103,7 @@ def init():
                                                             picture varchar(200) DEFAULT '/static/images/no_dp.png',
                                                             PRIMARY KEY (employee_id))auto_increment=2001""")
     except:
-        pass
+        print("employee table exists!")
     try:
         cur.execute("""CREATE TABLE assignment (ticket_id int UNIQUE,
                                                 employee_id int,
@@ -102,7 +113,7 @@ def init():
                                                 FOREIGN KEY(ticket_id)
                                                 REFERENCES ticket(ticket_id))""")
     except:
-        pass
+        print("assignment table exists!")
     try:
         cur.execute("""CREATE TABLE employee_superior (employee_id int,
                                                         superior_id int,
@@ -111,7 +122,7 @@ def init():
                                                         FOREIGN KEY(superior_id)
                                                         REFERENCES employee(employee_id))""")
     except:
-        pass
+        print("employee_superior table exists!")
     mysql.connection.commit()
 
 @app.route('/create_all')
@@ -119,6 +130,7 @@ def create_all():
     init()
     return redirect(url_for('home'))
 
+#SESSION VARIABLES: loggedin, id, designation, SuperuserAccess, EmpAccess
 def session_val(loggedin,id,designation,su_access,emp_access):
 
     if loggedin==True:
@@ -180,20 +192,6 @@ def reg():
                     values(%s,%s,%s,%s,%s,%s)""", (fname, lname, phone,address,pincode,hash_password))
             except:
                 pass
-            # except:
-            #     cur.execute("""CREATE TABLE user (
-            #                                     user_id int AUTO_INCREMENT,
-            #                                     fname varchar(20),
-            #                                     lname varchar(20),
-            #                                     phone bigint(10) UNIQUE,
-            #                                     address varchar(100),
-            #                                     pincode bigint(6),
-            #                                     hash_password varchar(128),
-            #                                     picture varchar(200) DEFAULT '/static/images/no_dp.png',
-            #                                     designation varchar(50) DEFAULT 'customer',
-            #                                     PRIMARY KEY (user_id))auto_increment=1001""")
-            #     cur.execute("""INSERT INTO user(fname, lname, phone,address,pincode,hash_password) 
-            #         values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))
             
             cur.execute("""SELECT user_id,designation from user where phone=%s""",(phone,))
             user_id=cur.fetchone()
@@ -511,6 +509,19 @@ def manager_profile(mgr_id):
         cur.execute("""SELECT * FROM employee WHERE employee_id=%s""",(mgr_id,))
         return render_template('/employee/read_profile.html',data=cur.fetchone(),tab="tickets",desg=session['designation'])
     return redirect(url_for('emp'))
+@app.route('/emp/admin/tickets')
+def admin_tickets():
+    if 'EmpAccess' in session and session['designation'] == 'ADMIN':
+        cur = mysql.connection.cursor()
+        cur.execute("""SELECT * from ticket, employee, assignment, employee_superior where ticket.ticket_id=assignment.ticket_id
+            and assignment.employee_id=employee.employee_id and employee.employee_id=employee_superior.employee_id
+            ORDER BY app_date DESC""",)
+        tickets=cur.fetchall()
+
+        return render_template('/employee/manager/view_tickets.html', tab="tickets", tickets=tickets,
+                               desg=session['designation'])
+    return redirect(url_for('emp'))
+
 
 #----------------------------------------TECHNICIAN---------------------------------------------#
 #Technician Tickets
@@ -520,9 +531,9 @@ def tech_tickets():
         user = escape(session['id'])
         cur = mysql.connection.cursor()
         cur.execute("""SELECT * FROM ticket,assignment WHERE 
-            ticket.ticket_id=assignment.ticket_id AND employee_id=%s""",(user,))
+            ticket.ticket_id=assignment.ticket_id AND employee_id=%s ORDER BY record_date DESC""",(user,))
         return render_template('/employee/technician/technician_tickets.html',data=cur.fetchall(),
-            tab="tickets",user=user,desg=session['designation'])
+            tab="inventory",user=user,desg=session['designation'])
     return redirect(url_for('emp'))
 
 #Update status
@@ -577,25 +588,6 @@ def ticket():
             return redirect(url_for('home'))
         except:
             pass
-        # except:
-        #     cur.execute("""CREATE TABLE ticket (ticket_id int AUTO_INCREMENT,
-        #                                         user_id int NOT NULL,
-        #                                         fname varchar(20),
-        #                                         lname varchar(20),
-        #                                         phone bigint(10),
-        #                                         address varchar(100),
-        #                                         app_date date, 
-        #                                         curr_date date,
-        #                                         app_type varchar(20) CHECK(app_type IN ('Appointment','Pickup')),
-        #                                         status varchar(20) DEFAULT 'Processing',
-        #                                         PRIMARY KEY (ticket_id),
-        #                                         FOREIGN KEY (user_id)
-        #                                         REFERENCES user(user_id))AUTO_INCREMENT=10001""")
-        #     cur.execute("""INSERT INTO ticket(user_id,fname, lname, phone, address, app_date, curr_date,app_type) 
-        #         values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date,
-        #         curr_date, type))
-        #     mysql.connection.commit()
-        #    return redirect(url_for('services'))
     gc.collect()
     return render_template('forms/ticket.html',tab="services",designation=escape(session['designation']), data=data,date=date.today(),
         user=escape(session['id']))
@@ -618,7 +610,8 @@ def all_tickets():
     if 'EmpAccess' in session and session['designation']=='EXECUTIVE':
         user = escape(session['id'])
         cur=mysql.connection.cursor()
-        cur.execute("SELECT ticket_id, user_id, fname, app_date,app_type,status FROM ticket where status='processing'")
+        cur.execute("""SELECT ticket_id, user_id, fname, app_date,app_type,status FROM ticket 
+            where status='processing' ORDER BY app_date DESC""")
         data=cur.fetchall()
         return render_template('employee/ticket/all_tickets.html',tab="tickets",data=data,user=user,desg=session['designation'])
     return redirect(url_for('emp'))
@@ -629,7 +622,8 @@ def inventory():
     if 'EmpAccess' in session:
         user = escape(session['id'])
         cur=mysql.connection.cursor()
-        cur.execute("SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id;")
+        cur.execute("""SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id
+             ORDER BY record_date DESC;""")
         data=cur.fetchall()
         return render_template('employee/ticket/inventory.html',tab="inventory",data=data,user=user,desg=session['designation'])
     return redirect(url_for('emp'))
@@ -640,7 +634,8 @@ def pending_inventory():
     if 'EmpAccess' in session:
         user = escape(session['id'])
         cur=mysql.connection.cursor()
-        cur.execute("SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id and status='inventory';")
+        cur.execute("""SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id and 
+            status='inventory' ORDER BY app_date DESC;""")
         data=cur.fetchall()
         return render_template('employee/ticket/inventory.html',tab="inventory",data=data,user=user,
             desg=session['designation'])
@@ -654,9 +649,12 @@ def assign_pending_inventory(tech_id):
         cur=mysql.connection.cursor()
         #cur.execute("SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id and status='inventory';")
         #data=cur.fetchall()
-        cur.execute("""SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id and status='inventory';""")
+        cur.execute("""SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id 
+            and status='inventory' ORDER BY ticket.app_date DESC;""")
         pending=cur.fetchall()
-        cur.execute("""SELECT * FROM assignment, ticket,inventory where inventory.ticket_id=assignment.ticket_id and assignment.ticket_id=ticket.ticket_id and assignment.employee_id=%s;""",(tech_id,))
+        cur.execute("""SELECT * FROM assignment, ticket,inventory where inventory.ticket_id=assignment.ticket_id 
+            and assignment.ticket_id=ticket.ticket_id and assignment.employee_id=%s
+            ORDER BY assignment.record_date DESC;""",(tech_id,))
         assigned = cur.fetchall()
         cur.execute(
             """SELECT * FROM employee where employee_id=%s;""",(tech_id,))
@@ -720,26 +718,6 @@ def inventory_add(ticket_id):
                 return redirect(url_for('all_tickets'))
             except:
                 pass
-            # except:
-            #     cur.execute("""CREATE TABLE inventory (inventory_id int AUTO_INCREMENT,
-            #                                         ticket_id int NOT NULL,
-            #                                         product_name varchar(50),
-            #                                         product_type varchar(50),
-            #                                         product_description varchar(100),
-            #                                         fault_type varchar(50),
-            #                                         fault_description varchar(200),
-            #                                         record_date date,
-            #                                         PRIMARY KEY (inventory_id),
-            #                                         FOREIGN KEY (ticket_id)
-            #                                         REFERENCES ticket(ticket_id))AUTO_INCREMENT=20001""")
-            #     cur.execute("""INSERT INTO inventory(ticket_id, product_name,product_type, product_description,
-            #          fault_type, fault_description, record_date) 
-            #                    values(%s,%s,%s,%s,%s,%s,%s)""",
-            #                 (ticket_id, product_name, product_type, product_description, fault_type, fault_description, curr_date))
-            #     mysql.connection.commit()
-            #     cur.execute("""UPDATE ticket SET status=%s WHERE ticket_id=%s""",('Inventory',ticket_id))
-            #     mysql.connection.commit()
-            #     return redirect(url_for('all_tickets'))
         gc.collect()
         return render_template('employee/ticket/add_inventory.html',tab="tickets",date=date.today(), 
             user=escape(session['id']),desg=session['designation'])
@@ -751,7 +729,8 @@ def inventory_add(ticket_id):
 def completed_tickets():
     if 'EmpAccess' in session:
         cur=mysql.connection.cursor()
-        cur.execute("""SELECT * FROM inventory,ticket WHERE inventory.ticket_id=ticket.ticket_id and (status='Completed' or status='Ready for delivery');""")
+        cur.execute("""SELECT * FROM inventory,ticket WHERE inventory.ticket_id=ticket.ticket_id and (status='Completed' or status='Ready for delivery')
+            ORDER BY record_date DESC;""")
         return render_template('/employee/ticket/completed_tickets.html',data=cur.fetchall(),tab="inventory",
             user=session['id'],desg=session['designation'])
     return redirect(url_for('emp'))
@@ -805,20 +784,6 @@ def emp_reg():
                         values(%s,%s,%s,%s,%s,%s)""", (fname, lname, phone,address,pincode,hash_password))
                 except:
                     pass
-                # except:
-                #     cur.execute("""CREATE TABLE employee (employee_id int AUTO_INCREMENT,
-                #                                     fname varchar(20),
-                #                                     lname varchar(20),
-                #                                     phone bigint(10) UNIQUE,
-                #                                     address varchar(100),
-                #                                     pincode bigint(6),
-                #                                     job_status varchar(20) DEFAULT 'ACTIVE',
-                #                                     designation varchar(20) DEFAULT 'EXECUTIVE',
-                #                                     hash_password varchar(128),
-                #                                     picture varchar(200) DEFAULT '/static/images/no_dp.png',
-                #                                     PRIMARY KEY (employee_id))auto_increment=2001""")
-                #     cur.execute("""INSERT INTO employee(fname, lname, phone,address,pincode,hash_password) 
-                #         values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))
                 
                 cur.execute("""SELECT employee_id,designation from employee where phone=%s""",(phone,))
                 employee=cur.fetchone()

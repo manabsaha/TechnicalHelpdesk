@@ -94,3 +94,80 @@ def test():
 
 if __name__ == "__main__":
     app.run()
+
+
+
+# except:
+            #     cur.execute("""CREATE TABLE user (
+            #                                     user_id int AUTO_INCREMENT,
+            #                                     fname varchar(20),
+            #                                     lname varchar(20),
+            #                                     phone bigint(10) UNIQUE,
+            #                                     address varchar(100),
+            #                                     pincode bigint(6),
+            #                                     hash_password varchar(128),
+            #                                     picture varchar(200) DEFAULT '/static/images/no_dp.png',
+            #                                     designation varchar(50) DEFAULT 'customer',
+            #                                     PRIMARY KEY (user_id))auto_increment=1001""")
+            #     cur.execute("""INSERT INTO user(fname, lname, phone,address,pincode,hash_password) 
+            #         values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))
+
+
+# except:
+        #     cur.execute("""CREATE TABLE ticket (ticket_id int AUTO_INCREMENT,
+        #                                         user_id int NOT NULL,
+        #                                         fname varchar(20),
+        #                                         lname varchar(20),
+        #                                         phone bigint(10),
+        #                                         address varchar(100),
+        #                                         app_date date, 
+        #                                         curr_date date,
+        #                                         app_type varchar(20) CHECK(app_type IN ('Appointment','Pickup')),
+        #                                         status varchar(20) DEFAULT 'Processing',
+        #                                         PRIMARY KEY (ticket_id),
+        #                                         FOREIGN KEY (user_id)
+        #                                         REFERENCES user(user_id))AUTO_INCREMENT=10001""")
+        #     cur.execute("""INSERT INTO ticket(user_id,fname, lname, phone, address, app_date, curr_date,app_type) 
+        #         values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date,
+        #         curr_date, type))
+        #     mysql.connection.commit()
+        #    return redirect(url_for('services'))
+
+
+
+# except:
+        #     cur.execute("""CREATE TABLE inventory (inventory_id int AUTO_INCREMENT,
+        #                                         ticket_id int NOT NULL,
+        #                                         product_name varchar(50),
+        #                                         product_type varchar(50),
+        #                                         product_description varchar(100),
+        #                                         fault_type varchar(50),
+        #                                         fault_description varchar(200),
+        #                                         record_date date,
+        #                                         PRIMARY KEY (inventory_id),
+        #                                         FOREIGN KEY (ticket_id)
+        #                                         REFERENCES ticket(ticket_id))AUTO_INCREMENT=20001""")
+        #     cur.execute("""INSERT INTO inventory(ticket_id, product_name,product_type, product_description,
+        #          fault_type, fault_description, record_date) 
+        #                    values(%s,%s,%s,%s,%s,%s,%s)""",
+        #                 (ticket_id, product_name, product_type, product_description, fault_type, fault_description, curr_date))
+        #     mysql.connection.commit()
+        #     cur.execute("""UPDATE ticket SET status=%s WHERE ticket_id=%s""",('Inventory',ticket_id))
+        #     mysql.connection.commit()
+        #     return redirect(url_for('all_tickets'))
+
+
+# except:
+                #     cur.execute("""CREATE TABLE employee (employee_id int AUTO_INCREMENT,
+                #                                     fname varchar(20),
+                #                                     lname varchar(20),
+                #                                     phone bigint(10) UNIQUE,
+                #                                     address varchar(100),
+                #                                     pincode bigint(6),
+                #                                     job_status varchar(20) DEFAULT 'ACTIVE',
+                #                                     designation varchar(20) DEFAULT 'EXECUTIVE',
+                #                                     hash_password varchar(128),
+                #                                     picture varchar(200) DEFAULT '/static/images/no_dp.png',
+                #                                     PRIMARY KEY (employee_id))auto_increment=2001""")
+                #     cur.execute("""INSERT INTO employee(fname, lname, phone,address,pincode,hash_password) 
+                #         values(%s,%s,%s,%s,%s,%s)""",(fname, lname, phone, address, pincode, hash_password))

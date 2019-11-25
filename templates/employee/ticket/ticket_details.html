@@ -36,7 +36,7 @@ select{
   .form-control:focus {
     border: 1px solid #ae3c33; }
  .inner12 {
-  min-width: 32%;
+  width: 80%;
   margin-top: 10%;
   margin-left:auto;
   margin-right:auto;
@@ -64,7 +64,7 @@ select{
      <div class="inner12 p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="800" >
 
         <form action="" method="post">
-            <h3 style="text-align:center">TICKET DETAILS</h3>
+            <h3 style="text-align:center">FAULT DETAILS</h3>
             <hr>
             <div class="form-group">
                 <div class="form-wrapper">
@@ -81,6 +81,15 @@ select{
                 </div>
                 <div class="form-wrapper">
                     <label>{{ticket['ticket_id']}}</label>
+                </div>
+            </div>
+             <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
+             <div class="form-group">
+                <div class="form-wrapper">
+                    <label>Record date:</label>
+                </div>
+                <div class="form-wrapper">
+                    <label>{{ticket['record_date']}}</label>
                 </div>
             </div>
              <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
@@ -126,15 +135,6 @@ select{
                 </div>
                 <div class="form-wrapper">
                     <label>{{ticket['fault_description']}}</label>
-                </div>
-            </div>
-             <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
-             <div class="form-group">
-                <div class="form-wrapper">
-                    <label>Record date:</label>
-                </div>
-                <div class="form-wrapper">
-                    <label>{{ticket['record_date']}}</label>
                 </div>
             </div>
              <hr  style=" background-image:none; border-top: 1px dashed #8c8b8b;">
