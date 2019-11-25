@@ -57,14 +57,18 @@
       </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/procfile">
-          <provider selected="true" editor-type-id="text-editor" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="23" selection-start-column="23" selection-end-column="23" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/site12.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="321">
-              <caret line="521" column="101" selection-start-line="521" selection-start-column="101" selection-end-line="521" selection-end-column="101" />
+            <state relative-caret-position="304">
+              <caret line="520" column="101" selection-start-line="520" selection-start-column="101" selection-end-line="520" selection-end-column="101" />
               <folding>
                 <element signature="e#0#91#0" expanded="true" />
               </folding>
@@ -196,6 +200,7 @@
         <option value="$PROJECT_DIR$/site12.py" />
         <option value="$PROJECT_DIR$/templates/employee/base_employee.html" />
         <option value="$PROJECT_DIR$/templates/employee/manager/view_tickets.html" />
+        <option value="$PROJECT_DIR$/procfile" />
       </list>
     </option>
   </component>
@@ -880,8 +885,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/site12.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="321">
-          <caret line="521" column="101" selection-start-line="521" selection-start-column="101" selection-end-line="521" selection-end-column="101" />
+        <state relative-caret-position="304">
+          <caret line="520" column="101" selection-start-line="520" selection-start-column="101" selection-end-line="520" selection-end-column="101" />
           <folding>
             <element signature="e#0#91#0" expanded="true" />
           </folding>
@@ -896,7 +901,11 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/procfile">
-      <provider selected="true" editor-type-id="text-editor" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="23" selection-start-column="23" selection-end-column="23" />
+        </state>
+      </provider>
     </entry>
   </component>
 </project>
