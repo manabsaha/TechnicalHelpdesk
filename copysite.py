@@ -28,22 +28,22 @@ config = {
     "measurementId": "G-KSX47MVXRN"
 }
 
-def check_db():
-    cur=mysql.connection.cursor()
-    try:
-        cur.execute("""USE abc""")
-        print("Database exits!")
-        app.config['MYSQL_DB'] = 'abc'
-    except:
-        print("Database doesn't exists!")
-        init()
+# def check_db():
+#     cur=mysql.connection.cursor()
+#     try:
+#         cur.execute("""USE abc""")
+#         print("Database exits!")
+#         app.config['MYSQL_DB'] = 'abc'
+#     except:
+#         print("Database doesn't exists!")
+#         init()
 
-def create_db():
-    cur=mysql.connection.cursor()
-    cur.execute("""CREATE DATABASE abc;""")
-    app.config['MYSQL_DB'] = 'abc'
-    mysql.connection.commit()
-    print("Database created!")
+# def create_db():
+#     cur=mysql.connection.cursor()
+#     cur.execute("""CREATE DATABASE abc;""")
+#     app.config['MYSQL_DB'] = 'abc'
+#     mysql.connection.commit()
+#     print("Database created!")
 
 def init():
     cur=mysql.connection.cursor()
@@ -174,6 +174,7 @@ def home():
     if 'EmpAccess' in session:
         return redirect(url_for('emp'))
         #return render_template('admin/admin_panel.html',desg="ADMIN",log=session['AdminAccess'])
+    return render_template('site/index.html',tab="home")
 
     # cur = mysql.connection.cursor()
     # cur.execute("""SELECT * from ticket, employee, assignment, employee_superior where
@@ -201,7 +202,7 @@ def home():
         #     print(tech[i][j])
     #tickets=cur.fetchall()
     
-    return render_template('site/index.html',tab="home")
+    #return render_template('site/index.html',tab="home")
 
 
 #Register method.
@@ -884,7 +885,6 @@ def emp_logout():
 #EMPLOYEE HOME
 @app.route('/emp',methods=['GET','POST'])
 def emp():
-    check_db()
     if 'EmpAccess' in session:
         print(session['designation'])
         return render_template('/employee/employee.html',desg=session['designation'],tab="stats")
