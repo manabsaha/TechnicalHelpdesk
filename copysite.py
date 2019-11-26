@@ -9,8 +9,10 @@ from datetime import date
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(32)
 #MySQL config.
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'root'
+app.config['MYSQL_HOST'] = 'remotemysql.com'
+app.config['MYSQL_USER'] = 'wqzlkC4jQC'
+app.config['MYSQL_PASSWORD'] = 'bhp0usrj9R'
+app.config['MYSQL_DB'] = 'wqzlkC4jQC'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
@@ -44,7 +46,6 @@ def create_db():
     print("Database created!")
 
 def init():
-    create_db()
     cur=mysql.connection.cursor()
     try:
         cur.execute("""CREATE TABLE user (
@@ -129,10 +130,6 @@ def init():
         print("employee_superior table exists!")
     mysql.connection.commit()
 
-# @app.route('/create_all')
-# def create_all():
-#     init()
-#     return redirect(url_for('home'))
 
 #SESSION VARIABLES: loggedin, id, designation, SuperuserAccess, EmpAccess
 def session_val(loggedin,id,designation,su_access,emp_access):
@@ -155,10 +152,14 @@ def session_val(loggedin,id,designation,su_access,emp_access):
 
 #----------------------------------------------USER---------------------------------------------------#
 
+@app.route('/create_all')
+def create_all():
+    init()
+    return redirect(url_for('home'))
+
 #HOME PAGE.
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    check_db()
     if 'loggedin' in session:
         user = escape(session['id'])
         designation=escape(session['designation'])
@@ -174,28 +175,28 @@ def home():
         return redirect(url_for('emp'))
         #return render_template('admin/admin_panel.html',desg="ADMIN",log=session['AdminAccess'])
 
-    cur = mysql.connection.cursor()
+    # cur = mysql.connection.cursor()
     # cur.execute("""SELECT * from ticket, employee, assignment, employee_superior where
     #  ticket.ticket_id=assignment.ticket_id and assignment.employee_id=employee.employee_id 
     #  and employee.employee_id=employee_superior.employee_id
     #     ORDER BY app_date DESC""",)
-    cur.execute("""select * from employee_superior where superior_id=2007""",)
-    mg=cur.fetchall()
-    tech=[]
-    tickets=[]
-    for x in mg:
+    # cur.execute("""select * from employee_superior where superior_id=2007""",)
+    # mg=cur.fetchall()
+    # tech=[]
+    # tickets=[]
+    # for x in mg:
         #print(x['employee_id'])
-        cur.execute("""select * from employee_superior where superior_id=%s""",(x['employee_id'],))
-        tech.append(cur.fetchall())
-    for i in range(0,len(tech)):
-        for j in range(0,len(tech[i])):
-            cur.execute("""select ticket_id from assignment where employee_id=%s""",(tech[i][j]['employee_id'],))
-            tickets.append(cur.fetchall())
-    print(tech[0])
-    print(tech[1])
-    print(len(tech[0]))
-    print(len(tech))
-    print(tickets)
+    #     cur.execute("""select * from employee_superior where superior_id=%s""",(x['employee_id'],))
+    #     tech.append(cur.fetchall())
+    # for i in range(0,len(tech)):
+    #     for j in range(0,len(tech[i])):
+    #         cur.execute("""select ticket_id from assignment where employee_id=%s""",(tech[i][j]['employee_id'],))
+    #         tickets.append(cur.fetchall())
+    # print(tech[0])
+    # print(tech[1])
+    # print(len(tech[0]))
+    # print(len(tech))
+    # print(tickets)
         # for j in tech[i]:
         #     print(tech[i][j])
     #tickets=cur.fetchall()

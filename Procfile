@@ -1,1 +1,1 @@
-web: gunicorn myfile:app
+web: gunicorn copysite:app
