@@ -173,6 +173,33 @@ def home():
     if 'EmpAccess' in session:
         return redirect(url_for('emp'))
         #return render_template('admin/admin_panel.html',desg="ADMIN",log=session['AdminAccess'])
+
+    cur = mysql.connection.cursor()
+    # cur.execute("""SELECT * from ticket, employee, assignment, employee_superior where
+    #  ticket.ticket_id=assignment.ticket_id and assignment.employee_id=employee.employee_id 
+    #  and employee.employee_id=employee_superior.employee_id
+    #     ORDER BY app_date DESC""",)
+    cur.execute("""select * from employee_superior where superior_id=2007""",)
+    mg=cur.fetchall()
+    tech=[]
+    tickets=[]
+    for x in mg:
+        #print(x['employee_id'])
+        cur.execute("""select * from employee_superior where superior_id=%s""",(x['employee_id'],))
+        tech.append(cur.fetchall())
+    for i in range(0,len(tech)):
+        for j in range(0,len(tech[i])):
+            cur.execute("""select ticket_id from assignment where employee_id=%s""",(tech[i][j]['employee_id'],))
+            tickets.append(cur.fetchall())
+    print(tech[0])
+    print(tech[1])
+    print(len(tech[0]))
+    print(len(tech))
+    print(tickets)
+        # for j in tech[i]:
+        #     print(tech[i][j])
+    #tickets=cur.fetchall()
+    
     return render_template('site/index.html',tab="home")
 
 
@@ -514,16 +541,23 @@ def manager_profile(mgr_id):
         cur.execute("""SELECT * FROM employee WHERE employee_id=%s""",(mgr_id,))
         return render_template('/employee/read_profile.html',data=cur.fetchone(),tab="tickets",desg=session['designation'])
     return redirect(url_for('emp'))
+
 @app.route('/emp/admin/tickets')
 def admin_tickets():
     if 'EmpAccess' in session and session['designation'] == 'ADMIN':
         cur = mysql.connection.cursor()
-        cur.execute("""SELECT * from ticket, employee, assignment, employee_superior where ticket.ticket_id=assignment.ticket_id
-            and assignment.employee_id=employee.employee_id and employee.employee_id=employee_superior.employee_id
-            ORDER BY app_date DESC""",)
-        tickets=cur.fetchall()
-
-        return render_template('/employee/manager/view_tickets.html', tab="tickets", tickets=tickets,
+        cur.execute("""select * from employee_superior where superior_id=2007""",)
+        mg=cur.fetchall()
+        tech=[]
+        tickets=[]
+        for x in mg:
+            cur.execute("""select * from employee_superior where superior_id=%s""",(x['employee_id'],))
+            tech.append(cur.fetchall())
+        for i in range(0,len(tech)):
+            for j in range(0,len(tech[i])):
+                cur.execute("""select ticket_id from assignment where employee_id=%s""",(tech[i][j]['employee_id'],))
+                tickets.append(cur.fetchall())
+        return render_template('/employee/admin/all_employee.html', tab="tickets", tech=tech, mg=mg,tkts=tickets,
                                desg=session['designation'])
     return redirect(url_for('emp'))
 

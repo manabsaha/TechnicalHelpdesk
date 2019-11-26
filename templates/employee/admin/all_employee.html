@@ -1,0 +1,101 @@
+{%extends "employee/base_employee.html"%}
+{%block content%}
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<link href="/static/formcss/style.css" rel="stylesheet">
+<style>
+    hr{
+             border: 0;
+    height: 2px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+          }
+          .inner12 {
+  min-width: 70%;
+  margin-left:auto;
+  margin-right:auto;
+  /*border: 2px solid white;*/
+  border-radius: 25px;
+  box-shadow: 5px 5px 15px grey;
+  padding-top: 100px;
+  padding-bottom: 48px;
+  background: url("../images/whitebg.jpg");
+   background-size: cover;}
+  .inner h3 {
+    text-transform: uppercase;
+    font-size: 22px;
+    font-family: "Muli-Bold";
+    text-align: center;
+    margin-bottom: 32px;
+    color: #333;
+    letter-spacing: 2px; }
+
+</style>
+
+    <div class="templateux-section" style="padding-bottom:0px;">
+
+        <div class="container">
+
+        </div>
+        <div class="wrapper js-animsition" data-animsition-out-class="fade-out" id="ticket" style=" box-shadow:5px 5px 15px grey; margin-top:0px; padding-bottom:100px; margin-top:-90px; background-image: url(/static/images/texture1.jpg);background-size: 30%; background-repeat: repeat-y; z-index:0;">
+     <div class="inner12 p-4 mb-4 bg-white" data-aos="fade-up" data-aos-delay="300" style="height:150%; margin-top:100px;background: url(/static/images/texture3.jpg);background-size: 30%; background-repeat: repeat-y;" >
+
+        <form>
+            <h3 style="text-align:center; padding-top:50px; padding-bottom:15px">EMPLOYEE RECORD</h3>
+            <hr style="margin-bottom:15px">
+            <div class="item form-wrapper">
+                <table class="table table-bordered" style="text-align:center; margin-bottom:100px;">
+                  {% set n = namespace(value=0) %}
+                  {% set t = namespace(value=0) %}
+                  {%for i in mg%}
+                      <tr>
+                        <td style="font-weight: bold;background-color: orange" colspan="2">Manager ID: {{i['employee_id']}}</td>
+                      
+                      
+                        
+
+                      {%for j in range(0, tech[n.value]|length)%}
+                      <tr>
+                        <th style="background-color: teal;color: white">Technician ID</th>
+                        <th style="background-color: teal;color: white">Option</th>
+                      </tr>
+                      <tr>
+                        <td style="width: 50%">{{tech[n.value][j]['employee_id']}}</td>
+                        <td class="text-center align-middle" style="width: 50%"><p id="btn1" value="cancel" class="btn btn-primary" style="color:white;width: 180px;">
+
+                          <a href="/emp/technician/{{tech[n.value][j]['employee_id']}}" style="color:white;">View Profile</a></p></td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="font-weight: bold;">Ticket IDs</td>
+                      </tr>
+                      {%for k in range(0,tkts[t.value]|length)%}
+                      <tr>
+                        <td>{{tkts[t.value][k]['ticket_id']}}</td>
+                        <td class="text-center align-middle" style="width: 50%"><p id="btn1" value="cancel" class="btn btn-warning" style="color:white;width: 180px;">
+
+                          <a href="/ticket_details/{{ tkts[t.value][k]['ticket_id'] }}" style="color:white;">View Ticket</a></p></td>
+                      </tr>
+                      {%endfor%}
+                      {%set t.value = t.value + 1 %}
+                      {%endfor%}
+
+                      <tr>
+                        <td colspan="2"><hr></td>
+                      </tr>
+                    
+                      </tr>
+                      {%set n.value = n.value + 1 %}
+                  {%endfor%}
+
+                </table>
+            </div>
+        </form>
+    </div>
+</div>
+    </div> <!-- .templateux-section -->
+
+{%endblock%}
+
+
+</body>
+</html>
