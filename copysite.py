@@ -423,6 +423,7 @@ def managers():
         cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
            and employee.employee_id = employee_superior.employee_id and designation='MANAGER'""",(user,))
         data = cur.fetchall()
+        cur.execute("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));")
         cur.execute("""select *, count(*) from employee, employee_superior where employee.employee_id=employee_superior.superior_id group 
         by employee.employee_id""")
         count = cur.fetchall()
