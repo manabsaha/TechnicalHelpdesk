@@ -358,6 +358,7 @@ def technicians():
         cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
            and employee.employee_id = employee_superior.employee_id and designation='TECHNICIAN'""",(user,))
         data = cur.fetchall()
+        cur.execute("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));")
         cur.execute("""select *, count(*) from employee, assignment where employee.employee_id=assignment.employee_id group 
         by employee.employee_id""")
         count = cur.fetchall()
@@ -383,6 +384,7 @@ def assign_job():
         cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
                    and employee.employee_id = employee_superior.employee_id and designation='TECHNICIAN'""", (user,))
         data = cur.fetchall()
+        cur.execute("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));")
         cur.execute("""select *, count(*) from employee, assignment where employee.employee_id=assignment.employee_id group 
                 by employee.employee_id""")
         count = cur.fetchall()
@@ -423,6 +425,7 @@ def managers():
         cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
            and employee.employee_id = employee_superior.employee_id and designation='MANAGER'""",(user,))
         data = cur.fetchall()
+        cur.execute("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));")
         cur.execute("""select *, count(*) from employee, employee_superior where employee.employee_id=employee_superior.superior_id group 
         by employee.employee_id""")
         count = cur.fetchall()
@@ -441,6 +444,7 @@ def allot_technician():
         cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
                    and employee.employee_id = employee_superior.employee_id and designation='MANAGER'""", (user,))
         alloted=cur.fetchall()
+        cur.execute("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));")
         cur.execute("""select *, count(*) from employee, employee_superior where employee.employee_id=employee_superior.superior_id group 
                 by employee.employee_id""")
         count = cur.fetchall()
@@ -503,7 +507,7 @@ def manager_profile(mgr_id):
 def admin_tickets():
     if 'EmpAccess' in session and session['designation'] == 'ADMIN':
         cur = mysql.connection.cursor()
-        cur.execute("""select * from employee_superior where superior_id=2007""",)
+        cur.execute("""select * from employee_superior where superior_id=%s""",(session['id'],))
         mg=cur.fetchall()
         tech=[]
         tickets=[]

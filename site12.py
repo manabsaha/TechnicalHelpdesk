@@ -7,10 +7,11 @@ import pyrebase
 from datetime import date
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(32)
+app.config['SECRET_KEY'] = '\xeao\x1a\x00\xcd\x08\n\x141\xbdr\xe6i\x82+>\xf5\x96\xf2\xa1\xb8\x01\x19\\\x8a\x0e\xdf\xcc3f!\xd4'
 #MySQL config.
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
+app.config['MYSQL_DB'] = 'abc'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
@@ -439,6 +440,7 @@ def managers():
         cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
            and employee.employee_id = employee_superior.employee_id and designation='MANAGER'""",(user,))
         data = cur.fetchall()
+        cur.execute("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));")
         cur.execute("""select *, count(*) from employee, employee_superior where employee.employee_id=employee_superior.superior_id group 
         by employee.employee_id""")
         count = cur.fetchall()
