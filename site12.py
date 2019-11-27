@@ -473,8 +473,8 @@ def allocate(mgr_id):
         cur.execute("""select * from employee,employee_superior where superior_id=%s and 
             employee.employee_id = employee_superior.employee_id and designation='TECHNICIAN'""", (mgr_id,))
         technicians = cur.fetchall()
-        cur.execute("""select * from employee where employee_id not in(select employee_id from employee_superior where 
-        superior_id=%s) and designation='TECHNICIAN' or designation='EMPLOYEE'""",(mgr_id,))
+        cur.execute("""select * from employee where employee_id not in(select employee_id from employee_superior) and 
+        designation='TECHNICIAN' or designation='EMPLOYEE'""")
         pending = cur.fetchall()
         cur.execute(
             """SELECT * FROM employee where employee_id=%s;""", (mgr_id,))
