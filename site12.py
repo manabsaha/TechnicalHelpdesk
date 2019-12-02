@@ -521,7 +521,7 @@ def manager_profile(mgr_id):
 def admin_tickets():
     if 'EmpAccess' in session and session['designation'] == 'ADMIN':
         cur = mysql.connection.cursor()
-        cur.execute("""select * from employee_superior where superior_id=2007""",)
+        cur.execute("""select * from employee_superior where superior_id=%s""",(session['id'],))
         mg=cur.fetchall()
         tech=[]
         tickets=[]
@@ -860,11 +860,8 @@ def emp_logout():
 def emp():
     check_db()
     if 'EmpAccess' in session:
-        #print(session['designation'])
-        cur=mysql.connection.cursor()
-        cur.execute("""SELECT fname FROM employee WHERE employee_id=%s""",(session['id'],))
-        name=cur.fetchone()
-        return render_template('/employee/employee.html',name=name['fname'],desg=session['designation'],tab="stats")
+        print(session['designation'])
+        return render_template('/employee/employee.html',desg=session['designation'],tab="stats")
     return redirect(url_for('emp_access'))
 
 #Employee Profile Method.
