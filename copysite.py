@@ -1,7 +1,7 @@
 from flask import Flask, url_for, request, redirect, render_template,flash, session, escape
 from flask_mysqldb import MySQL
 import bcrypt
-import os
+import random
 import gc
 import pyrebase
 from datetime import date
@@ -848,7 +848,11 @@ def emp_logout():
 def emp():
     if 'EmpAccess' in session:
         print(session['designation'])
-        return render_template('/employee/employee.html',desg=session['designation'],tab="stats")
+        cur=mysql.connection.cursor()
+        cur.execute("SELECT * from feedback")
+        feedback=cur.fetchall()
+        feedback=random.sample(feedback,5)
+        return render_template('/employee/employee.html',desg=session['designation'],tab="stats",feedback=feedback)
     return redirect(url_for('emp_access'))
 
 #Employee Profile Method.

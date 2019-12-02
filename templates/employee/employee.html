@@ -1,8 +1,8 @@
 {%extends "employee/base_employee.html"%}
 {%block content2%}
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <link rel="stylesheet" href="/static/formcss/style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+<link rel="stylesheet" href="/static/formcss/style.css">
 
 
 <style>
@@ -38,22 +38,73 @@ input[type="password"]{font-size: 14px;}
   .form-control:focus {
     border: 1px solid #ae3c33; }
 
+.owl-dots{
+  position: absolute;
+  top:10px;
+  left:25%;
+  right:25%;
+}
 </style>
 
 <div class="wrapper js-animsition"
-     data-animsition-out-class="fade-out" style="background-image: url(/static/images/hero_3.jpg); z-index:0; padding-bottom:5%">
+     data-animsition-out-class="fade-out"
+     style="background-image: url(/static/images/hero_3.jpg); z-index:0; padding-bottom:5%">
 
-        <div class="container">
-            <div class="row align-items-lg-center" >
-                <div class="col-lg-6 order-lg-1">
+    <div class="templateux-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 testimonial-wrap">
+                <div class="quote">“</div>
+                <div class="owl-carousel wide-slider-testimonial owl-loaded owl-drag">
 
-                    <h1 class="heading mb-3" data-aos="fade-up" >
-                      Lorem ipsum dolor sit amet, an ludus nostro forensibus sed. Solum cetero numquam eam eu, nec ludus dictas facilisi at. Impetus aliquid in vel. Mea veritus minimum ea. No pri nostrum noluisse tractatos. Noster appetere cu eum, eu oblique nostrud pro, graeco nusquam accumsan cum at. Eos cetero accusamus dissentiet ne, fastidii imperdiet ad vel.
-                    </h1>
+                    <div class="owl-stage-outer">
+                         <div class="owl-stage"
+                             style="transform: translate3d(900px, 100px, 500px); transition: all 0s ease 0s; width: 3150px;">
+                            <div class="owl-item cloned" style="width: 450px;">
+                                <div class="item">
+                                    <blockquote class="block-testomonial">
+                                        <p>"{{feedback[0]['message']}}"</p>
+                                    </blockquote>
+                                </div>
+                            </div>
+                            <div class="owl-item cloned" style="width: 450px;">
+                                <div class="item">
+                                    <blockquote class="block-testomonial">
+                                        <p>"{{feedback[1]['message']}}"</p>
+                                    </blockquote>
+                                </div>
+                            </div>
+                            <div class="owl-item active" style="width: 450px;">
+                                <div class="item">
+                                    <blockquote class="block-testomonial">
+                                        <p>"{{feedback[2]['message']}}"</p>
+                                    </blockquote>
+                                </div>
+                            </div>
+                            <div class="owl-item" style="width: 450px;">
+                                <div class="item">
+                                    <blockquote class="block-testomonial">
+                                        <p>"{{feedback[3]['message']}}"</p>
+                                    </blockquote>
+                                </div>
+                            </div>
+                            <div class="owl-item" style="width: 450px;">
+                                <div class="item">
+                                    <blockquote class="block-testomonial">
+                                        <p>"{{feedback[4]['message']}}"</p>
+                                    </blockquote>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
                 </div>
-
             </div>
-    </div> <!-- .templateux-cover -->
+        </div>
+    </div>
+</div>
 
 </div>
 
