@@ -41,8 +41,10 @@ input[type="password"]{font-size: 14px;}
 .owl-dots{
   position: absolute;
   top:10px;
-  left:25%;
+  left:50%;
   right:25%;
+  transform-origin:10px 60px;
+  transform: rotate(270deg);
 }
 </style>
 
@@ -52,18 +54,20 @@ input[type="password"]{font-size: 14px;}
 
     <div class="templateux-section">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8 testimonial-wrap">
+        <div class="row justify-content-center" >
+            <div class="col-md-8 testimonial-wrap" style="background-image: url(/static/images/texture3.jpg);
+                left:5%; margin:auto; top:25%; box-shadow: 5px 5px 15px grey;border-radius: 25px;">
                 <div class="quote">“</div>
-                <div class="owl-carousel wide-slider-testimonial owl-loaded owl-drag">
+                <div class="owl-carousel wide-slider-testimonial owl-loaded owl-drag" >
 
-                    <div class="owl-stage-outer">
+                    <div class="owl-stage-outer" >
                          <div class="owl-stage"
-                             style="transform: translate3d(900px, 100px, 500px); transition: all 0s ease 0s; width: 3150px;">
+                             style="transform: translate3d(900px, 100px, 500px);  transition: all 0s ease 0s; width: 3150px;">
                             <div class="owl-item cloned" style="width: 450px;">
                                 <div class="item">
                                     <blockquote class="block-testomonial">
                                         <p>"{{feedback[0]['message']}}"</p>
+                                        <h5 style="text-align:right">-Customer</h5>
                                     </blockquote>
                                 </div>
                             </div>
@@ -71,6 +75,7 @@ input[type="password"]{font-size: 14px;}
                                 <div class="item">
                                     <blockquote class="block-testomonial">
                                         <p>"{{feedback[1]['message']}}"</p>
+                                        <h5 style="text-align:right">-Customer</h5>
                                     </blockquote>
                                 </div>
                             </div>
@@ -78,6 +83,7 @@ input[type="password"]{font-size: 14px;}
                                 <div class="item">
                                     <blockquote class="block-testomonial">
                                         <p>"{{feedback[2]['message']}}"</p>
+                                        <h5 style="text-align:right">-Customer</h5>
                                     </blockquote>
                                 </div>
                             </div>
@@ -85,6 +91,7 @@ input[type="password"]{font-size: 14px;}
                                 <div class="item">
                                     <blockquote class="block-testomonial">
                                         <p>"{{feedback[3]['message']}}"</p>
+                                        <h5 style="text-align:right">-Customer</h5>
                                     </blockquote>
                                 </div>
                             </div>
@@ -92,6 +99,7 @@ input[type="password"]{font-size: 14px;}
                                 <div class="item">
                                     <blockquote class="block-testomonial">
                                         <p>"{{feedback[4]['message']}}"</p>
+                                        <h5 style="text-align:right">-Customer</h5>
                                     </blockquote>
                                 </div>
                             </div>
