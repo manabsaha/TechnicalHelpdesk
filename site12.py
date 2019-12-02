@@ -521,7 +521,7 @@ def manager_profile(mgr_id):
 def admin_tickets():
     if 'EmpAccess' in session and session['designation'] == 'ADMIN':
         cur = mysql.connection.cursor()
-        cur.execute("""select * from employee_superior where superior_id=%s""",(session['id'],))
+        cur.execute("""select * from employee_superior where superior_id=2007""",)
         mg=cur.fetchall()
         tech=[]
         tickets=[]
