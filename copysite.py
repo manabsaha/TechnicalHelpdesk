@@ -150,27 +150,7 @@ def home():
         cur.execute("""SELECT fname FROM user where user_id=%s""",(user,))
         name = cur.fetchone()
         name = name['fname']
-        return render_template('site/index.html',designation=designation, user=user,name=name,login_flag=True,tab="home",message='adjakhdjk')
-    if 'SuperuserAccess' in session:
-        return redirect(url_for('super_panel'))
-        #return render_template('superuser/superuser_panel.html',desg="SUPERUSER",log=session['SuperuserAccess'])
-    if 'EmpAccess' in session:
-        return redirect(url_for('emp'))
-        #return render_template('admin/admin_panel.html',desg="ADMIN",log=session['AdminAccess'])
-    return render_template('site/index.html',tab="home")
-
-
-#HOME PAGE ALERT.
-@app.route('/alert/', methods=['GET', 'POST'])
-def home_alert():
-    if 'loggedin' in session:
-        user = escape(session['id'])
-        designation=escape(session['designation'])
-        cur = mysql.connection.cursor()
-        cur.execute("""SELECT fname FROM user where user_id=%s""",(user,))
-        name = cur.fetchone()
-        name = name['fname']
-        return render_template('site/index.html',designation=designation, user=user,name=name,login_flag=True,tab="home",message='asdada')
+        return render_template('site/index.html',designation=designation, user=user,name=name,login_flag=True,tab="home")
     if 'SuperuserAccess' in session:
         return redirect(url_for('super_panel'))
         #return render_template('superuser/superuser_panel.html',desg="SUPERUSER",log=session['SuperuserAccess'])
@@ -201,14 +181,14 @@ def reg():
                     values(%s,%s,%s,%s,%s,%s)""", (fname, lname, phone,address,pincode,hash_password))
             except:
                 pass
-            
+
             cur.execute("""SELECT user_id,designation from user where phone=%s""",(phone,))
             user_id=cur.fetchone()
             session_val(True,user_id['user_id'],user_id['designation'],None,None)
             mysql.connection.commit()
             gc.collect()
             return redirect(url_for('home'))
-            
+
         except:
             cur.execute("""SELECT phone FROM user WHERE phone=%s""",(phone,))
             if cur.rowcount == 0:
@@ -217,7 +197,7 @@ def reg():
             else:
                 msg= "*Number already used"
                 return render_template('reg-login/reg.html',msg=msg)
-        
+
     return render_template('reg-login/reg.html')
 
 #Login method.
@@ -242,8 +222,7 @@ def login():
         id=cur.fetchone()
         if(check_pass==hash_password.encode('utf8')):
             session_val(True,id['user_id'],id['designation'],None,None)
-            alert='Login Successfull!'
-            return redirect(url_for('home_alert'))
+            return redirect(url_for('home'))
         else:
             msg = '*Incorrect password!'
             return render_template('reg-login/login.html',msg=msg)
