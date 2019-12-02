@@ -847,11 +847,8 @@ def emp_logout():
 @app.route('/emp',methods=['GET','POST'])
 def emp():
     if 'EmpAccess' in session:
-        #print(session['designation'])
-        cur=mysql.connection.cursor()
-        cur.execute("""SELECT fname FROM employee WHERE employee_id=%s""",(session['id'],))
-        name=cur.fetchone()
-        return render_template('/employee/employee.html',name=name['fname'],desg=session['designation'],tab="stats")
+        print(session['designation'])
+        return render_template('/employee/employee.html',desg=session['designation'],tab="stats")
     return redirect(url_for('emp_access'))
 
 #Employee Profile Method.
