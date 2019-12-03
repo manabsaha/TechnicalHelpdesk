@@ -9,6 +9,9 @@ from datetime import date
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '\xeao\x1a\x00\xcd\x08\n\x141\xbdr\xe6i\x82+>\xf5\x96\xf2\xa1\xb8\x01\x19\\\x8a\x0e\xdf\xcc3f!\xd4'
 #MySQL config.
+# app.config['MYSQL_USER'] = 'root'
+# app.config['MYSQL_PASSWORD'] = 'root'
+# app.config['MYSQL_DB'] = 'abc'
 app.config['MYSQL_HOST'] = 'remotemysql.com'
 app.config['MYSQL_USER'] = 'wqzlkC4jQC'
 app.config['MYSQL_PASSWORD'] = 'bhp0usrj9R'
@@ -222,6 +225,7 @@ def login():
         id=cur.fetchone()
         if(check_pass==hash_password.encode('utf8')):
             session_val(True,id['user_id'],id['designation'],None,None)
+            flash('You were logged in')
             return redirect(url_for('home'))
         else:
             msg = '*Incorrect password!'
@@ -828,6 +832,7 @@ def emp_access():
                 cur.execute("""SELECT employee_id,designation FROM employee where phone = %s""",(phone,))
                 id=cur.fetchone()
                 session_val(None,id['employee_id'],id['designation'],None,True)
+                flash('You were logged in')
                 return redirect(url_for('emp'))
             else:
                 msg = '*Incorrect password!'

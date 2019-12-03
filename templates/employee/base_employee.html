@@ -41,6 +41,13 @@
 }
 </style>
 
+{% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <h3 class="alert alert-success"><strong>Success! </strong>{{ message }}</h3>
+            {% endfor %}
+        {% endif %}
+{%endwith%}
 
 
 <div class="js-animsition animsition " id="site-wrap"  data-animsition-in-class="fade-in"
@@ -71,8 +78,8 @@
                             {%endif%}
 
                             {%if desg=="ADMIN"%}
-                            <li><a href="/emp" class="animsition-link">Home</a></li>
-                            <li><a href="" class="animsition-link">Manager</a>
+                            <li id="stats"><a href="/emp" class="animsition-link">Home</a></li>
+                            <li id="manager"><a href="" class="animsition-link">Manager</a>
                             <ul>
                                   <li ><a href="/emp/allot_technician">ALLOT TECHNICIAN</a></li>
                                     <li><hr></li>
@@ -81,8 +88,15 @@
                                 </ul>
                             </li>
 
-                            <li><a href="/emp/admin/tickets" class="animsition-link">Tickets</a></li>
-                            <li><a href="/emp/profile" class="animsition-link">Profile</a></li>
+                            <li id="tickets"><a class="animsition-link disabled">Tickets</a>
+                                <ul>
+                                  <li ><a href="/emp/admin/tickets">INVENTORY</a></li>
+                                    <li><hr></li>
+                                  <li><a href="#">COMPLETED</a></li>
+                                    <li><hr></li>
+                                </ul>
+                            </li>
+                            <li id="profile"><a href="/emp/profile" class="animsition-link">Profile</a></li>
                             <li><a href="/emp/logout" style="color:darkred">LOGOUT ADMIN<i  class="animsition-link glyphicon glyphicon-log-out" style="color:darkred"></i></a></li>
                             {%endif%}
 
@@ -91,7 +105,7 @@
                             <li id="tickets">
                                 <a class="animsition-link disabled">Technicians</a>
                                 <ul>
-                                  <li ><a href="/emp/technicians">VIEW ALL</a></li>
+                                  <li><a href="/emp/technicians">VIEW ALL</a></li>
                                     <li><hr></li>
                                   <li><a href="/emp/assign_job">ASSIGN JOB</a></li>
                                     <li><hr></li>

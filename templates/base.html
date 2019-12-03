@@ -60,6 +60,13 @@
 </style>
 
 
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <h3 class="alert alert-success"><strong>Success! </strong>{{ message }}</h3>
+        {% endfor %}
+    {% endif %}
+{%endwith%}
 
 <div class="js-animsition animsition " id="site-wrap"  data-animsition-in-class="fade-in"
      data-animsition-out-class="fade-out"  >
