@@ -12,10 +12,10 @@ app.config['SECRET_KEY'] = '\xeao\x1a\x00\xcd\x08\n\x141\xbdr\xe6i\x82+>\xf5\x96
 # app.config['MYSQL_USER'] = 'root'
 # app.config['MYSQL_PASSWORD'] = 'root'
 # app.config['MYSQL_DB'] = 'abc'
-app.config['MYSQL_HOST'] = 'remotemysql.com'
-app.config['MYSQL_USER'] = 'wqzlkC4jQC'
-app.config['MYSQL_PASSWORD'] = 'bhp0usrj9R'
-app.config['MYSQL_DB'] = 'wqzlkC4jQC'
+app.config['MYSQL_HOST'] = 'https://in.000webhost.com/'
+app.config['MYSQL_USER'] = 'helpdesk'
+app.config['MYSQL_PASSWORD'] = 'Technical@jrt01'
+app.config['MYSQL_DB'] = 'helpdeskjrt'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
