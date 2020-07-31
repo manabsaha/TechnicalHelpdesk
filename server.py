@@ -168,8 +168,8 @@ def home():
 def reg():
     if 'loggedin' in session or 'EmpAccess' in session:
         return redirect(url_for('home'))
-    cur=mysql.connection.cursor()
     if request.method == 'POST':
+        cur=mysql.connection.cursor()
         try:
             fname = request.form['fname']
             lname = request.form['lname']
@@ -208,8 +208,8 @@ def reg():
 def login():
     if 'loggedin' in session or 'EmpAccess' in session:
         return redirect(url_for('home'))
-    cur=mysql.connection.cursor()
     if request.method == 'POST':
+        cur=mysql.connection.cursor()
         phone = request.form['phone']
         password = request.form['password']
 
@@ -236,8 +236,9 @@ def login():
 #Logout method.
 @app.route('/logout/',methods=['GET','POST'])
 def logout():
-    session.pop('loggedin', None)
-    session.pop('id', None)
+    if 'loggedin' in session:
+        session.pop('loggedin', None)
+        session.pop('id', None)
     return redirect(url_for('home'))
 
 #About us method.
