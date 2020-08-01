@@ -9,13 +9,16 @@ from datetime import date
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '\xeao\x1a\x00\xcd\x08\n\x141\xbdr\xe6i\x82+>\xf5\x96\xf2\xa1\xb8\x01\x19\\\x8a\x0e\xdf\xcc3f!\xd4'
 #MySQL config.
-# app.config['MYSQL_USER'] = 'root'
-# app.config['MYSQL_PASSWORD'] = 'root'
-# app.config['MYSQL_DB'] = 'abc'
-app.config['MYSQL_HOST'] = 'db4free.net'
-app.config['MYSQL_USER'] = 'helpdesk785001 '
-app.config['MYSQL_PASSWORD'] = 'TD@jorhat785001'
-app.config['MYSQL_DB'] = 'helpdesk785001'
+
+#app.config['MYSQL_HOST'] = 'db4free.net'
+#app.config['MYSQL_USER'] = 'helpdesk785001 '
+#app.config['MYSQL_PASSWORD'] = 'TD@jorhat785001'
+#app.config['MYSQL_DB'] = 'helpdesk785001'
+
+app.config['MYSQL_HOST'] = 'sql12.freemysqlhosting.net'
+app.config['MYSQL_USER'] = 'sql12357996'
+app.config['MYSQL_PASSWORD'] = '2qdbyd7xCK'
+app.config['MYSQL_DB'] = 'sql12357996'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
