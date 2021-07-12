@@ -1,26 +1,23 @@
 from flask import Flask, url_for, request, redirect, render_template,flash, session, escape
-from flask_mysqldb import MySQL
+#from flask_mysqldb import MySQL
 import bcrypt
 import random
 import gc
 import pyrebase
 from datetime import date
+import psycopg2
+import psycopg2.extras
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '\xeao\x1a\x00\xcd\x08\n\x141\xbdr\xe6i\x82+>\xf5\x96\xf2\xa1\xb8\x01\x19\\\x8a\x0e\xdf\xcc3f!\xd4'
+
 #MySQL config.
-
-#app.config['MYSQL_HOST'] = 'db4free.net'
-#app.config['MYSQL_USER'] = 'helpdesk785001 '
-#app.config['MYSQL_PASSWORD'] = 'TD@jorhat785001'
-#app.config['MYSQL_DB'] = 'helpdesk785001'
-
-app.config['MYSQL_HOST'] = 'sql12.freemysqlhosting.net'
-app.config['MYSQL_USER'] = 'sql12357996'
-app.config['MYSQL_PASSWORD'] = '2qdbyd7xCK'
-app.config['MYSQL_DB'] = 'sql12357996'
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-mysql = MySQL(app)
+# app.config['MYSQL_HOST'] = 'sql12.freemysqlhosting.net'
+# app.config['MYSQL_USER'] = 'sql12357996'
+# app.config['MYSQL_PASSWORD'] = '2qdbyd7xCK'
+# app.config['MYSQL_DB'] = 'sql12357996'
+# app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+#mysql = MySQL(app)
 
 #Firebase config.
 config = {
@@ -34,9 +31,18 @@ config = {
     "measurementId": "G-KSX47MVXRN"
 }
 
+DB_NAME = "helpdesk"
+DB_USER = "root"
+DB_PASS = ""
+DB_HOST = "localhost"
+conn = psycopg2.connect(dbname=DB_NAME,user=DB_USER,password=DB_PASS,host=DB_HOST)
+
 def init():
-    cur=mysql.connection.cursor()
+    cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     try:
+        cur.execute("""CREATE DATABASE helpdesk;""")
+        conn.commit()
+        print("Database created!")
         cur.execute("""CREATE TABLE user (
                                         user_id int AUTO_INCREMENT,
                                         fname varchar(20),
@@ -117,7 +123,7 @@ def init():
                                                         REFERENCES employee(employee_id))""")
     except:
         print("employee_superior table exists!")
-    mysql.connection.commit()
+    conn.commit()
 
 
 #SESSION VARIABLES: loggedin, id, designation, SuperuserAccess, EmpAccess
@@ -152,7 +158,7 @@ def home():
     if 'loggedin' in session:
         user = escape(session['id'])
         designation=escape(session['designation'])
-        cur = mysql.connection.cursor()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""SELECT fname FROM user where user_id=%s""",(user,))
         name = cur.fetchone()
         name = name['fname']
@@ -172,7 +178,7 @@ def reg():
     if 'loggedin' in session or 'EmpAccess' in session:
         return redirect(url_for('home'))
     if request.method == 'POST':
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         try:
             fname = request.form['fname']
             lname = request.form['lname']
@@ -191,7 +197,7 @@ def reg():
             cur.execute("""SELECT user_id,designation from user where phone=%s""",(phone,))
             user_id=cur.fetchone()
             session_val(True,user_id['user_id'],user_id['designation'],None,None)
-            mysql.connection.commit()
+            conn.commit()
             gc.collect()
             return redirect(url_for('home'))
 
@@ -212,7 +218,7 @@ def login():
     if 'loggedin' in session or 'EmpAccess' in session:
         return redirect(url_for('home'))
     if request.method == 'POST':
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         phone = request.form['phone']
         password = request.form['password']
 
@@ -260,7 +266,7 @@ def profile():
     if 'loggedin' in session:
         user = escape(session['id'])
         designation = escape(session['designation'])
-        cur = mysql.connection.cursor()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""select * from user where user_id= %s""", (user,))
         d = cur.fetchone()
         pic_url = d['picture']
@@ -278,7 +284,7 @@ def edit_profile():
     if 'loggedin' in session:
         user = escape(session['id'])
         designation = escape(session['designation'])
-        cur = mysql.connection.cursor()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""select * from user where user_id= %s""", (session['id'],))
         d = cur.fetchone()
         pic_url = d['picture']
@@ -300,7 +306,7 @@ def edit_profile():
                     cur.execute("""update user set picture=%s where user_id=%s""",(new_pic_url,session['id']))
             except:
                 pass
-            mysql.connection.commit()
+            conn.commit()
             return redirect(url_for('profile'))
         return render_template('reg-login/edit_profile.html',tab="profile",designation=designation, data=d,user=user,pic=pic_url)
     return redirect(url_for('home'))
@@ -309,7 +315,7 @@ def edit_profile():
 @app.route('/change_password/', methods=['GET','POST'])
 def change_password():
     if 'loggedin' in session:
-        cur = mysql.connection.cursor()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         user = escape(session['id'])
         designation = escape(session['designation'])
         if request.method == 'POST':
@@ -327,7 +333,7 @@ def change_password():
             else:
                 msg = '*Incorrect password!'
                 return render_template('reg-login/change_pass.html',tab="profile",designation=designation, msg=msg,user=user)
-            mysql.connection.commit()
+            conn.commit()
             return redirect(url_for('profile'))
         return render_template('reg-login/change_pass.html',tab="profile",designation=designation, user=user)
     return redirect(url_for('home'))
@@ -341,13 +347,13 @@ def contact():
         designation = escape(session['designation'])
         if request.method == 'POST':
             feedback = request.form['feedback']
-            cur=mysql.connection.cursor()
+            cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
             try:
                 cur.execute("""INSERT INTO feedback values(%s,%s)""", (user,feedback))
             except:
                 cur.execute("""CREATE TABLE feedback (phone bigint(10),message varchar(200))""")
                 cur.execute("""INSERT INTO feedback values(%s,%s)""", (user,feedback))
-            mysql.connection.commit()
+            conn.commit()
             return redirect(url_for('home'))
         return render_template('site/contact.html',tab="contact", user=user, designation=designation)
     return redirect(url_for('login'))
@@ -360,7 +366,7 @@ def contact():
 def technicians():
     if 'EmpAccess' in session and session['designation']=='MANAGER':
         user = escape(session['id'])
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         # cur.execute("SELECT *,count(*) FROM assignment,employee where designation='TECHNICIAN' and "
         #             "assignment.employee_id= employee.employee_id group by employee.employee_id order by count(*)")
         cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
@@ -377,7 +383,7 @@ def technicians():
 #View technician profile.
 @app.route('/emp/technician/<int:tech_id>',methods=['GET','POST'])
 def technician_profile(tech_id):
-    cur=mysql.connection.cursor()
+    cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cur.execute("""SELECT * FROM employee WHERE employee_id=%s""",(tech_id,))
     return render_template('/employee/read_profile.html',data=cur.fetchone(),tab="tickets",desg=session['designation'])
 
@@ -386,7 +392,7 @@ def technician_profile(tech_id):
 def assign_job():
     if 'EmpAccess' in session and session['designation']=='MANAGER':
         user = escape(session['id'])
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         # cur.execute("SELECT *,count(*) FROM assignment,employee where designation='TECHNICIAN' and "
         #             "assignment.employee_id= employee.employee_id group by employee.employee_id order by count(*)")
         cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
@@ -411,11 +417,11 @@ def assign_job_redirect(tech_id):
 @app.route('/emp/assigned/<int:tktid>/<int:techid>',methods=['GET','POST'])
 def assigned_job(tktid,techid):
     if 'EmpAccess' in session and session['designation']=='MANAGER':
-        cur = mysql.connection.cursor()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""insert into assignment values(%s,%s,%s)""",(tktid,techid,0))
-        mysql.connection.commit()
+        conn.commit()
         cur.execute("""update ticket set status='Assigned' where ticket_id=%s""",(tktid,))
-        mysql.connection.commit()
+        conn.commit()
         return redirect(url_for('assign_job'))
     return redirect(url_for('emp'))
 
@@ -427,7 +433,7 @@ def assigned_job(tktid,techid):
 def managers():
     if 'EmpAccess' in session and session['designation']=='ADMIN':
         user = escape(session['id'])
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         # cur.execute("SELECT *,count(*) FROM assignment,employee where designation='TECHNICIAN' and "
         #             "assignment.employee_id= employee.employee_id group by employee.employee_id order by count(*)")
         cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
@@ -446,7 +452,7 @@ def managers():
 def allot_technician():
     if 'EmpAccess' in session and session['designation']=='ADMIN':
         user = escape(session['id'])
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         #cur.execute("SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id and status='inventory';")
         #data=cur.fetchall()
         cur.execute("""select * from employee,employee_superior where employee_superior.superior_id=%s
@@ -465,7 +471,7 @@ def allot_technician():
 def allocate(mgr_id):
     if 'EmpAccess' in session and session['designation']=='ADMIN':
         user = escape(session['id'])
-        cur = mysql.connection.cursor()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""select * from employee,employee_superior where superior_id=%s and 
             employee.employee_id = employee_superior.employee_id and designation='TECHNICIAN'""", (mgr_id,))
         technicians = cur.fetchall()
@@ -486,10 +492,10 @@ def allocate(mgr_id):
 def allocation_redirect(mgr_id,emp_id):
     if 'EmpAccess' in session:
         user = escape(session['id'])
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""insert into employee_superior values(%s,%s) ;""",(emp_id,mgr_id,))
         cur.execute("""update employee set designation='TECHNICIAN' where employee_id=%s""",(emp_id,))
-        mysql.connection.commit()
+        conn.commit()
         return redirect(url_for('allocate',mgr_id=mgr_id))
     return redirect(url_for('emp'))
 
@@ -498,9 +504,9 @@ def allocation_redirect(mgr_id,emp_id):
 def deallocation_redirect(mgr_id,emp_id):
     if 'EmpAccess' in session:
         user = escape(session['id'])
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""delete from employee_superior where employee_id=%s""",(emp_id,))
-        mysql.connection.commit()
+        conn.commit()
         return redirect(url_for('allocate',mgr_id=mgr_id))
     return redirect(url_for('emp'))
 
@@ -508,7 +514,7 @@ def deallocation_redirect(mgr_id,emp_id):
 @app.route('/emp/manager/<int:mgr_id>',methods=['GET','POST'])
 def manager_profile(mgr_id):
     if 'EmpAccess' in session and session['designation'] == 'ADMIN':
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""SELECT * FROM employee WHERE employee_id=%s""",(mgr_id,))
         return render_template('/employee/read_profile.html',data=cur.fetchone(),tab="tickets",desg=session['designation'])
     return redirect(url_for('emp'))
@@ -516,7 +522,7 @@ def manager_profile(mgr_id):
 @app.route('/emp/admin/tickets')
 def admin_tickets():
     if 'EmpAccess' in session and session['designation'] == 'ADMIN':
-        cur = mysql.connection.cursor()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""select * from employee_superior where superior_id=%s""",(session['id'],))
         mg=cur.fetchall()
         tech=[]
@@ -539,7 +545,7 @@ def admin_tickets():
 def tech_tickets():
     if 'EmpAccess' in session:
         user = escape(session['id'])
-        cur = mysql.connection.cursor()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""SELECT * FROM ticket,assignment WHERE 
             ticket.ticket_id=assignment.ticket_id AND employee_id=%s ORDER BY record_date DESC""",(user,))
         return render_template('/employee/technician/technician_tickets.html',data=cur.fetchall(),
@@ -550,9 +556,9 @@ def tech_tickets():
 @app.route('/emp/jobs/<string:status>/<int:tkt_id>',methods=['GET','POST'])
 def update_status(status,tkt_id):
     if 'EmpAccess' in session:
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""UPDATE ticket SET status=%s WHERE ticket_id=%s""",(status,tkt_id))
-        mysql.connection.commit()
+        conn.commit()
         return redirect(url_for('tech_tickets'))
     return redirect(url_for('emp'))
 
@@ -564,7 +570,7 @@ def services():
     if 'loggedin' in session and session['designation']=="customer":
         user = escape(session['id'])
         designation = escape(session['designation'])
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("SELECT ticket_id,app_date,app_type,status FROM ticket where user_id=%s ORDER BY curr_date DESC",(user,))
         data=cur.fetchall()
         return render_template('site/services.html',tab="services",data=data, designation=designation, user=user)
@@ -575,7 +581,7 @@ def services():
 def ticket():
     if 'loggedin' not in session:
          return redirect(url_for('login'))
-    cur=mysql.connection.cursor()
+    cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cur.execute("""select * from user where user_id= %s""", (session['id'],))
     data=cur.fetchone()
     if request.method=='POST':
@@ -594,7 +600,7 @@ def ticket():
         try:
             cur.execute("""INSERT INTO ticket(user_id, fname, lname, phone, address, app_date, curr_date,app_type) 
                 values(%s,%s,%s,%s,%s,%s,%s,%s)""", (session['id'], fname, lname, phone, address, app_date, curr_date,type))
-            mysql.connection.commit()
+            conn.commit()
             return redirect(url_for('home'))
         except:
             pass
@@ -606,10 +612,10 @@ def ticket():
 @app.route('/services/<int:id>')
 def cancel(id):
     if 'loggedin' in session and session['designation']=="customer":
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         status = "CANCELLED BY USER"
         cur.execute("""UPDATE ticket SET status=%s WHERE ticket_id=%s""",(status,id))
-        mysql.connection.commit()
+        conn.commit()
         return redirect(url_for('services'))
     return redirect(url_for('login'))
 
@@ -619,7 +625,7 @@ def cancel(id):
 def all_tickets():
     if 'EmpAccess' in session and session['designation']=='EXECUTIVE':
         user = escape(session['id'])
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""SELECT ticket_id, user_id, fname, app_date,app_type,status FROM ticket 
             where status='processing' ORDER BY app_date DESC""")
         data=cur.fetchall()
@@ -631,7 +637,7 @@ def all_tickets():
 def inventory():
     if 'EmpAccess' in session:
         user = escape(session['id'])
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id
              ORDER BY record_date DESC;""")
         data=cur.fetchall()
@@ -643,7 +649,7 @@ def inventory():
 def pending_inventory():
     if 'EmpAccess' in session:
         user = escape(session['id'])
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id and 
             status='inventory' ORDER BY app_date DESC;""")
         data=cur.fetchall()
@@ -656,7 +662,7 @@ def pending_inventory():
 def assign_pending_inventory(tech_id):
     if 'EmpAccess' in session:
         user = escape(session['id'])
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         #cur.execute("SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id and status='inventory';")
         #data=cur.fetchall()
         cur.execute("""SELECT * FROM inventory,ticket where inventory.ticket_id=ticket.ticket_id 
@@ -678,10 +684,10 @@ def assign_pending_inventory(tech_id):
 def assign_pending_redirect(tech_id,ticket_id):
     if 'EmpAccess' in session:
         user = escape(session['id'])
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""insert into assignment values(%s,%s,%s) ;""",(ticket_id,tech_id,date.today()))
         cur.execute("""update ticket set status='Assigned' where ticket_id=%s""",(ticket_id,))
-        mysql.connection.commit()
+        conn.commit()
 
         return redirect(url_for('assign_pending_inventory',tech_id=tech_id))
     return redirect(url_for('emp'))
@@ -690,7 +696,7 @@ def assign_pending_redirect(tech_id,ticket_id):
 @app.route('/emp/inventory/<int:id>')
 def inventory_details(id):
     if 'EmpAccess' in session:
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""SELECT * FROM ticket WHERE ticket_id=%s""",(id,))
         return render_template('employee/ticket/inventory_details.html',tab="inventory",ticket=cur.fetchone(),
             desg=session['designation'])
@@ -715,16 +721,16 @@ def inventory_add(ticket_id):
             fault_type = request.form['fault_type']
             fault_description = request.form['fault_description']
             curr_date = date.today()
-            cur=mysql.connection.cursor()
+            cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
             try:
                 cur.execute("""INSERT INTO inventory(ticket_id, product_name,product_type, product_description, fault_type, 
                     fault_description, record_date) 
                     values(%s,%s,%s,%s,%s,%s,%s)""",
                             (ticket_id, product_name, product_type, product_description, fault_type, fault_description, curr_date))
 
-                mysql.connection.commit()
+                conn.commit()
                 cur.execute("""UPDATE ticket SET status=%s WHERE ticket_id=%s""",('Inventory',ticket_id))
-                mysql.connection.commit()
+                conn.commit()
                 return redirect(url_for('all_tickets'))
             except:
                 pass
@@ -738,7 +744,7 @@ def inventory_add(ticket_id):
 @app.route('/emp/completed_tickets',methods=['GET','POST'])
 def completed_tickets():
     if 'EmpAccess' in session:
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""SELECT * FROM inventory,ticket WHERE inventory.ticket_id=ticket.ticket_id and (status='Completed' or status='Ready for delivery')
             ORDER BY record_date DESC;""")
         return render_template('/employee/ticket/completed_tickets.html',data=cur.fetchall(),tab="inventory",
@@ -750,13 +756,13 @@ def completed_tickets():
 @app.route('/emp/completed_tickets/<int:tkt_id>/<string:status>',methods=['GET','POST'])
 def completed_ticket(tkt_id,status):
     if 'EmpAccess' in session:
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         if status=="ready":
             cur.execute("""UPDATE ticket SET status='Ready for delivery' WHERE ticket_id=%s""",(tkt_id,))
-            mysql.connection.commit()
+            conn.commit()
         elif status=="delivered":
             cur.execute("""UPDATE ticket SET status='DELIVERED' WHERE ticket_id=%s""",(tkt_id,))
-            mysql.connection.commit()
+            conn.commit()
             cur.execute("""DELETE FROM inventory WHERE ticket_id=%s""",(tkt_id,))
         return redirect(url_for('completed_tickets'))
     return redirect(url_for('emp'))
@@ -765,7 +771,7 @@ def completed_ticket(tkt_id,status):
 @app.route('/ticket_details/<int:id>')
 def ticket_details(id):
     if 'EmpAccess' in session:
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""SELECT * FROM inventory WHERE ticket_id=%s""",(id,))
         return render_template('employee/ticket/ticket_details.html',tab="inventory",ticket=cur.fetchone(),
             desg=session['designation'])
@@ -788,7 +794,7 @@ def emp_reg():
                 pincode = request.form['pincode']
                 password = request.form['password']
                 hash_password = bcrypt.hashpw(password.encode('utf8'),bcrypt.gensalt())
-                cur = mysql.connection.cursor()
+                cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
                 try:
                     cur.execute("""INSERT INTO employee(fname, lname, phone,address,pincode,hash_password) 
                         values(%s,%s,%s,%s,%s,%s)""", (fname, lname, phone,address,pincode,hash_password))
@@ -798,7 +804,7 @@ def emp_reg():
                 cur.execute("""SELECT employee_id,designation from employee where phone=%s""",(phone,))
                 employee=cur.fetchone()
                 session_val(None,employee['employee_id'],employee['designation'],None,True)
-                mysql.connection.commit()
+                conn.commit()
                 gc.collect()
                 return redirect(url_for('emp'))
             
@@ -823,7 +829,7 @@ def emp_access():
 
             phone = request.form['emp_phone']
             password = request.form['emp_password']
-            cur = mysql.connection.cursor()
+            cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
             cur.execute("""SELECT hash_password FROM employee where phone = %s""",(phone,))
             if(cur.rowcount == 0):
                 msg = '*Number not registered'
@@ -857,7 +863,7 @@ def emp_logout():
 def emp():
     if 'EmpAccess' in session:
         print(session['designation'])
-        cur=mysql.connection.cursor()
+        cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("SELECT * from feedback")
         feedback=cur.fetchall()
         feedback=random.sample(feedback,5)
@@ -870,7 +876,7 @@ def emp_profile():
     if 'EmpAccess' in session:
         user = escape(session['id'])
         designation = escape(session['designation'])
-        cur = mysql.connection.cursor()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""select * from employee where employee_id= %s""", (user,))
         d = cur.fetchone()
         pic_url = d['picture']
@@ -888,7 +894,7 @@ def edit_emp_profile():
     if 'EmpAccess' in session:
         user = escape(session['id'])
         designation = escape(session['designation'])
-        cur = mysql.connection.cursor()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""select * from employee where employee_id= %s""", (session['id'],))
         d = cur.fetchone()
         pic_url = d['picture']
@@ -910,7 +916,7 @@ def edit_emp_profile():
                     cur.execute("""update employee set picture=%s where employee_id=%s""",(new_pic_url,session['id']))
             except:
                 pass
-            mysql.connection.commit()
+            conn.commit()
             return redirect(url_for('emp_profile'))
         return render_template('employee/profile/emp_edit_profile.html',tab="profile", data=d,user=user,pic=pic_url,desg=session['designation'])
     return redirect(url_for('emp'))
@@ -919,7 +925,7 @@ def edit_emp_profile():
 @app.route('/emp/change_password/', methods=['GET','POST'])
 def change_emp_password():
     if 'EmpAccess' in session:
-        cur = mysql.connection.cursor()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         user = escape(session['id'])
         designation = escape(session['designation'])
         if request.method == 'POST':
@@ -937,7 +943,7 @@ def change_emp_password():
             else:
                 msg = '*Incorrect password!'
                 return render_template('employee/profile/emp_change_pass.html',tab="profile",desg=session['designation'], msg=msg,user=user)
-            mysql.connection.commit()
+            conn.commit()
             return redirect(url_for('emp_profile'))
         return render_template('employee/profile/emp_change_pass.html',tab="profile",user=user,desg=session['designation'])
     return redirect(url_for('emp'))
@@ -979,9 +985,9 @@ def super_panel():
         if request.method == 'POST':
             su_query = request.form['su_query']
             phone = request.form['phone']
-            cur = mysql.connection.cursor()
+            cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
             cur.execute("""UPDATE employee SET designation=%s WHERE phone=%s""",(su_query,phone))
-            mysql.connection.commit()
+            conn.commit()
         return render_template('employee/superuser/superuser_panel.html',desg="SUPERUSER",log=session['SuperuserAccess'])
     return redirect(url_for('super_access'))
 
