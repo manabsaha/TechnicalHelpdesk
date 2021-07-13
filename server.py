@@ -40,8 +40,6 @@ conn = psycopg2.connect(dbname=DB_NAME,user=DB_USER,password=DB_PASS,host=DB_HOS
 def init():
     cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     try:
-        cur.execute("""CREATE DATABASE helpdesk;""")
-        conn.commit()
         print("Database created!")
         cur.execute("""CREATE TABLE user (
                                         user_id int AUTO_INCREMENT,
