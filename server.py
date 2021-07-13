@@ -38,7 +38,7 @@ DB_NAME = "dbusrqlquo0res"
 conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASS)
 
 def init():
-    cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur=conn.cursor()
     try:
         print("Database created!")
         cur.execute("""CREATE TABLE user (
