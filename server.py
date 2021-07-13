@@ -35,47 +35,52 @@ DB_HOST = "ec2-184-73-192-172.compute-1.amazonaws.com"
 DB_USER = "lgldwgidoyuihn"
 DB_PASS = "14f0ccae54d7fa77417942f8a11c4e46c8cc710415c5c4a7e1a3eaa541d973bf"
 DB_NAME = "dbusrqlquo0res"
+
+# DB_HOST = "localhost"
+# DB_USER = "postgres"
+# DB_PASS = "root"
+# DB_NAME = "helpdesk"
 conn = psycopg2.connect(dbname=DB_NAME,user=DB_USER,password=DB_PASS,host=DB_HOST)
 
 def init():
-    cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     try:
-        print("Database created!")
-        cur.execute("""CREATE TABLE user (
-                                        user_id int AUTO_INCREMENT,
+        cur=conn.cursor()
+        cur.execute("""CREATE TABLE IF NOT EXISTS users (
+                                        user_id SERIAL PRIMARY KEY,
                                         fname varchar(20),
                                         lname varchar(20),
-                                        phone bigint(10) UNIQUE,
+                                        phone bigint UNIQUE,
                                         address varchar(100),
-                                        pincode bigint(6),
+                                        pincode bigint,
                                         hash_password varchar(128),
                                         picture varchar(200) DEFAULT '/static/images/no_dp.png',
-                                        designation varchar(50) DEFAULT 'customer',
-                                        PRIMARY KEY (user_id))auto_increment=1001""")
-    except:
-        print("user table exists!")
+                                        designation varchar(50) DEFAULT 'customer')""")
+    except Exception as e:
+        print(e)
     try:
-        cur.execute("""CREATE TABLE feedback (phone bigint(10),message varchar(200))""")
-    except:
-        print("feedback table exists!")
+        cur.execute("""CREATE TABLE IF NOT EXISTS feedback (phone bigint,message varchar(200))""")
+    except Exception as e:
+        print(e)
+
+
     try:
-        cur.execute("""CREATE TABLE ticket (ticket_id int AUTO_INCREMENT,
+        cur.execute("""CREATE TABLE IF NOT EXISTS ticket (ticket_id serial primary key,
                                                         user_id int NOT NULL,
                                                         fname varchar(20),
                                                         lname varchar(20),
-                                                        phone bigint(10),
+                                                        phone bigint,
                                                         address varchar(100),
                                                         app_date date, 
                                                         curr_date date,
                                                         app_type varchar(20) CHECK(app_type IN ('Appointment','Pickup')),
                                                         status varchar(20) DEFAULT 'Processing',
-                                                        PRIMARY KEY (ticket_id),
                                                         FOREIGN KEY (user_id)
-                                                        REFERENCES user(user_id))AUTO_INCREMENT=10001""")
-    except:
-        print("ticket table exists!")
+                                                        REFERENCES users(user_id))""")
+    except Exception as e:
+        print(e)
+
     try:
-        cur.execute("""CREATE TABLE inventory (inventory_id int AUTO_INCREMENT,
+        cur.execute("""CREATE TABLE IF NOT EXISTS inventory (inventory_id serial primary key,
                                                             ticket_id int NOT NULL,
                                                             product_name varchar(50),
                                                             product_type varchar(50),
@@ -83,44 +88,48 @@ def init():
                                                             fault_type varchar(50),
                                                             fault_description varchar(200),
                                                             record_date date,
-                                                            PRIMARY KEY (inventory_id),
                                                             FOREIGN KEY (ticket_id)
-                                                            REFERENCES ticket(ticket_id))AUTO_INCREMENT=20001""")
-    except:
-        print("inventory table exists!")
+                                                            REFERENCES ticket(ticket_id))""")
+    except Exception as e:
+        print(e)
+
     try:
-        cur.execute("""CREATE TABLE employee (employee_id int AUTO_INCREMENT,
+        cur.execute("""CREATE TABLE IF NOT EXISTS employee (employee_id serial primary key,
                                                             fname varchar(20),
                                                             lname varchar(20),
-                                                            phone bigint(10) UNIQUE,
+                                                            phone bigint UNIQUE,
                                                             address varchar(100),
-                                                            pincode bigint(6),
+                                                            pincode bigint,
                                                             job_status varchar(20) DEFAULT 'ACTIVE',
                                                             designation varchar(20) DEFAULT 'EXECUTIVE',
                                                             hash_password varchar(128),
-                                                            picture varchar(200) DEFAULT '/static/images/no_dp.png',
-                                                            PRIMARY KEY (employee_id))auto_increment=2001""")
-    except:
-        print("employee table exists!")
+                                                            picture varchar(200) DEFAULT '/static/images/no_dp.png'
+                                                            )""")
+    except Exception as e:
+        print(e)
+
     try:
-        cur.execute("""CREATE TABLE assignment (ticket_id int UNIQUE,
+        cur.execute("""CREATE TABLE IF NOT EXISTS assignment (ticket_id int UNIQUE,
                                                 employee_id int,
                                                 record_date date,
                                                 FOREIGN KEY(employee_id)
                                                 REFERENCES employee(employee_id),
                                                 FOREIGN KEY(ticket_id)
                                                 REFERENCES ticket(ticket_id))""")
-    except:
-        print("assignment table exists!")
+    except Exception as e:
+        print(e)
+
     try:
-        cur.execute("""CREATE TABLE employee_superior (employee_id int,
+        cur.execute("""CREATE TABLE IF NOT EXISTS employee_superior (employee_id int,
                                                         superior_id int,
                                                         FOREIGN KEY(employee_id)
                                                         REFERENCES employee(employee_id),
                                                         FOREIGN KEY(superior_id)
                                                         REFERENCES employee(employee_id))""")
-    except:
-        print("employee_superior table exists!")
+    except Exception as e:
+        print(e)
+
+    cur.close()
     conn.commit()
 
 
