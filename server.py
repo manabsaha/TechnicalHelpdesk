@@ -39,43 +39,42 @@ conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=D
 
 def init():
     cur=conn.cursor()
-    #try:
-    print("Database created!")
-    cur.execute("""CREATE TABLE user (
-                                    user_id int AUTO_INCREMENT,
+    try:
+        print("Database created!")
+        cur.execute("""CREATE TABLE users (
+                                    user_id SERIAL PRIMARY KEY,
                                     fname varchar(20),
                                     lname varchar(20),
-                                    phone bigint(10) UNIQUE,
+                                    phone bigint UNIQUE,
                                     address varchar(100),
-                                    pincode bigint(6),
+                                    pincode int,
                                     hash_password varchar(128),
                                     picture varchar(200) DEFAULT '/static/images/no_dp.png',
-                                    designation varchar(50) DEFAULT 'customer',
-                                    PRIMARY KEY (user_id))auto_increment=1001""")
-    #except:
-        #print("user table exists!")
+                                    designation varchar(50) DEFAULT 'customer'
+                                    )""")
+    except:
+        print("user table exists!")
     try:
         cur.execute("""CREATE TABLE feedback (phone bigint(10),message varchar(200))""")
     except:
         print("feedback table exists!")
     try:
-        cur.execute("""CREATE TABLE ticket (ticket_id int AUTO_INCREMENT,
+        cur.execute("""CREATE TABLE ticket (ticket_id serial primary key,
                                                         user_id int NOT NULL,
                                                         fname varchar(20),
                                                         lname varchar(20),
-                                                        phone bigint(10),
+                                                        phone bigint,
                                                         address varchar(100),
                                                         app_date date, 
                                                         curr_date date,
                                                         app_type varchar(20) CHECK(app_type IN ('Appointment','Pickup')),
                                                         status varchar(20) DEFAULT 'Processing',
-                                                        PRIMARY KEY (ticket_id),
                                                         FOREIGN KEY (user_id)
-                                                        REFERENCES user(user_id))AUTO_INCREMENT=10001""")
+                                                        REFERENCES users(user_id))""")
     except:
         print("ticket table exists!")
     try:
-        cur.execute("""CREATE TABLE inventory (inventory_id int AUTO_INCREMENT,
+        cur.execute("""CREATE TABLE inventory (inventory_id serial primary key,
                                                             ticket_id int NOT NULL,
                                                             product_name varchar(50),
                                                             product_type varchar(50),
@@ -83,23 +82,22 @@ def init():
                                                             fault_type varchar(50),
                                                             fault_description varchar(200),
                                                             record_date date,
-                                                            PRIMARY KEY (inventory_id),
                                                             FOREIGN KEY (ticket_id)
-                                                            REFERENCES ticket(ticket_id))AUTO_INCREMENT=20001""")
+                                                            REFERENCES ticket(ticket_id))""")
     except:
         print("inventory table exists!")
     try:
-        cur.execute("""CREATE TABLE employee (employee_id int AUTO_INCREMENT,
+        cur.execute("""CREATE TABLE employee (employee_id serial primary key,
                                                             fname varchar(20),
                                                             lname varchar(20),
-                                                            phone bigint(10) UNIQUE,
+                                                            phone bigint UNIQUE,
                                                             address varchar(100),
-                                                            pincode bigint(6),
+                                                            pincode bigint,
                                                             job_status varchar(20) DEFAULT 'ACTIVE',
                                                             designation varchar(20) DEFAULT 'EXECUTIVE',
                                                             hash_password varchar(128),
-                                                            picture varchar(200) DEFAULT '/static/images/no_dp.png',
-                                                            PRIMARY KEY (employee_id))auto_increment=2001""")
+                                                            picture varchar(200) DEFAULT '/static/images/no_dp.png'
+                                                            )""")
     except:
         print("employee table exists!")
     try:
@@ -157,7 +155,7 @@ def home():
         user = escape(session['id'])
         designation=escape(session['designation'])
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("""SELECT fname FROM user where user_id=%s""",(user,))
+        cur.execute("""SELECT fname FROM users where user_id=%s""",(user,))
         name = cur.fetchone()
         name = name['fname']
         return render_template('site/index.html',designation=designation, user=user,name=name,login_flag=True,tab="home")
@@ -187,12 +185,12 @@ def reg():
             hash_password = bcrypt.hashpw(password.encode('utf8'),bcrypt.gensalt())
 
             try:
-                cur.execute("""INSERT INTO user(fname, lname, phone,address,pincode,hash_password) 
+                cur.execute("""INSERT INTO users(fname, lname, phone,address,pincode,hash_password) 
                     values(%s,%s,%s,%s,%s,%s)""", (fname, lname, phone,address,pincode,hash_password))
             except:
                 pass
 
-            cur.execute("""SELECT user_id,designation from user where phone=%s""",(phone,))
+            cur.execute("""SELECT user_id,designation from users where phone=%s""",(phone,))
             user_id=cur.fetchone()
             session_val(True,user_id['user_id'],user_id['designation'],None,None)
             conn.commit()
@@ -200,7 +198,7 @@ def reg():
             return redirect(url_for('home'))
 
         except:
-            cur.execute("""SELECT phone FROM user WHERE phone=%s""",(phone,))
+            cur.execute("""SELECT phone FROM users WHERE phone=%s""",(phone,))
             if cur.rowcount == 0:
                 msg= "*Error. Try again"
                 return render_template('reg-login/reg.html',msg=msg)
@@ -220,7 +218,7 @@ def login():
         phone = request.form['phone']
         password = request.form['password']
 
-        cur.execute("""SELECT hash_password FROM user where phone = %s""",(phone,))
+        cur.execute("""SELECT hash_password FROM users where phone = %s""",(phone,))
         if(cur.rowcount == 0):
             msg = '*Number not registered'
             return render_template('reg-login/login.html',msg=msg)
@@ -228,7 +226,7 @@ def login():
         psw=cur.fetchone()
         hash_password = psw['hash_password']
         check_pass = bcrypt.hashpw(password.encode('utf8'),hash_password.encode('utf8'))
-        cur.execute("""SELECT user_id,designation FROM user where phone = %s""",(phone,))
+        cur.execute("""SELECT user_id,designation FROM users where phone = %s""",(phone,))
         id=cur.fetchone()
         if(check_pass==hash_password.encode('utf8')):
             session_val(True,id['user_id'],id['designation'],None,None)
@@ -265,7 +263,7 @@ def profile():
         user = escape(session['id'])
         designation = escape(session['designation'])
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("""select * from user where user_id= %s""", (user,))
+        cur.execute("""select * from users where user_id= %s""", (user,))
         d = cur.fetchone()
         pic_url = d['picture']
         if request.method=='POST':
@@ -283,7 +281,7 @@ def edit_profile():
         user = escape(session['id'])
         designation = escape(session['designation'])
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("""select * from user where user_id= %s""", (session['id'],))
+        cur.execute("""select * from users where user_id= %s""", (session['id'],))
         d = cur.fetchone()
         pic_url = d['picture']
         if request.method == 'POST':
@@ -294,14 +292,14 @@ def edit_profile():
             pincode = request.form['pincode']
             file = request.files['display_pic']
             try:
-                cur.execute("""update user set fname=%s,lname=%s,phone=%s,address=%s,pincode=%s where user_id=%s""", (
+                cur.execute("""update users set fname=%s,lname=%s,phone=%s,address=%s,pincode=%s where user_id=%s""", (
                     fname, lname, phone, address, pincode, session['id'],))
                 if file.filename!= '':
                     firebase = pyrebase.initialize_app(config)
                     storage = firebase.storage()
                     storage.child("images/"+user+"/new.jpg").put(file)
                     new_pic_url = storage.child("images/" + user + "/new.jpg").get_url(None)
-                    cur.execute("""update user set picture=%s where user_id=%s""",(new_pic_url,session['id']))
+                    cur.execute("""update users set picture=%s where user_id=%s""",(new_pic_url,session['id']))
             except:
                 pass
             conn.commit()
@@ -320,13 +318,13 @@ def change_password():
             old_pass = request.form['pass']
             password = request.form['password']
 
-            cur.execute("""SELECT hash_password FROM user where user_id = %s""", (session['id'],))
+            cur.execute("""SELECT hash_password FROM users where user_id = %s""", (session['id'],))
             psw = cur.fetchone()
             hash_password = psw['hash_password']
             check_pass = bcrypt.hashpw(old_pass.encode('utf8'), hash_password.encode('utf8'))
             if (check_pass == hash_password.encode('utf8')):
                 new_hash = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
-                cur.execute("""update user set hash_password=%s where user_id = %s""", (new_hash, session['id'],))
+                cur.execute("""update users set hash_password=%s where user_id = %s""", (new_hash, session['id'],))
 
             else:
                 msg = '*Incorrect password!'
@@ -580,7 +578,7 @@ def ticket():
     if 'loggedin' not in session:
          return redirect(url_for('login'))
     cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.execute("""select * from user where user_id= %s""", (session['id'],))
+    cur.execute("""select * from users where user_id= %s""", (session['id'],))
     data=cur.fetchone()
     if request.method=='POST':
         fname=request.form['fname']
