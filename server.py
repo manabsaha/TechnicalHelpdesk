@@ -39,21 +39,21 @@ conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=D
 
 def init():
     cur=conn.cursor()
-    try:
+    #try:
         print("Database created!")
-        cur.execute("""CREATE TABLE user (
-                                        user_id int AUTO_INCREMENT,
-                                        fname varchar(20),
-                                        lname varchar(20),
-                                        phone bigint(10) UNIQUE,
-                                        address varchar(100),
-                                        pincode bigint(6),
-                                        hash_password varchar(128),
-                                        picture varchar(200) DEFAULT '/static/images/no_dp.png',
-                                        designation varchar(50) DEFAULT 'customer',
-                                        PRIMARY KEY (user_id))auto_increment=1001""")
-    except:
-        print("user table exists!")
+    cur.execute("""CREATE TABLE user (
+                                    user_id int AUTO_INCREMENT,
+                                    fname varchar(20),
+                                    lname varchar(20),
+                                    phone bigint(10) UNIQUE,
+                                    address varchar(100),
+                                    pincode bigint(6),
+                                    hash_password varchar(128),
+                                    picture varchar(200) DEFAULT '/static/images/no_dp.png',
+                                    designation varchar(50) DEFAULT 'customer',
+                                    PRIMARY KEY (user_id))auto_increment=1001""")
+    #except:
+        #print("user table exists!")
     try:
         cur.execute("""CREATE TABLE feedback (phone bigint(10),message varchar(200))""")
     except:
