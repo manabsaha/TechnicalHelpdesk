@@ -40,7 +40,7 @@ conn = psycopg2.connect(host=DB_HOST, database=DB_NAME, user=DB_USER, password=D
 def init():
     cur=conn.cursor()
     #try:
-        print("Database created!")
+    print("Database created!")
     cur.execute("""CREATE TABLE user (
                                     user_id int AUTO_INCREMENT,
                                     fname varchar(20),
