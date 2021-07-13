@@ -40,6 +40,7 @@ DB_NAME = "dbusrqlquo0res"
 # DB_USER = "postgres"
 # DB_PASS = "root"
 # DB_NAME = "helpdesk"
+
 conn = psycopg2.connect(dbname=DB_NAME,user=DB_USER,password=DB_PASS,host=DB_HOST)
 
 def init():
@@ -57,6 +58,7 @@ def init():
                                         designation varchar(50) DEFAULT 'customer')""")
     except Exception as e:
         print(e)
+
     try:
         cur.execute("""CREATE TABLE IF NOT EXISTS feedback (phone bigint,message varchar(200))""")
     except Exception as e:
@@ -166,7 +168,7 @@ def home():
         user = escape(session['id'])
         designation=escape(session['designation'])
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("""SELECT fname FROM user where user_id=%s""",(user,))
+        cur.execute("""SELECT fname FROM users where user_id=%s""",(user,))
         name = cur.fetchone()
         name = name['fname']
         return render_template('site/index.html',designation=designation, user=user,name=name,login_flag=True,tab="home")
@@ -196,12 +198,12 @@ def reg():
             hash_password = bcrypt.hashpw(password.encode('utf8'),bcrypt.gensalt())
 
             try:
-                cur.execute("""INSERT INTO user(fname, lname, phone,address,pincode,hash_password) 
+                cur.execute("""INSERT INTO users(fname, lname, phone,address,pincode,hash_password) 
                     values(%s,%s,%s,%s,%s,%s)""", (fname, lname, phone,address,pincode,hash_password))
             except:
                 pass
 
-            cur.execute("""SELECT user_id,designation from user where phone=%s""",(phone,))
+            cur.execute("""SELECT user_id,designation from users where phone=%s""",(phone,))
             user_id=cur.fetchone()
             session_val(True,user_id['user_id'],user_id['designation'],None,None)
             conn.commit()
@@ -209,7 +211,7 @@ def reg():
             return redirect(url_for('home'))
 
         except:
-            cur.execute("""SELECT phone FROM user WHERE phone=%s""",(phone,))
+            cur.execute("""SELECT phone FROM users WHERE phone=%s""",(phone,))
             if cur.rowcount == 0:
                 msg= "*Error. Try again"
                 return render_template('reg-login/reg.html',msg=msg)
@@ -229,7 +231,7 @@ def login():
         phone = request.form['phone']
         password = request.form['password']
 
-        cur.execute("""SELECT hash_password FROM user where phone = %s""",(phone,))
+        cur.execute("""SELECT hash_password FROM users where phone = %s""",(phone,))
         if(cur.rowcount == 0):
             msg = '*Number not registered'
             return render_template('reg-login/login.html',msg=msg)
@@ -237,7 +239,7 @@ def login():
         psw=cur.fetchone()
         hash_password = psw['hash_password']
         check_pass = bcrypt.hashpw(password.encode('utf8'),hash_password.encode('utf8'))
-        cur.execute("""SELECT user_id,designation FROM user where phone = %s""",(phone,))
+        cur.execute("""SELECT user_id,designation FROM users where phone = %s""",(phone,))
         id=cur.fetchone()
         if(check_pass==hash_password.encode('utf8')):
             session_val(True,id['user_id'],id['designation'],None,None)
@@ -274,7 +276,7 @@ def profile():
         user = escape(session['id'])
         designation = escape(session['designation'])
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("""select * from user where user_id= %s""", (user,))
+        cur.execute("""select * from users where user_id= %s""", (user,))
         d = cur.fetchone()
         pic_url = d['picture']
         if request.method=='POST':
@@ -292,7 +294,7 @@ def edit_profile():
         user = escape(session['id'])
         designation = escape(session['designation'])
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("""select * from user where user_id= %s""", (session['id'],))
+        cur.execute("""select * from users where user_id= %s""", (session['id'],))
         d = cur.fetchone()
         pic_url = d['picture']
         if request.method == 'POST':
@@ -303,14 +305,14 @@ def edit_profile():
             pincode = request.form['pincode']
             file = request.files['display_pic']
             try:
-                cur.execute("""update user set fname=%s,lname=%s,phone=%s,address=%s,pincode=%s where user_id=%s""", (
+                cur.execute("""update users set fname=%s,lname=%s,phone=%s,address=%s,pincode=%s where user_id=%s""", (
                     fname, lname, phone, address, pincode, session['id'],))
                 if file.filename!= '':
                     firebase = pyrebase.initialize_app(config)
                     storage = firebase.storage()
                     storage.child("images/"+user+"/new.jpg").put(file)
                     new_pic_url = storage.child("images/" + user + "/new.jpg").get_url(None)
-                    cur.execute("""update user set picture=%s where user_id=%s""",(new_pic_url,session['id']))
+                    cur.execute("""update users set picture=%s where user_id=%s""",(new_pic_url,session['id']))
             except:
                 pass
             conn.commit()
@@ -329,13 +331,13 @@ def change_password():
             old_pass = request.form['pass']
             password = request.form['password']
 
-            cur.execute("""SELECT hash_password FROM user where user_id = %s""", (session['id'],))
+            cur.execute("""SELECT hash_password FROM users where user_id = %s""", (session['id'],))
             psw = cur.fetchone()
             hash_password = psw['hash_password']
             check_pass = bcrypt.hashpw(old_pass.encode('utf8'), hash_password.encode('utf8'))
             if (check_pass == hash_password.encode('utf8')):
                 new_hash = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
-                cur.execute("""update user set hash_password=%s where user_id = %s""", (new_hash, session['id'],))
+                cur.execute("""update users set hash_password=%s where user_id = %s""", (new_hash, session['id'],))
 
             else:
                 msg = '*Incorrect password!'
@@ -589,7 +591,7 @@ def ticket():
     if 'loggedin' not in session:
          return redirect(url_for('login'))
     cur=conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.execute("""select * from user where user_id= %s""", (session['id'],))
+    cur.execute("""select * from users where user_id= %s""", (session['id'],))
     data=cur.fetchone()
     if request.method=='POST':
         fname=request.form['fname']
