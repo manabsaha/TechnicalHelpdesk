@@ -31,10 +31,10 @@ config = {
     "measurementId": "G-KSX47MVXRN"
 }
 
-DB_NAME = "helpdesk"
-DB_USER = "root"
-DB_PASS = ""
-DB_HOST = "localhost"
+DB_HOST = "ec2-184-73-192-172.compute-1.amazonaws.com"
+DB_USER = "lgldwgidoyuihn"
+DB_PASS = "14f0ccae54d7fa77417942f8a11c4e46c8cc710415c5c4a7e1a3eaa541d973bf"
+DB_NAME = "dbusrqlquo0res"
 conn = psycopg2.connect(dbname=DB_NAME,user=DB_USER,password=DB_PASS,host=DB_HOST)
 
 def init():
